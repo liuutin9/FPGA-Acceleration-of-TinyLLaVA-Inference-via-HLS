@@ -1,0 +1,245 @@
+<ENTRY>
+{
+ "thisFile": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls_test.hlscompile_summary",
+ "connectId": "",
+ "serverToken": "",
+ "timestamp": "0"
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_CmdStep",
+ "dateTimestamp": "05/06/25 19:37:40",
+ "timestampMillis": "1746531460399",
+ "buildStep": {
+  "cmdId": "d71bf0a2-499c-4ec6-98e2-8904af88290b",
+  "name": "v++",
+  "logFile": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\logs\\hls_test.steps.log",
+  "commandLine": "C:/Xilinx/Vitis/2024.2/bin/unwrapped/win64.o/v++.exe  -c --mode hls --config C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_config.cfg --work_dir hls_test ",
+  "args": [
+   "-c",
+   "--mode",
+   "hls",
+   "--config",
+   "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_config.cfg",
+   "--work_dir",
+   "hls_test"
+  ],
+  "iniFiles": [
+   {
+    "path": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_config.cfg",
+    "content": "part=xcu50-fsvh2104-2-e\n\n[hls]\nflow_target=vitis\npackage.output.format=ip_catalog\npackage.output.syn=false\nclock=300MHz\nclock_uncertainty=0.4ns\nsyn.file=mat_mul.cpp\ntb.file=mat_mul_tb.cpp\ncsim.code_analyzer=1\nsyn.top=mat_mul"
+   }
+  ],
+  "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "05/06/25 19:37:40",
+ "timestampMillis": "1746531460400",
+ "status": {
+  "cmdId": "d71bf0a2-499c-4ec6-98e2-8904af88290b",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_FlowMetaData",
+ "dateTimestamp": "05/06/25 19:37:46",
+ "timestampMillis": "1746531466612",
+ "buildSummary": {
+  "hardwarePlatform": "",
+  "hardwareDsa": "",
+  "platformDirectory": "",
+  "runtime": "",
+  "systemConfig": "",
+  "flow": "BF_COMPILE",
+  "target": "TT_HW",
+  "kernels": [
+   {
+    "base": {
+     "type": "KERNEL",
+     "name": "mat_mul",
+     "file": "",
+     "reports": [],
+     "uuid": ""
+    },
+    "sources": [
+     "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\mat_mul.cpp"
+    ],
+    "psSources": [],
+    "cuNames": [],
+    "type": "HLS",
+    "frequency": 0,
+    "freqUnits": ""
+   }
+  ],
+  "toolVersion": "2024.2"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "05/06/25 19:37:46",
+ "timestampMillis": "1746531466613",
+ "buildStep": {
+  "cmdId": "0ee8d282-e6db-4bfe-a42b-a0188760341e",
+  "name": "",
+  "logFile": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\hls.log",
+  "commandLine": "",
+  "args": [],
+  "iniFiles": [],
+  "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "05/06/25 19:37:46",
+ "timestampMillis": "1746531466614",
+ "status": {
+  "cmdId": "0ee8d282-e6db-4bfe-a42b-a0188760341e",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:37:46",
+ "timestampMillis": "1746531466614",
+ "report": {
+  "path": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\hls_data.json",
+  "name": "",
+  "fileType": "JSON",
+  "reportType": "HLS_SYNTHESIS",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:37:46",
+ "timestampMillis": "1746531466614",
+ "report": {
+  "path": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\syn\\report\\csynth.rpt",
+  "name": "",
+  "fileType": "TEXT",
+  "reportType": "HLS_SYNTHESIS",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:37:46",
+ "timestampMillis": "1746531466615",
+ "report": {
+  "path": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\syn\\report\\csynth.xml",
+  "name": "",
+  "fileType": "XML",
+  "reportType": "HLS_SYNTHESIS",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:38:04",
+ "timestampMillis": "1746531484237",
+ "report": {
+  "path": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls",
+  "name": "",
+  "fileType": "DIR",
+  "reportType": "HLS_DATAFLOW",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:38:04",
+ "timestampMillis": "1746531484239",
+ "report": {
+  "path": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls",
+  "name": "",
+  "fileType": "DIR",
+  "reportType": "HLS_FUNCTION_CALL_GRAPH",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:38:04",
+ "timestampMillis": "1746531484240",
+ "report": {
+  "path": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls",
+  "name": "",
+  "fileType": "DIR",
+  "reportType": "HLS_SCHEDULE",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "05/06/25 19:38:04",
+ "timestampMillis": "1746531484242",
+ "status": {
+  "cmdId": "0ee8d282-e6db-4bfe-a42b-a0188760341e",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "05/06/25 19:38:04",
+ "timestampMillis": "1746531484597",
+ "status": {
+  "cmdId": "d71bf0a2-499c-4ec6-98e2-8904af88290b",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:38:04",
+ "timestampMillis": "1746531484665",
+ "report": {
+  "path": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\reports\\v++_compile_hls_test_guidance.html",
+  "name": "",
+  "fileType": "HTML",
+  "reportType": "GLOBAL_RULECHECK_GUIDANCE",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:38:04",
+ "timestampMillis": "1746531484668",
+ "report": {
+  "path": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\reports\\.db\\v++_compile_hls_test_guidance.pb3",
+  "name": "",
+  "fileType": "BINARY_PROTOBUF",
+  "reportType": "GLOBAL_RULECHECK_GUIDANCE",
+  "cmdId": ""
+ }
+}
+</ENTRY>

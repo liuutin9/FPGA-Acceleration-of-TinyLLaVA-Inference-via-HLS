@@ -1,0 +1,22 @@
+{
+    "0": {
+        "name": "mat_mul",
+        "file": "mat_mul.cpp",
+        "fileloc": "3",
+        "instructions": "93",
+        "total_instructions": "93",
+        "calls": "",
+        "basicblocks": "5",
+        "loads": {
+            "L": "6",
+            "T": "4"
+        },
+        "stores": {
+            "L": "12",
+            "T": "1"
+        },
+        "loops": {
+            "L": "1"
+        }
+    }
+}

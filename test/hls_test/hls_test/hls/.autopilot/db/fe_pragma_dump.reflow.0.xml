@@ -1,0 +1,7 @@
+<pragmas>
+<pragma file="mat_mul.cpp" line="13" pragmaType="unroll" parentfunction="mat_mul" factor="2" skip_exit_check="0"/>
+<pragma file="mat_mul.cpp" line="4" pragmaType="interface" parentfunction="mat_mul" mode="s_axilite" port="" bundle="" offset="-1" name="" clock="" impl="" register="0"/>
+<pragma file="mat_mul.cpp" line="5" pragmaType="interface" parentfunction="mat_mul" mode="ap_memory" port="in1" storage_type="-1" impl="-1" latency="-1" name="" depth="-1"/>
+<pragma file="mat_mul.cpp" line="6" pragmaType="interface" parentfunction="mat_mul" mode="ap_memory" port="in2" storage_type="-1" impl="-1" latency="-1" name="" depth="-1"/>
+<pragma file="mat_mul.cpp" line="7" pragmaType="interface" parentfunction="mat_mul" mode="ap_memory" port="out" storage_type="-1" impl="-1" latency="-1" name="" depth="-1"/>
+</pragmas>

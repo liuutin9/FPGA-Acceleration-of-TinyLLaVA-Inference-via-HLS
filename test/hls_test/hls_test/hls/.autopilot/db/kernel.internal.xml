@@ -1,0 +1,11 @@
+<root versionMajor = "1" versionMinor = "5">
+  <kernel name="mat_mul" language="c" vlnv="xilinx.com:hls:mat_mul:1.0" attributes="" hash="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" debug="false" compileOptions="" profileType="" hwControlProtocol="ap_ctrl_chain">
+    <ports>
+      <port name="S_AXI_CONTROL" portType="addressable" mode="slave" base="0x0" range="0x10" dataWidth="32"/>
+    </ports>
+    <args>
+    </args>
+    <compileWorkGroupSize x="1" y="1" z="1"/>
+    <maxWorkGroupSize x="1" y="1" z="1"/>
+  </kernel>
+</root>

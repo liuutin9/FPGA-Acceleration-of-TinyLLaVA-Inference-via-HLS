@@ -1,0 +1,39 @@
+--- !Passed
+Pass:            reflow-pragma-loop-unroll
+Name:            PragmaPartiallyUnroll
+DebugLoc:        { File: mat_mul.cpp, Line: 3, Column: 0 }
+Function:        _Z7mat_mulPA4_iS0_S0_
+Args:            
+  - String:          'Unrolling loop '''
+  - LoopName:        VITIS_LOOP_12_3
+  - String:          ''' ('
+  - LoopLoc:         'mat_mul.cpp:12:30'
+  - String:          ') '
+  - String:          'in function '''
+  - String:          mat_mul
+  - String:          ''' partially '
+  - String:          ''
+  - String:          'with a factor of '
+  - Factor:          '2'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+Function:        apatb_mat_mul_ir
+Args:            
+  - Callee:          'mat_mul(int (*) [4], int (*) [4], int (*) [4])'
+    DebugLoc:        { File: mat_mul.cpp, Line: 3, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          apatb_mat_mul_ir
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !HLSReportInfo
+Pass:            auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'automatically set the pipeline for Loop< '
+  - LoopName:        VITIS_LOOP_12_3
+  - String:          '> at '
+  - LoopLoc:         'mat_mul.cpp:12:30'
+  - String:          ' '
+...

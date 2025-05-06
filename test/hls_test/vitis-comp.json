@@ -1,0 +1,12 @@
+{
+  "name": "hls_test",
+  "type": "HLS",
+  "configuration": {
+    "componentType": "HLS",
+    "configFiles": [
+      "hls_config.cfg"
+    ],
+    "work_dir": "hls_test"
+  },
+  "template": "empty_hls_component"
+}

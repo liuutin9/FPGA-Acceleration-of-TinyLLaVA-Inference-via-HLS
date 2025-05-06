@@ -1,0 +1,24 @@
+
+
+Implementation tool: Xilinx Vivado v.2024.2
+Project:             hls_test
+Solution:            hls
+Device target:       xcu50-fsvh2104-2-e
+Report date:         Tue May 06 19:56:40 +0800 2025
+
+#=== Post-Implementation Resource usage ===
+SLICE:            0
+LUT:            159
+FF:             199
+DSP:              6
+BRAM:             0
+URAM:             0
+LATCH:            0
+SRL:              8
+CLB:             37
+
+#=== Final timing ===
+CP required:                     3.333
+CP achieved post-synthesis:      2.230
+CP achieved post-implementation: 2.254
+Timing met

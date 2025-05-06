@@ -1,0 +1,31 @@
+---
+MainSourceFile:  'C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/.autopilot/db/mat_mul.pp.0.cpp'
+Diagnostics:     
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_9_1:  '
+    FileOffset:      9
+    FilePath:        mat_mul.cpp
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\mat_mul.pp.0.cpp'
+        Offset:          9793
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_9_1: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_10_2:  '
+    FileOffset:      10
+    FilePath:        mat_mul.cpp
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\mat_mul.pp.0.cpp'
+        Offset:          9831
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_10_2: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_12_3:  '
+    FileOffset:      12
+    FilePath:        mat_mul.cpp
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\mat_mul.pp.0.cpp'
+        Offset:          9898
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_12_3: '
+...

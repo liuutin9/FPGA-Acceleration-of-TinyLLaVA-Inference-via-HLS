@@ -1,0 +1,24 @@
+<xilinx:hls_fe_msgs>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-5471" msg_severity="WARNING" msg_loc="directive:1:9" msg_body="HLS pragma dump">
+        <args ARG_PragmaContext="directive" ARG_PragmaFunction="mat_mul" ARG_PragmaIsValid="1" ARG_PragmaOptions="name=mat_mul" ARG_PragmaType="top" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-5471" msg_severity="WARNING" msg_loc="mat_mul.cpp:4:9" msg_body="HLS pragma dump">
+        <args ARG_PragmaFunction="mat_mul" ARG_PragmaIsValid="1" ARG_PragmaOptions="port=return mode=s_axilite" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-5471" msg_severity="WARNING" msg_loc="mat_mul.cpp:5:9" msg_body="HLS pragma dump">
+        <args ARG_PragmaFunction="mat_mul" ARG_PragmaIsValid="1" ARG_PragmaOptions="port=in1 mode=bram" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-5471" msg_severity="WARNING" msg_loc="mat_mul.cpp:6:9" msg_body="HLS pragma dump">
+        <args ARG_PragmaFunction="mat_mul" ARG_PragmaIsValid="1" ARG_PragmaOptions="port=in2 mode=bram" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-5471" msg_severity="WARNING" msg_loc="mat_mul.cpp:7:9" msg_body="HLS pragma dump">
+        <args ARG_PragmaFunction="mat_mul" ARG_PragmaIsValid="1" ARG_PragmaOptions="port=out mode=bram" ARG_PragmaType="interface" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_VERBOSE_DUMP" msg_id="207-5471" msg_severity="WARNING" msg_loc="mat_mul.cpp:13:9" msg_body="HLS pragma dump">
+        <args ARG_PragmaFunction="mat_mul" ARG_PragmaIsValid="1" ARG_PragmaOptions="factor=2" ARG_PragmaType="unroll" ClangWarningOption="dump-hls-pragmas"/>
+    </msg>
+    <msg msg_groups="PRAGMA_UNROLL" msg_id="214-188" msg_severity="INFO" msg_loc="mat_mul.cpp:3:0" msg_body="Unrolling loop 'VITIS_LOOP_12_3' (mat_mul.cpp:12:30) in function 'mat_mul' partially with a factor of 2">
+        <args Factor="2" LoopLoc="mat_mul.cpp:12:30" LoopName="VITIS_LOOP_12_3"/>
+    </msg>
+</xilinx:hls_fe_msgs>
+

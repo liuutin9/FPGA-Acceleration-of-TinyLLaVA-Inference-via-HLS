@@ -1,0 +1,601 @@
+#-----------------------------------------------------------
+# Vivado v2024.2 (64-bit)
+# SW Build 5239630 on Fri Nov 08 22:35:27 MST 2024
+# IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+# SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+# Start of session at: Tue May  6 19:42:46 2025
+# Process ID         : 46704
+# Current directory  : C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.runs/bd_0_hls_inst_0_synth_1
+# Command line       : vivado.exe -log bd_0_hls_inst_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source bd_0_hls_inst_0.tcl
+# Log file           : C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.runs/bd_0_hls_inst_0_synth_1/bd_0_hls_inst_0.vds
+# Journal file       : C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.runs/bd_0_hls_inst_0_synth_1\vivado.jou
+# Running On         : Prestige14
+# Platform           : Windows Server 2016 or Windows 10
+# Operating System   : 26100
+# Processor Detail   : 13th Gen Intel(R) Core(TM) i7-13700H
+# CPU Frequency      : 2918 MHz
+# CPU Physical cores : 14
+# CPU Logical cores  : 20
+# Host memory        : 34045 MB
+# Swap memory        : 2147 MB
+# Total Virtual      : 36193 MB
+# Available Virtual  : 17512 MB
+#-----------------------------------------------------------
+source bd_0_hls_inst_0.tcl -notrace
+INFO: Dispatch client connection id - 54326
+create_project: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 446.746 ; gain = 125.695
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository 'c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/ip'.
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Xilinx/Vivado/2024.2/data/ip'.
+WARNING: [IP_Flow 19-4995] The host OS only allows 260 characters in a normal path. The IP cache path is more than 80 characters. If you experience issues with IP caching, please consider changing the IP cache to a location with a shorter path. Alternately consider using the OS subst command to map part of the path to a drive letter. 
+Current IP cache path is c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.cache/ip 
+INFO: [IP_Flow 19-6924] IPCACHE: Running cache check for IP inst: bd_0_hls_inst_0
+Command: synth_design -top bd_0_hls_inst_0 -part xcu50-fsvh2104-2-e -directive sdx_optimization_effort_high -incremental_mode off -mode out_of_context
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xcu50'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xcu50'
+INFO: [Device 21-403] Loading part xcu50-fsvh2104-2-e
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 5264
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2132.426 ; gain = 317.242
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'bd_0_hls_inst_0' [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ip/bd_0_hls_inst_0/synth/bd_0_hls_inst_0.v:53]
+INFO: [Synth 8-6157] synthesizing module 'mat_mul' [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul.v:9]
+INFO: [Synth 8-6157] synthesizing module 'mat_mul_control_s_axi' [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul_control_s_axi.v:9]
+INFO: [Synth 8-155] case statement is not full and has no default [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul_control_s_axi.v:200]
+INFO: [Synth 8-6155] done synthesizing module 'mat_mul_control_s_axi' (0#1) [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul_control_s_axi.v:9]
+INFO: [Synth 8-6157] synthesizing module 'mat_mul_mul_32s_32s_32_2_1' [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul_mul_32s_32s_32_2_1.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'mat_mul_mul_32s_32s_32_2_1' (0#1) [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul_mul_32s_32s_32_2_1.v:5]
+INFO: [Synth 8-6157] synthesizing module 'mat_mul_flow_control_loop_delay_pipe' [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul_flow_control_loop_delay_pipe.v:11]
+INFO: [Synth 8-6155] done synthesizing module 'mat_mul_flow_control_loop_delay_pipe' (0#1) [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul_flow_control_loop_delay_pipe.v:11]
+INFO: [Synth 8-6155] done synthesizing module 'mat_mul' (0#1) [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul.v:9]
+INFO: [Synth 8-6155] done synthesizing module 'bd_0_hls_inst_0' (0#1) [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ip/bd_0_hls_inst_0/synth/bd_0_hls_inst_0.v:53]
+WARNING: [Synth 8-6014] Unused sequential element int_ap_done_reg was removed.  [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ipshared/7a58/hdl/verilog/mat_mul_control_s_axi.v:258]
+WARNING: [Synth 8-7129] Port ap_done_int in module mat_mul_flow_control_loop_delay_pipe is either unconnected or has no load
+WARNING: [Synth 8-7129] Port reset in module mat_mul_mul_32s_32s_32_2_1 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port AWADDR[1] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port AWADDR[0] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[31] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[30] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[29] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[28] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[27] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[26] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[25] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[24] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[23] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[22] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[21] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[20] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[19] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[18] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[17] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[16] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[15] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[14] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[13] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[12] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[11] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[10] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[9] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[8] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[6] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[5] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[3] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WDATA[2] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WSTRB[3] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WSTRB[2] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port WSTRB[1] in module mat_mul_control_s_axi is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[31] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[30] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[29] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[28] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[27] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[26] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[25] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[24] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[23] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[22] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[21] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[20] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[19] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[18] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[17] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[16] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[15] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[14] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[13] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[12] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[11] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[10] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[9] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[8] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[7] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[6] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[5] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[4] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[3] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[2] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[1] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[0] in module mat_mul is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:08 ; elapsed = 00:00:10 . Memory (MB): peak = 2248.332 ; gain = 433.148
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:08 ; elapsed = 00:00:10 . Memory (MB): peak = 2248.332 ; gain = 433.148
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:08 ; elapsed = 00:00:10 . Memory (MB): peak = 2248.332 ; gain = 433.148
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 2248.332 ; gain = 0.000
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ip/bd_0_hls_inst_0/constraints/mat_mul_ooc.xdc] for cell 'inst'
+create_clock: Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 2351.883 ; gain = 1.762
+Finished Parsing XDC File [c:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.gen/sources_1/bd/bd_0/ip/bd_0_hls_inst_0/constraints/mat_mul_ooc.xdc] for cell 'inst'
+Parsing XDC File [C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.runs/bd_0_hls_inst_0_synth_1/dont_touch.xdc]
+Finished Parsing XDC File [C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.runs/bd_0_hls_inst_0_synth_1/dont_touch.xdc]
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 2351.883 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.059 . Memory (MB): peak = 2352.727 ; gain = 0.844
+INFO: [Designutils 20-5008] Incremental synthesis strategy off
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:23 ; elapsed = 00:00:26 . Memory (MB): peak = 2352.727 ; gain = 537.543
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xcu50-fsvh2104-2-e
+INFO: [Synth 8-6742] Reading net delay rules and data
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:23 ; elapsed = 00:00:26 . Memory (MB): peak = 2352.727 ; gain = 537.543
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property KEEP_HIERARCHY = SOFT for inst. (constraint file  C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.runs/bd_0_hls_inst_0_synth_1/dont_touch.xdc, line 9).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:23 ; elapsed = 00:00:26 . Memory (MB): peak = 2352.727 ; gain = 537.543
+---------------------------------------------------------------------------------
+INFO: [Synth 8-802] inferred FSM for state register 'wstate_reg' in module 'mat_mul_control_s_axi'
+INFO: [Synth 8-802] inferred FSM for state register 'rstate_reg' in module 'mat_mul_control_s_axi'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  iSTATE |                             0001 |                               11
+*
+                  WRIDLE |                             0010 |                               00
+                  WRDATA |                             0100 |                               01
+                  WRRESP |                             1000 |                               10
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'wstate_reg' using encoding 'one-hot' in module 'mat_mul_control_s_axi'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  iSTATE |                              001 |                               10
+*
+                  RDIDLE |                              010 |                               00
+                  RDDATA |                              100 |                               01
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'rstate_reg' using encoding 'one-hot' in module 'mat_mul_control_s_axi'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:23 ; elapsed = 00:00:26 . Memory (MB): peak = 2352.727 ; gain = 537.543
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input   32 Bit       Adders := 1     
+	   2 Input    5 Bit       Adders := 2     
+	   2 Input    4 Bit       Adders := 4     
+	   2 Input    3 Bit       Adders := 3     
++---XORs : 
+	   2 Input      1 Bit         XORs := 3     
++---Registers : 
+	               32 Bit    Registers := 10    
+	                5 Bit    Registers := 2     
+	                4 Bit    Registers := 5     
+	                3 Bit    Registers := 3     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 43    
++---Multipliers : 
+	              32x32  Multipliers := 2     
++---Muxes : 
+	   2 Input   32 Bit        Muxes := 2     
+	   2 Input    5 Bit        Muxes := 2     
+	   4 Input    4 Bit        Muxes := 1     
+	   2 Input    4 Bit        Muxes := 3     
+	   3 Input    3 Bit        Muxes := 1     
+	   2 Input    3 Bit        Muxes := 5     
+	   2 Input    1 Bit        Muxes := 14    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 5952 (col length:93)
+BRAMs: 2688 (col length: RAMB18 192 RAMB36 96)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+DSP Report: Generating DSP mul_32s_32s_32_2_1_U1/tmp_product, operation Mode is: A2*B.
+DSP Report: register mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/tmp_product.
+DSP Report: operator mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/tmp_product.
+DSP Report: operator mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/tmp_product.
+DSP Report: Generating DSP mul_32s_32s_32_2_1_U1/buff0_reg, operation Mode is: (PCIN>>17)+A*B.
+DSP Report: register mul_32s_32s_32_2_1_U1/buff0_reg is absorbed into DSP mul_32s_32s_32_2_1_U1/buff0_reg.
+DSP Report: operator mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/buff0_reg.
+DSP Report: operator mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/buff0_reg.
+DSP Report: Generating DSP mul_32s_32s_32_2_1_U1/tmp_product, operation Mode is: A2*B2.
+DSP Report: register mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/tmp_product.
+DSP Report: register mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/tmp_product.
+DSP Report: operator mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/tmp_product.
+DSP Report: operator mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/tmp_product.
+DSP Report: Generating DSP mul_32s_32s_32_2_1_U1/buff0_reg, operation Mode is: (PCIN>>17)+A2*B.
+DSP Report: register mul_32s_32s_32_2_1_U1/buff0_reg is absorbed into DSP mul_32s_32s_32_2_1_U1/buff0_reg.
+DSP Report: register mul_32s_32s_32_2_1_U1/buff0_reg is absorbed into DSP mul_32s_32s_32_2_1_U1/buff0_reg.
+DSP Report: operator mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/buff0_reg.
+DSP Report: operator mul_32s_32s_32_2_1_U1/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U1/buff0_reg.
+DSP Report: Generating DSP mul_32s_32s_32_2_1_U2/tmp_product, operation Mode is: A2*B.
+DSP Report: register mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/tmp_product.
+DSP Report: operator mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/tmp_product.
+DSP Report: operator mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/tmp_product.
+DSP Report: Generating DSP mul_32s_32s_32_2_1_U2/buff0_reg, operation Mode is: (PCIN>>17)+A*B.
+DSP Report: register mul_32s_32s_32_2_1_U2/buff0_reg is absorbed into DSP mul_32s_32s_32_2_1_U2/buff0_reg.
+DSP Report: operator mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/buff0_reg.
+DSP Report: operator mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/buff0_reg.
+DSP Report: Generating DSP mul_32s_32s_32_2_1_U2/tmp_product, operation Mode is: A2*B2.
+DSP Report: register mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/tmp_product.
+DSP Report: register mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/tmp_product.
+DSP Report: operator mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/tmp_product.
+DSP Report: operator mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/tmp_product.
+DSP Report: Generating DSP mul_32s_32s_32_2_1_U2/buff0_reg, operation Mode is: (PCIN>>17)+A2*B.
+DSP Report: register mul_32s_32s_32_2_1_U2/buff0_reg is absorbed into DSP mul_32s_32s_32_2_1_U2/buff0_reg.
+DSP Report: register mul_32s_32s_32_2_1_U2/buff0_reg is absorbed into DSP mul_32s_32s_32_2_1_U2/buff0_reg.
+DSP Report: operator mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/buff0_reg.
+DSP Report: operator mul_32s_32s_32_2_1_U2/tmp_product is absorbed into DSP mul_32s_32s_32_2_1_U2/buff0_reg.
+WARNING: [Synth 8-7129] Port out_r_Dout_A[31] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[30] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[29] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[28] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[27] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[26] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[25] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[24] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[23] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[22] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[21] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[20] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[19] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[18] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[17] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[16] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[15] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[14] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[13] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[12] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[11] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[10] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[9] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[8] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[7] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[6] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[5] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[4] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[3] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[2] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[1] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port out_r_Dout_A[0] in module mat_mul is either unconnected or has no load
+WARNING: [Synth 8-7129] Port s_axi_control_AWADDR[1] in module mat_mul is either unconnected or has no load
+INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+WARNING: [Synth 8-3332] Sequential element (control_s_axi_U/FSM_onehot_wstate_reg[0]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (control_s_axi_U/FSM_onehot_rstate_reg[0]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[47]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[46]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[45]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[44]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[43]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[42]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[41]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[40]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[39]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[38]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[37]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[36]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[35]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[34]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[33]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[32]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[31]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[30]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[29]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[28]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[27]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[26]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[25]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[24]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[23]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[22]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[21]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[20]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[19]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[18]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[17]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[16]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[15]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[47]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[46]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[45]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[44]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[43]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[42]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[41]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[40]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[39]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[38]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[37]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[36]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[35]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[34]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[33]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[32]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[31]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[30]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[29]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[28]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[27]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[26]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[25]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[24]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[23]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[22]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[21]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[20]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[19]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[18]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U1/buff0_reg[17]__0) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[47]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[46]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[45]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[44]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[43]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[42]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[41]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[40]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[39]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[38]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[37]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[36]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[35]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[34]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[33]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[32]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[31]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[30]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[29]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[28]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[27]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[26]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[25]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[24]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[23]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[22]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[21]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[20]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[19]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[18]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[17]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[16]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[15]) is unused and will be removed from module mat_mul.
+WARNING: [Synth 8-3332] Sequential element (mul_32s_32s_32_2_1_U2/buff0_reg[47]__0) is unused and will be removed from module mat_mul.
+INFO: [Common 17-14] Message 'Synth 8-3332' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:26 ; elapsed = 00:00:30 . Memory (MB): peak = 2352.727 ; gain = 537.543
+---------------------------------------------------------------------------------
+ Sort Area is  mul_32s_32s_32_2_1_U1/tmp_product_6 : 0 0 : 3137 5856 : Used 1 time 0
+ Sort Area is  mul_32s_32s_32_2_1_U1/tmp_product_6 : 0 1 : 2719 5856 : Used 1 time 0
+ Sort Area is  mul_32s_32s_32_2_1_U2/tmp_product_0 : 0 0 : 3137 5856 : Used 1 time 0
+ Sort Area is  mul_32s_32s_32_2_1_U2/tmp_product_0 : 0 1 : 2719 5856 : Used 1 time 0
+ Sort Area is  mul_32s_32s_32_2_1_U1/tmp_product_7 : 0 0 : 2652 5185 : Used 1 time 0
+ Sort Area is  mul_32s_32s_32_2_1_U1/tmp_product_7 : 0 1 : 2533 5185 : Used 1 time 0
+ Sort Area is  mul_32s_32s_32_2_1_U2/tmp_product_3 : 0 0 : 2652 5185 : Used 1 time 0
+ Sort Area is  mul_32s_32s_32_2_1_U2/tmp_product_3 : 0 1 : 2533 5185 : Used 1 time 0
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+DSP: Preliminary Mapping Report (see note below. The ' indicates corresponding REG is set)
++------------+-----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name | DSP Mapping     | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++------------+-----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|mat_mul     | A2*B            | 18     | 15     | -      | -      | 48     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|mat_mul     | (PCIN>>17)+A*B  | 15     | 15     | -      | -      | 48     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|mat_mul     | A2*B2           | 18     | 18     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|mat_mul     | (PCIN>>17)+A2*B | 18     | 15     | -      | -      | 48     | 1    | 0    | -    | -    | -     | 0    | 1    | 
+|mat_mul     | A2*B            | 18     | 15     | -      | -      | 48     | 1    | 0    | -    | -    | -     | 0    | 0    | 
+|mat_mul     | (PCIN>>17)+A*B  | 15     | 15     | -      | -      | 48     | 0    | 0    | -    | -    | -     | 0    | 1    | 
+|mat_mul     | A2*B2           | 18     | 18     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|mat_mul     | (PCIN>>17)+A2*B | 18     | 15     | -      | -      | 48     | 1    | 0    | -    | -    | -     | 0    | 1    | 
++------------+-----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:35 ; elapsed = 00:00:41 . Memory (MB): peak = 2891.176 ; gain = 1075.992
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:36 ; elapsed = 00:00:42 . Memory (MB): peak = 2915.527 ; gain = 1100.344
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:36 ; elapsed = 00:00:42 . Memory (MB): peak = 2916.969 ; gain = 1101.785
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:40 ; elapsed = 00:00:46 . Memory (MB): peak = 3111.066 ; gain = 1295.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:40 ; elapsed = 00:00:46 . Memory (MB): peak = 3111.066 ; gain = 1295.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:40 ; elapsed = 00:00:46 . Memory (MB): peak = 3111.066 ; gain = 1295.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:40 ; elapsed = 00:00:46 . Memory (MB): peak = 3111.066 ; gain = 1295.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:40 ; elapsed = 00:00:46 . Memory (MB): peak = 3111.066 ; gain = 1295.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:40 ; elapsed = 00:00:46 . Memory (MB): peak = 3111.066 ; gain = 1295.883
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                                             | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|mat_mul     | ap_condition_exit_pp0_iter0_stage0_pp0_iter3_reg_reg | 3      | 1     | NO           | NO                 | YES               | 1      | 0       | 
+|mat_mul     | add_ln16_reg_557_pp0_iter3_reg_reg[3]                | 4      | 4     | NO           | NO                 | YES               | 4      | 0       | 
+|mat_mul     | tmp_5_reg_582_pp0_iter3_reg_reg[0]                   | 4      | 1     | NO           | NO                 | YES               | 1      | 0       | 
+|mat_mul     | icmp_ln108_reg_161_pp0_iter3_reg_reg[0]              | 3      | 1     | NO           | NO                 | YES               | 1      | 0       | 
+|mat_mul     | or_ln9_reg_552_pp0_iter3_reg_reg[0]                  | 4      | 1     | NO           | NO                 | YES               | 1      | 0       | 
++------------+------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+DSP Final Report (the ' indicates corresponding REG is set)
++------------+------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name | DSP Mapping      | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++------------+------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|mat_mul     | (A'*B')'         | 17     | 18     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 1    | 
+|mat_mul     | A'*B'            | 17     | 17     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|mat_mul     | (PCIN>>17+A*B')' | 0      | 18     | -      | -      | 48     | 0    | 1    | -    | -    | -     | 0    | 1    | 
+|mat_mul     | (A'*B')'         | 17     | 18     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 1    | 
+|mat_mul     | A'*B'            | 17     | 17     | -      | -      | 48     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|mat_mul     | (PCIN>>17+A*B')' | 0      | 18     | -      | -      | 48     | 0    | 1    | -    | -    | -     | 0    | 1    | 
++------------+------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+----------------+------+
+|      |Cell            |Count |
++------+----------------+------+
+|1     |CARRY8          |     8|
+|2     |DSP_ALU         |     6|
+|3     |DSP_A_B_DATA    |     6|
+|4     |DSP_C_DATA      |     6|
+|5     |DSP_MULTIPLIER  |     6|
+|6     |DSP_M_DATA      |     6|
+|7     |DSP_OUTPUT      |     6|
+|9     |DSP_PREADD      |     6|
+|10    |DSP_PREADD_DATA |     6|
+|11    |LUT1            |     3|
+|12    |LUT2            |    39|
+|13    |LUT3            |    12|
+|14    |LUT4            |    10|
+|15    |LUT5            |    46|
+|16    |LUT6            |    59|
+|17    |SRL16E          |     8|
+|18    |FDRE            |   199|
++------+----------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:40 ; elapsed = 00:00:46 . Memory (MB): peak = 3111.066 ; gain = 1295.883
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 196 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:24 ; elapsed = 00:00:37 . Memory (MB): peak = 3111.066 ; gain = 1191.488
+Synthesis Optimization Complete : Time (s): cpu = 00:00:40 ; elapsed = 00:00:47 . Memory (MB): peak = 3111.066 ; gain = 1295.883
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.015 . Memory (MB): peak = 3111.066 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 14 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3111.066 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 6 instances were transformed.
+  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 6 instances
+
+Synth Design complete | Checksum: 4057c977
+INFO: [Common 17-83] Releasing license: Synthesis
+37 Infos, 203 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:51 ; elapsed = 00:01:00 . Memory (MB): peak = 3111.066 ; gain = 2608.051
+Write ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.004 . Memory (MB): peak = 3111.066 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.runs/bd_0_hls_inst_0_synth_1/bd_0_hls_inst_0.dcp' has been generated.
+INFO: [Coretcl 2-1648] Added synthesis output to IP cache for IP bd_0_hls_inst_0, cache-ID = d0e0e71597b064fa
+INFO: [Coretcl 2-1174] Renamed 5 cell refs.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 3111.066 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/impl/verilog/project.runs/bd_0_hls_inst_0_synth_1/bd_0_hls_inst_0.dcp' has been generated.
+INFO: [Vivado 12-24828] Executing command : report_utilization -file bd_0_hls_inst_0_utilization_synth.rpt -pb bd_0_hls_inst_0_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Tue May  6 19:44:00 2025...

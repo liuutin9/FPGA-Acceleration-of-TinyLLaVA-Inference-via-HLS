@@ -1,0 +1,156 @@
+<ENTRY>
+{
+ "thisFile": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls_test.hlsrun_csim_summary",
+ "connectId": "",
+ "serverToken": "",
+ "timestamp": "0"
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_CmdStep",
+ "dateTimestamp": "05/06/25 19:27:15",
+ "timestampMillis": "1746530835275",
+ "buildStep": {
+  "cmdId": "c25174bd-c26b-45e6-8cd2-43b315d61b1c",
+  "name": "vitis-run",
+  "logFile": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\logs\\hls_test.steps.log",
+  "commandLine": "C:/Xilinx/Vitis/2024.2/bin/unwrapped/win64.o/vitis-run.exe  --mode hls --csim --config C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_config.cfg --work_dir hls_test ",
+  "args": [
+   "--mode",
+   "hls",
+   "--csim",
+   "--config",
+   "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_config.cfg",
+   "--work_dir",
+   "hls_test"
+  ],
+  "iniFiles": [],
+  "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "05/06/25 19:27:15",
+ "timestampMillis": "1746530835275",
+ "status": {
+  "cmdId": "c25174bd-c26b-45e6-8cd2-43b315d61b1c",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_FlowMetaData",
+ "dateTimestamp": "05/06/25 19:27:26",
+ "timestampMillis": "1746530846016",
+ "buildSummary": {
+  "hardwarePlatform": "",
+  "hardwareDsa": "",
+  "platformDirectory": "",
+  "runtime": "",
+  "systemConfig": "",
+  "flow": "BF_RUN",
+  "target": "TT_HLS_C_SIM",
+  "kernels": [
+   {
+    "base": {
+     "type": "KERNEL",
+     "name": "mat_mul",
+     "file": "",
+     "reports": [],
+     "uuid": ""
+    },
+    "sources": [
+     "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\mat_mul.cpp"
+    ],
+    "psSources": [],
+    "cuNames": [],
+    "type": "HLS",
+    "frequency": 0,
+    "freqUnits": ""
+   }
+  ],
+  "toolVersion": "2024.2"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "05/06/25 19:27:26",
+ "timestampMillis": "1746530846018",
+ "buildStep": {
+  "cmdId": "85d09104-b8bf-4a72-a1bf-c173837582ba",
+  "name": "",
+  "logFile": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\hls.log",
+  "commandLine": "",
+  "args": [],
+  "iniFiles": [],
+  "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "05/06/25 19:27:26",
+ "timestampMillis": "1746530846019",
+ "status": {
+  "cmdId": "85d09104-b8bf-4a72-a1bf-c173837582ba",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "05/06/25 19:27:29",
+ "timestampMillis": "1746530849002",
+ "status": {
+  "cmdId": "85d09104-b8bf-4a72-a1bf-c173837582ba",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "05/06/25 19:27:29",
+ "timestampMillis": "1746530849188",
+ "status": {
+  "cmdId": "c25174bd-c26b-45e6-8cd2-43b315d61b1c",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:27:29",
+ "timestampMillis": "1746530849189",
+ "report": {
+  "path": "",
+  "name": "",
+  "fileType": "HTML",
+  "reportType": "GLOBAL_RULECHECK_GUIDANCE",
+  "cmdId": ""
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "05/06/25 19:27:29",
+ "timestampMillis": "1746530849189",
+ "report": {
+  "path": "",
+  "name": "",
+  "fileType": "BINARY_PROTOBUF",
+  "reportType": "GLOBAL_RULECHECK_GUIDANCE",
+  "cmdId": ""
+ }
+}
+</ENTRY>
