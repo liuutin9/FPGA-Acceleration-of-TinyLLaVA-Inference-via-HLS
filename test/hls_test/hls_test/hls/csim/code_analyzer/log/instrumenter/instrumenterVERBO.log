@@ -12,7 +12,7 @@ instrumenter::VERBO: [Instrumenter - IRBuilder] Instruction has no debug informa
 instrumenter::VERBO: [Instrumenter - IRBuilder] Instruction has no debug information, defaulting to function/basic block info
 instrumenter::VERBO: [Instrumenter - IRBuilder] Instruction has no debug information, defaulting to function/basic block info
 instrumenter::INFOR: [Instrumenter - Initialization] Finished adding static information
-instrumenter::VERBO: [Instrumenter - Finalize] Dumping static data to .... "C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\csim\code_analyzer/.internal/instrument/app_0\static.xml"
+instrumenter::VERBO: [Instrumenter - Finalize] Dumping static data to .... "D:\Project\test\hls_test\hls_test\hls\csim\code_analyzer/.internal/instrument/app_1\static.xml"
 instrumenter::VERBO: [Instrumenter - GV] Global Variables Instrumentation
 instrumenter::VERBO: [Instrumenter - WARNING] Global value .str is not instrumentable
 instrumenter::VERBO: [Instrumenter - WARNING] Global value .str.1 is not instrumentable

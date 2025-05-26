@@ -1,10 +1,10 @@
 parallelismSelector::VERBO: Summary of inputs: 
-parallelismSelector::VERBO: Output directory: "C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\csim\code_analyzer\output"
-parallelismSelector::VERBO: spec:0:0: info: Will use basepath at location C:\Users\liuut\Desktop\Project\test\hls_test
+parallelismSelector::VERBO: Output directory: "D:\Project\test\hls_test\hls_test\hls\csim\code_analyzer\output"
+parallelismSelector::VERBO: spec:0:0: info: Will use basepath at location D:\Project\test\hls_test
 parallelismSelector::VERBO: FPGA clock frequency is set to 300.03 MHz
 parallelismSelector::VERBO: Will use user-driven complete partitioning settings
 parallelismSelector::VERBO: Arrays with less than or equal to 4 elements that appear in the codegen directives will be completely partitioned
-parallelismSelector::VERBO: spec:0:0: info: Will use IR Module file at location C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\csim\code_analyzer\.internal\instrument\app_0\annotated.bc
+parallelismSelector::VERBO: spec:0:0: info: Will use IR Module file at location D:\Project\test\hls_test\hls_test\hls\csim\code_analyzer\.internal\instrument\app_1\annotated.bc
 parallelismSelector::VERBO: FPGA frequency: 300030003 Hz
 parallelismSelector::VERBO: Using FPGA frequency for HLS estimations: 300000000 Hz
 parallelismSelector::VERBO: [Model Builder] Extracting logic model object from: C:\Xilinx\Vitis\2024.2\vcxx\data\platform\logic\virtexuplusHBM.logic
@@ -13,7 +13,7 @@ parallelismSelector::VERBO: Maximum area for the hardware functions: AreaConstra
 parallelismSelector::VERBO: Code Analyzer Id: 0
 parallelismSelector::VERBO: Dataflow Hardware Function: _Z7mat_mulPA4_iS0_S0_
 parallelismSelector::VERBO: Adding outline as primary transformation
-parallelismSelector::VERBO: RecipeFile: "C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\csim\code_analyzer\.internal\dataflow\0\recipe.json"
+parallelismSelector::VERBO: RecipeFile: "D:\Project\test\hls_test\hls_test\hls\csim\code_analyzer\.internal\dataflow\0\recipe.json"
 parallelismSelector::VERBO: Applying transformation: (region_outline)
 parallelismSelector::VERBO: Applying transformation: (outline)
 parallelismSelector::VERBO: Alias Equivalence: (Var <- { Pointees })
@@ -26,7 +26,7 @@ parallelismSelector::VERBO: Alias Equivalence: (Var <- { Pointees })
                             
 parallelismSelector::VERBO: No optimization objective set
 parallelismSelector::VERBO: Variable Infos:
-parallelismSelector::VERBO:     'in1' C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 17
+parallelismSelector::VERBO:     'in1' D:/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 17
                                   ElementBitsize=32
                                   IsHlsStream=no
                                   FunctionId= 204
@@ -36,7 +36,7 @@ parallelismSelector::VERBO:     'in1' C:/Users/liuut/Desktop/Project/test/hls_te
                                   Elements=[ 4,  4 ]
                                   HasInsertionLoc=yes
                                   IsFromSystemFunction=no
-parallelismSelector::VERBO:     'in2' C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 18
+parallelismSelector::VERBO:     'in2' D:/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 18
                                   ElementBitsize=32
                                   IsHlsStream=no
                                   FunctionId= 204
@@ -46,7 +46,7 @@ parallelismSelector::VERBO:     'in2' C:/Users/liuut/Desktop/Project/test/hls_te
                                   Elements=[ 4,  4 ]
                                   HasInsertionLoc=yes
                                   IsFromSystemFunction=no
-parallelismSelector::VERBO:     'out' C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 19
+parallelismSelector::VERBO:     'out' D:/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 19
                                   ElementBitsize=32
                                   IsHlsStream=no
                                   FunctionId= 204
@@ -56,7 +56,7 @@ parallelismSelector::VERBO:     'out' C:/Users/liuut/Desktop/Project/test/hls_te
                                   Elements=[ 4,  4 ]
                                   HasInsertionLoc=yes
                                   IsFromSystemFunction=no
-parallelismSelector::VERBO:     'out' C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 20
+parallelismSelector::VERBO:     'out' D:/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 20
                                   ElementBitsize=32
                                   IsHlsStream=no
                                   FunctionId= 205
@@ -66,7 +66,7 @@ parallelismSelector::VERBO:     'out' C:/Users/liuut/Desktop/Project/test/hls_te
                                   Elements=[ 4,  4 ]
                                   HasInsertionLoc=yes
                                   IsFromSystemFunction=no
-parallelismSelector::VERBO:     'in1' C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 21
+parallelismSelector::VERBO:     'in1' D:/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 21
                                   ElementBitsize=32
                                   IsHlsStream=no
                                   FunctionId= 205
@@ -76,7 +76,7 @@ parallelismSelector::VERBO:     'in1' C:/Users/liuut/Desktop/Project/test/hls_te
                                   Elements=[ 4,  4 ]
                                   HasInsertionLoc=yes
                                   IsFromSystemFunction=no
-parallelismSelector::VERBO:     'in2' C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 22
+parallelismSelector::VERBO:     'in2' D:/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 22
                                   ElementBitsize=32
                                   IsHlsStream=no
                                   FunctionId= 205
@@ -95,34 +95,34 @@ parallelismSelector::VERBO: Equivalence table
                              Object with value: 22 is mapped to the object with value: 18
                             
 parallelismSelector::VERBO: Nesting structure:
-                            +- Loop with id 8, Trip Count: (Static=4, Dynamic [x1]), [PerfectNest], Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:9:5
-                               +- Loop with id 9, Trip Count: (Static=4, Dynamic [x4]), Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:10:9, Vars=19,
-                                  +- Loop with id 10, Trip Count: (Static=4, Dynamic [x16]), Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:12:13, Vars=17,18,
+                            +- Loop with id 8, Trip Count: (Static=4, Dynamic [x1]), [PerfectNest], Loc=D:/Project/test/hls_test\mat_mul.cpp:9:5
+                               +- Loop with id 9, Trip Count: (Static=4, Dynamic [x4]), Loc=D:/Project/test/hls_test\mat_mul.cpp:10:9, Vars=19,
+                                  +- Loop with id 10, Trip Count: (Static=4, Dynamic [x16]), Loc=D:/Project/test/hls_test\mat_mul.cpp:12:13, Vars=17,18,
                             
 parallelismSelector::VERBO: Nesting structure after dynamic trip count update:
-                            +- Loop with id 8, Trip Count: (Static=4, Dynamic [x1]), [PerfectNest], Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:9:5
-                               +- Loop with id 9, Trip Count: (Static=4, Dynamic [x4]), Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:10:9, Vars=19,
-                                  +- Loop with id 10, Trip Count: (Static=4, Dynamic [x16]), Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:12:13, Vars=17,18,
+                            +- Loop with id 8, Trip Count: (Static=4, Dynamic [x1]), [PerfectNest], Loc=D:/Project/test/hls_test\mat_mul.cpp:9:5
+                               +- Loop with id 9, Trip Count: (Static=4, Dynamic [x4]), Loc=D:/Project/test/hls_test\mat_mul.cpp:10:9, Vars=19,
+                                  +- Loop with id 10, Trip Count: (Static=4, Dynamic [x16]), Loc=D:/Project/test/hls_test\mat_mul.cpp:12:13, Vars=17,18,
                             
 parallelismSelector::VERBO: Function 'mat_mul' not inlined as per top-levels
 parallelismSelector::VERBO: Function 'Outline_T3_F204_R2_Loop' not inlined as per dataflow task
 parallelismSelector::VERBO: Nesting structure after static trip count upper bound calculation for symbolically bounded loops:
-                            +- Loop with id 8, Trip Count: (Static=4, Dynamic [x1]), [PerfectNest], Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:9:5
-                               +- Loop with id 9, Trip Count: (Static=4, Dynamic [x4]), Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:10:9, Vars=19,
-                                  +- Loop with id 10, Trip Count: (Static=4, Dynamic [x16]), Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:12:13, Vars=17,18,
+                            +- Loop with id 8, Trip Count: (Static=4, Dynamic [x1]), [PerfectNest], Loc=D:/Project/test/hls_test\mat_mul.cpp:9:5
+                               +- Loop with id 9, Trip Count: (Static=4, Dynamic [x4]), Loc=D:/Project/test/hls_test\mat_mul.cpp:10:9, Vars=19,
+                                  +- Loop with id 10, Trip Count: (Static=4, Dynamic [x16]), Loc=D:/Project/test/hls_test\mat_mul.cpp:12:13, Vars=17,18,
                             
 parallelismSelector::VERBO: 
                             The following user pragmas were detected in the application:
-parallelismSelector::VERBO: C:\Users\liuut\Desktop\Project\test\hls_test\mat_mul.cpp:13:17: warning: User pragma 'unroll' found in function Outline_T3_F204_R2_Loop
+parallelismSelector::VERBO: D:\Project\test\hls_test\mat_mul.cpp:13:17: warning: User pragma 'unroll' found in function Outline_T3_F204_R2_Loop
 parallelismSelector::VERBO: Max iterations for loop 8 are 4
-parallelismSelector::VERBO:  - loop 8 is "C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp":9:5
+parallelismSelector::VERBO:  - loop 8 is "D:/Project/test/hls_test\mat_mul.cpp":9:5
 parallelismSelector::VERBO: Max iterations for loop 9 are 4
-parallelismSelector::VERBO:  - loop 9 is "C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp":10:9
+parallelismSelector::VERBO:  - loop 9 is "D:/Project/test/hls_test\mat_mul.cpp":10:9
 parallelismSelector::VERBO: Max iterations for loop 10 are 4
-parallelismSelector::VERBO:  - loop 10 is "C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp":12:13
-parallelismSelector::VERBO: Partitioning variable 'in1' C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 17
-parallelismSelector::VERBO: Partitioning variable 'in2' C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 18
-parallelismSelector::VERBO: Partitioning variable 'out' C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 19
+parallelismSelector::VERBO:  - loop 10 is "D:/Project/test/hls_test\mat_mul.cpp":12:13
+parallelismSelector::VERBO: Partitioning variable 'in1' D:/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 17
+parallelismSelector::VERBO: Partitioning variable 'in2' D:/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 18
+parallelismSelector::VERBO: Partitioning variable 'out' D:/Project/test/hls_test\mat_mul.cpp:3:0 VariableId 19
 parallelismSelector::VERBO: Initial branch:
                             FunctionPipelineTopLevel: Maybe
                             Reshape {dim 0: cyclic 1, 2 complete, dim 1: cyclic 1, 2 complete} (VariableName in1) (VariableId 17)
@@ -142,9 +142,9 @@ parallelismSelector::VERBO: Initial branch after first round of constraints:
                                   +- pipeline, unroll with factors 1, 2, 4, unroll/pipeline with factors 2 (LoopId 10)
                             
 parallelismSelector::VERBO: Nesting structure after user pragma constraints:
-                            +- Loop with id 8, Trip Count: (Static=4, Dynamic [x1]), [PerfectNest], Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:9:5
-                               +- Loop with id 9, Trip Count: (Static=4, Dynamic [x4]), Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:10:9, Vars=19,
-                                  +- Loop with id 10, Trip Count: (Static=4, Dynamic [x16]), [User Pragma], Loc=C:/Users/liuut/Desktop/Project/test/hls_test\mat_mul.cpp:12:13, Vars=17,18,
+                            +- Loop with id 8, Trip Count: (Static=4, Dynamic [x1]), [PerfectNest], Loc=D:/Project/test/hls_test\mat_mul.cpp:9:5
+                               +- Loop with id 9, Trip Count: (Static=4, Dynamic [x4]), Loc=D:/Project/test/hls_test\mat_mul.cpp:10:9, Vars=19,
+                                  +- Loop with id 10, Trip Count: (Static=4, Dynamic [x16]), [User Pragma], Loc=D:/Project/test/hls_test\mat_mul.cpp:12:13, Vars=17,18,
                             
 parallelismSelector::VERBO: Initial branch after applying user pragma constraints:
                             FunctionPipelineTopLevel: Maybe
@@ -258,11 +258,11 @@ parallelismSelector::VERBO:         	unroll 2 Cycles: 14
 parallelismSelector::VERBO:         Overall latency for nested loop (LoopId 10): 14
 parallelismSelector::VERBO:     MARegionScheduler::finalize():
 parallelismSelector::VERBO:        - LoopId: 9
-parallelismSelector::VERBO:          - EndCycles: for.body6 -> {1: 14}
 parallelismSelector::VERBO:          - EndCycles: for.body3 -> {1: 1}
 parallelismSelector::VERBO:          - EndCycles: for.end -> {1: 14}
+parallelismSelector::VERBO:          - EndCycles: for.body6 -> {1: 14}
 parallelismSelector::VERBO:        - MaxEndCycle: {1: 14}
-parallelismSelector::VERBO:        - Critical path: for.body6, for.body3, for.end
+parallelismSelector::VERBO:        - Critical path: for.body3, for.end, for.body6
 parallelismSelector::VERBO:     hasRAW: 0
 parallelismSelector::VERBO:        - IIMem: {1: 0.5}, OwnedIIMem: {1: 0.5}, NestedIIMem: {1: 0}
 parallelismSelector::VERBO: 
@@ -272,11 +272,11 @@ parallelismSelector::VERBO:         	unroll 1 Cycles: 56
 parallelismSelector::VERBO:         Overall latency for nested loop (LoopId 9): 56
 parallelismSelector::VERBO:     MARegionScheduler::finalize():
 parallelismSelector::VERBO:        - LoopId: 8
+parallelismSelector::VERBO:          - EndCycles: for.end -> {1: 56}
 parallelismSelector::VERBO:          - EndCycles: for.body -> {1: 1}
 parallelismSelector::VERBO:          - EndCycles: for.end19 -> {1: 56}
-parallelismSelector::VERBO:          - EndCycles: for.end -> {1: 56}
 parallelismSelector::VERBO:        - MaxEndCycle: {1: 56}
-parallelismSelector::VERBO:        - Critical path: for.body, for.end19, for.body3, for.end
+parallelismSelector::VERBO:        - Critical path: for.body3, for.end, for.body, for.end19
 parallelismSelector::VERBO:     hasRAW: 0
 parallelismSelector::VERBO:        - IIMem: {1: 0}, OwnedIIMem: {1: 0}, NestedIIMem: {1: 0}
 parallelismSelector::VERBO: 
@@ -286,20 +286,20 @@ parallelismSelector::VERBO:         	unroll 1 Cycles: 224
 parallelismSelector::VERBO:         Overall latency for nested loop (LoopId 8): 224
 parallelismSelector::VERBO:     MARegionScheduler::finalize():
 parallelismSelector::VERBO:        - Function: Outline_T3_F204_R2_Loop
+parallelismSelector::VERBO:          - EndCycles: newFuncRoot -> {1: 1}
 parallelismSelector::VERBO:          - EndCycles: for.end22 -> {1: 225}
 parallelismSelector::VERBO:          - EndCycles: for.end19 -> {1: 225}
-parallelismSelector::VERBO:          - EndCycles: newFuncRoot -> {1: 1}
 parallelismSelector::VERBO:        - MaxEndCycle: {1: 225}
-parallelismSelector::VERBO:        - Critical path: for.body, for.end22, for.end19, newFuncRoot
+parallelismSelector::VERBO:        - Critical path: newFuncRoot, for.end22, for.body, for.end19
 parallelismSelector::VERBO: 
 parallelismSelector::VERBO: Analyzing Function "mat_mul" (FunctionId 204):
 parallelismSelector::VERBO:     MARegionScheduler::finalize():
 parallelismSelector::VERBO:        - Function: _Z7mat_mulPA4_iS0_S0_
 parallelismSelector::VERBO:          - EndCycles: entry -> {1: 1}
-parallelismSelector::VERBO:          - EndCycles: codeRepl -> {1: 227}
 parallelismSelector::VERBO:          - EndCycles: for.end22_iso9 -> {1: 227}
+parallelismSelector::VERBO:          - EndCycles: codeRepl -> {1: 227}
 parallelismSelector::VERBO:        - MaxEndCycle: {1: 227}
-parallelismSelector::VERBO:        - Critical path: entry, codeRepl, for.end22_iso9
+parallelismSelector::VERBO:        - Critical path: entry, for.end22_iso9, codeRepl
 parallelismSelector::VERBO: 
 parallelismSelector::VERBO: Filling in latencies and intervals per loop...
 parallelismSelector::VERBO:     Initiation Interval:
@@ -421,11 +421,11 @@ parallelismSelector::VERBO:         	unroll 2 Cycles: 14
 parallelismSelector::VERBO:         Overall latency for nested loop (LoopId 10): 14
 parallelismSelector::VERBO:     MARegionScheduler::finalize():
 parallelismSelector::VERBO:        - LoopId: 9
-parallelismSelector::VERBO:          - EndCycles: for.body6 -> {1: 14}
 parallelismSelector::VERBO:          - EndCycles: for.body3 -> {1: 1}
 parallelismSelector::VERBO:          - EndCycles: for.end -> {1: 14}
+parallelismSelector::VERBO:          - EndCycles: for.body6 -> {1: 14}
 parallelismSelector::VERBO:        - MaxEndCycle: {1: 14}
-parallelismSelector::VERBO:        - Critical path: for.body6, for.body3, for.end
+parallelismSelector::VERBO:        - Critical path: for.body3, for.end, for.body6
 parallelismSelector::VERBO:     hasRAW: 0
 parallelismSelector::VERBO:        - IIMem: {1: 0.5}, OwnedIIMem: {1: 0.5}, NestedIIMem: {1: 0}
 parallelismSelector::VERBO: 
@@ -435,11 +435,11 @@ parallelismSelector::VERBO:         	unroll 1 Cycles: 56
 parallelismSelector::VERBO:         Overall latency for nested loop (LoopId 9): 56
 parallelismSelector::VERBO:     MARegionScheduler::finalize():
 parallelismSelector::VERBO:        - LoopId: 8
+parallelismSelector::VERBO:          - EndCycles: for.end -> {1: 56}
 parallelismSelector::VERBO:          - EndCycles: for.body -> {1: 1}
 parallelismSelector::VERBO:          - EndCycles: for.end19 -> {1: 56}
-parallelismSelector::VERBO:          - EndCycles: for.end -> {1: 56}
 parallelismSelector::VERBO:        - MaxEndCycle: {1: 56}
-parallelismSelector::VERBO:        - Critical path: for.body, for.end19, for.body3, for.end
+parallelismSelector::VERBO:        - Critical path: for.body3, for.end, for.body, for.end19
 parallelismSelector::VERBO:     hasRAW: 0
 parallelismSelector::VERBO:        - IIMem: {1: 0}, OwnedIIMem: {1: 0}, NestedIIMem: {1: 0}
 parallelismSelector::VERBO: 
@@ -449,20 +449,20 @@ parallelismSelector::VERBO:         	unroll 1 Cycles: 224
 parallelismSelector::VERBO:         Overall latency for nested loop (LoopId 8): 224
 parallelismSelector::VERBO:     MARegionScheduler::finalize():
 parallelismSelector::VERBO:        - Function: Outline_T3_F204_R2_Loop
+parallelismSelector::VERBO:          - EndCycles: newFuncRoot -> {1: 1}
 parallelismSelector::VERBO:          - EndCycles: for.end22 -> {1: 225}
 parallelismSelector::VERBO:          - EndCycles: for.end19 -> {1: 225}
-parallelismSelector::VERBO:          - EndCycles: newFuncRoot -> {1: 1}
 parallelismSelector::VERBO:        - MaxEndCycle: {1: 225}
-parallelismSelector::VERBO:        - Critical path: for.body, for.end22, for.end19, newFuncRoot
+parallelismSelector::VERBO:        - Critical path: newFuncRoot, for.end22, for.body, for.end19
 parallelismSelector::VERBO: 
 parallelismSelector::VERBO: Analyzing Function "mat_mul" (FunctionId 204):
 parallelismSelector::VERBO:     MARegionScheduler::finalize():
 parallelismSelector::VERBO:        - Function: _Z7mat_mulPA4_iS0_S0_
 parallelismSelector::VERBO:          - EndCycles: entry -> {1: 1}
-parallelismSelector::VERBO:          - EndCycles: codeRepl -> {1: 227}
 parallelismSelector::VERBO:          - EndCycles: for.end22_iso9 -> {1: 227}
+parallelismSelector::VERBO:          - EndCycles: codeRepl -> {1: 227}
 parallelismSelector::VERBO:        - MaxEndCycle: {1: 227}
-parallelismSelector::VERBO:        - Critical path: entry, codeRepl, for.end22_iso9
+parallelismSelector::VERBO:        - Critical path: entry, for.end22_iso9, codeRepl
 parallelismSelector::VERBO: 
 parallelismSelector::VERBO: Filling in latencies and intervals per loop...
 parallelismSelector::VERBO:     Initiation Interval:

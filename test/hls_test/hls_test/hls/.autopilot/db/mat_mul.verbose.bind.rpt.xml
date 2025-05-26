@@ -1,7 +1,7 @@
 <profile>
 
 <section name = "Vitis HLS Report for 'mat_mul'" level="0">
-<item name = "Date">Tue May  6 19:37:59 2025
+<item name = "Date">Tue May  6 20:44:31 2025
 </item>
 <item name = "Version">2024.2 (Build 5238294 on Nov  8 2024)</item>
 <item name = "Project">hls_test</item>

@@ -224,6 +224,242 @@
             ],
             "exectime": 0.8443074226379395,
             "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\mat_mul.cpp.0.bc', 'D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\mat_mul.cpp.0.bc.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-emit-llvm",
+                "-MD",
+                "-MF",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul.cpp.0.bc.d",
+                "-fhls",
+                "-hls-syn-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\autopilot",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-hls-clock-period=3.333",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fhlstoplevel=mat_mul",
+                "mat_mul.cpp",
+                "-o",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul.cpp.0.bc"
+            ],
+            "exectime": 0.29786038398742676,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\mat_mul_tb.cpp.0.o', 'D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\mat_mul_tb.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul_tb.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=mat_mul",
+                "D:/Project/test/hls_test/mat_mul_tb.cpp",
+                "-o",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul_tb.cpp.0.o"
+            ],
+            "exectime": 0.07434201240539551,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\mat_mul.cpp.0.o', 'D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\mat_mul.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=mat_mul",
+                "mat_mul.cpp",
+                "-o",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul.cpp.0.o"
+            ],
+            "exectime": 0.03788113594055176,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\syn_srcs.bc']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/llvm-link.exe",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul.cpp.0.bc",
+                "-o",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\syn_srcs.bc"
+            ],
+            "exectime": 0.05440688133239746,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\syn_srcs.opt.bc']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/opt.exe",
+                "-check-single-toplevel",
+                "-make-non-toplevel-internal",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\syn_srcs.bc",
+                "-o",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\syn_srcs.opt.bc"
+            ],
+            "exectime": 0.18833398818969727,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\app.exe']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang++.exe",
+                "-o",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\app.exe",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul_tb.cpp.0.o",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul.cpp.0.o",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\syn_srcs.opt.bc",
+                "-fhls",
+                "-fhlstoplevel=mat_mul",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\win64\\tools\\dds_v6_0",
+                "-lIp_dds_compiler_v6_0_bitacc_cmodel",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\win64\\tools\\fft_v9_1",
+                "-lIp_xfft_v9_1_bitacc_cmodel",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\win64\\tools\\fir_v7_0",
+                "-lIp_fir_compiler_v7_2_bitacc_cmodel",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\win64\\tools\\fpo_v7_1",
+                "-lIp_floating_point_v7_1_bitacc_cmodel",
+                "-lm",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\win64\\lib\\csim",
+                "-lhlsm-GCC95-x64",
+                "-lhlsmc++-GCC95-x64",
+                "-lgmp",
+                "-lmpfr",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt\\x86_64-w64-mingw32\\lib",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt\\lib",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt\\lib\\gcc",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt\\lib\\gcc\\x86_64-w64-mingw32\\9.5.0",
+                "-LC:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt\\libexec\\gcc\\x86_64-w64-mingw32\\9.5.0",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-Wl,-mllvm,-profilerOutputDirectory=D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\profiler\\0",
+                "-fslxpthreads",
+                "-lpthread"
+            ],
+            "exectime": 0.6288189888000488,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\instrument\\\\app_1\\\\hls_ir_info.json']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/irInfoDump.exe",
+                "--ir-module",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\project.symbols.bc",
+                "--json-output",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\hls_ir_info.json",
+                "--hw-function",
+                "mat_mul"
+            ],
+            "exectime": 0.14855599403381348,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\instrument\\\\app_0\\\\binary_dependencies.json']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\libexec\\clang-scan-deps.exe",
+                "--compilation-database=D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_0\\compile_commands.json",
+                "--format=vitiscxx",
+                "--reuse-filemanager=false",
+                "--output=D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_0\\binary_dependencies.json"
+            ],
+            "exectime": 0.1985621452331543,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\instrument\\\\app_1\\\\binary_dependencies.json']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\libexec\\clang-scan-deps.exe",
+                "--compilation-database=D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\compile_commands.json",
+                "--format=vitiscxx",
+                "--reuse-filemanager=false",
+                "--output=D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\binary_dependencies.json"
+            ],
+            "exectime": 0.03806257247924805,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\bin\\\\.tracing_stdout.txt', 'D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\bin\\\\.tracing_stderr.txt']": {
+            "command": [
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\app.exe"
+            ],
+            "exectime": 0.5096330642700195,
+            "cwd": "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\tracing\\csim\\build"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\instrument\\\\app_1\\\\annotated.bc']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/optimizer.exe",
+                "-DFGPass",
+                "-outputDir",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\output",
+                "-logDir",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\log",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\project.symbols.bc",
+                "-staticFile",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\static.xml",
+                "-traceFile",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\profiler\\0\\app_1_0\\thread0000-trace.txt",
+                "-o",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\annotated.bc"
+            ],
+            "exectime": 1.0111775398254395,
+            "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['D:\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\dataflow\\\\0\\\\taskgraph.json']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/parallelismSelector.exe",
+                "--basepath",
+                "D:\\Project\\test\\hls_test",
+                "--fpga-part",
+                "xcu50-fsvh2104-2-e",
+                "--device-totals",
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\platform\\logic\\fpga.devicetotals",
+                "--clock-frequency",
+                "300.03000300030004",
+                "--out-dir",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\output",
+                "--log-dir",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\log",
+                "--objective",
+                "none",
+                "--performance-target",
+                "target_both",
+                "--max-array-optimization-factor",
+                "1024",
+                "--complete-partition-limit",
+                "4",
+                "--lut-constraint",
+                "100.0",
+                "--ff-constraint",
+                "100.0",
+                "--dsp-constraint",
+                "100.0",
+                "--bram-constraint",
+                "100.0",
+                "--uram-constraint",
+                "100.0",
+                "--max-iterations",
+                "1000",
+                "--max-iterations-branch-full-log",
+                "20",
+                "--ir-module",
+                "D:\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\annotated.bc",
+                "--df-id",
+                "0",
+                "--df-target",
+                "%F204"
+            ],
+            "exectime": 0.8040070533752441,
+            "cwd": "D:\\Project\\test\\hls_test"
         }
     }
 }

@@ -1,6 +1,6 @@
 <ENTRY>
 {
- "thisFile": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls_test.hlsrun_csim_summary",
+ "thisFile": "D:/Project\\test\\hls_test\\hls_test\\hls_test.hlsrun_csim_summary",
  "connectId": "",
  "serverToken": "",
  "timestamp": "0"
@@ -9,34 +9,34 @@
 <ENTRY>
 {
  "type": "ET_CmdStep",
- "dateTimestamp": "05/06/25 19:27:15",
- "timestampMillis": "1746530835275",
+ "dateTimestamp": "05/06/25 20:43:34",
+ "timestampMillis": "1746535414482",
  "buildStep": {
-  "cmdId": "c25174bd-c26b-45e6-8cd2-43b315d61b1c",
+  "cmdId": "18b9c19c-9269-47e8-a454-a13f9d14813e",
   "name": "vitis-run",
-  "logFile": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\logs\\hls_test.steps.log",
-  "commandLine": "C:/Xilinx/Vitis/2024.2/bin/unwrapped/win64.o/vitis-run.exe  --mode hls --csim --config C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_config.cfg --work_dir hls_test ",
+  "logFile": "D:/Project\\test\\hls_test\\hls_test\\logs\\hls_test.steps.log",
+  "commandLine": "C:/Xilinx/Vitis/2024.2/bin/unwrapped/win64.o/vitis-run.exe  --mode hls --csim --config D:\\Project\\test\\hls_test\\hls_config.cfg --work_dir hls_test ",
   "args": [
    "--mode",
    "hls",
    "--csim",
    "--config",
-   "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_config.cfg",
+   "D:\\Project\\test\\hls_test\\hls_config.cfg",
    "--work_dir",
    "hls_test"
   ],
   "iniFiles": [],
-  "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+  "cwd": "D:\\Project\\test\\hls_test"
  }
 }
 </ENTRY>
 <ENTRY>
 {
  "type": "ET_Status",
- "dateTimestamp": "05/06/25 19:27:15",
- "timestampMillis": "1746530835275",
+ "dateTimestamp": "05/06/25 20:43:34",
+ "timestampMillis": "1746535414483",
  "status": {
-  "cmdId": "c25174bd-c26b-45e6-8cd2-43b315d61b1c",
+  "cmdId": "18b9c19c-9269-47e8-a454-a13f9d14813e",
   "state": "CS_RUNNING"
  }
 }
@@ -44,8 +44,8 @@
 <ENTRY>
 {
  "type": "ET_FlowMetaData",
- "dateTimestamp": "05/06/25 19:27:26",
- "timestampMillis": "1746530846016",
+ "dateTimestamp": "05/06/25 20:43:41",
+ "timestampMillis": "1746535421340",
  "buildSummary": {
   "hardwarePlatform": "",
   "hardwareDsa": "",
@@ -64,7 +64,7 @@
      "uuid": ""
     },
     "sources": [
-     "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\mat_mul.cpp"
+     "D:/Project\\test\\hls_test\\mat_mul.cpp"
     ],
     "psSources": [],
     "cuNames": [],
@@ -80,26 +80,26 @@
 <ENTRY>
 {
  "type": "ET_SubCmdStep",
- "dateTimestamp": "05/06/25 19:27:26",
- "timestampMillis": "1746530846018",
+ "dateTimestamp": "05/06/25 20:43:41",
+ "timestampMillis": "1746535421340",
  "buildStep": {
-  "cmdId": "85d09104-b8bf-4a72-a1bf-c173837582ba",
+  "cmdId": "78e6c71a-ad0c-4e14-9366-752dac91c74f",
   "name": "",
-  "logFile": "C:/Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\hls.log",
+  "logFile": "D:/Project\\test\\hls_test\\hls_test\\hls\\hls.log",
   "commandLine": "",
   "args": [],
   "iniFiles": [],
-  "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+  "cwd": "D:\\Project\\test\\hls_test"
  }
 }
 </ENTRY>
 <ENTRY>
 {
  "type": "ET_Status",
- "dateTimestamp": "05/06/25 19:27:26",
- "timestampMillis": "1746530846019",
+ "dateTimestamp": "05/06/25 20:43:41",
+ "timestampMillis": "1746535421341",
  "status": {
-  "cmdId": "85d09104-b8bf-4a72-a1bf-c173837582ba",
+  "cmdId": "78e6c71a-ad0c-4e14-9366-752dac91c74f",
   "state": "CS_RUNNING"
  }
 }
@@ -107,10 +107,10 @@
 <ENTRY>
 {
  "type": "ET_Status",
- "dateTimestamp": "05/06/25 19:27:29",
- "timestampMillis": "1746530849002",
+ "dateTimestamp": "05/06/25 20:43:47",
+ "timestampMillis": "1746535427931",
  "status": {
-  "cmdId": "85d09104-b8bf-4a72-a1bf-c173837582ba",
+  "cmdId": "78e6c71a-ad0c-4e14-9366-752dac91c74f",
   "state": "CS_PASSED"
  }
 }
@@ -118,10 +118,10 @@
 <ENTRY>
 {
  "type": "ET_Status",
- "dateTimestamp": "05/06/25 19:27:29",
- "timestampMillis": "1746530849188",
+ "dateTimestamp": "05/06/25 20:43:48",
+ "timestampMillis": "1746535428097",
  "status": {
-  "cmdId": "c25174bd-c26b-45e6-8cd2-43b315d61b1c",
+  "cmdId": "18b9c19c-9269-47e8-a454-a13f9d14813e",
   "state": "CS_PASSED"
  }
 }
@@ -129,8 +129,8 @@
 <ENTRY>
 {
  "type": "ET_Report",
- "dateTimestamp": "05/06/25 19:27:29",
- "timestampMillis": "1746530849189",
+ "dateTimestamp": "05/06/25 20:43:48",
+ "timestampMillis": "1746535428098",
  "report": {
   "path": "",
   "name": "",
@@ -143,8 +143,8 @@
 <ENTRY>
 {
  "type": "ET_Report",
- "dateTimestamp": "05/06/25 19:27:29",
- "timestampMillis": "1746530849189",
+ "dateTimestamp": "05/06/25 20:43:48",
+ "timestampMillis": "1746535428098",
  "report": {
   "path": "",
   "name": "",
