@@ -3407,16 +3407,16 @@ window.onload = function () { addSorting(); }
 <center><h1>Design Guidance Report</h1></center><center><table class="header" border="0">
 <tr><td><b>Copyright</b></td><td>Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.</td></tr>
 <tr><td><b>Tool Version</b></td><td>xcd v.2024.2 (win64) Build 0 </td></tr>
-<tr><td><b>Date</b></td><td>Tue May  6 20:44:34 2025</td></tr>
-<tr><td><b>Host</b></td><td>Utin-Desktop running 64-bit major release  (build 9200)</td></tr>
-<tr><td><b>Command</b></td><td>C:/Xilinx/Vitis/2024.2/bin/unwrapped/win64.o/v++.exe  -c --mode hls --config D:\Project\test\hls_test\hls_config.cfg --work_dir hls_test </td></tr>
+<tr><td><b>Date</b></td><td>Tue May 27 19:57:12 2025</td></tr>
+<tr><td><b>Host</b></td><td>Prestige14 running 64-bit major release  (build 9200)</td></tr>
+<tr><td><b>Command</b></td><td>C:/Xilinx/Vitis/2024.2/bin/unwrapped/win64.o/v++.exe  -c --mode hls --config C:\Users\liuut\Desktop\Project\test\hls_test\hls_config.cfg --work_dir hls_test </td></tr>
 </table></center><br>
 <table class="toc" border="1"><tr><td><b>Table of Contents</b></td></tr>
 <tr><td><a href="#REPORT SUMMARY">1 REPORT SUMMARY</a></tr></td>
 <tr><td><a href="#VIOLATION DETAILS">2 VIOLATION DETAILS</a></tr></td>
 </table>
 <a name="REPORT SUMMARY"></a><h1>1 REPORT SUMMARY</h1>
-<pre>Violations found: 3
+<pre>Violations found: 8
 </pre>
 <pre>Rule Specs Violated: 2
 </pre>
@@ -3434,35 +3434,90 @@ window.onload = function () { addSorting(); }
 <th align="left" width="380">Resolution</th>
 </tr>
 <tr>
-<td align="left">1</td>
-<td align="left">Throughput</td>
-<td align="left">ADVISORY</td>
-<td align="left"><undefined></td>
-<td align="left">HLS Throughput Related</td>
-<td align="left">Accelerator.mat_mul.Throughput</td>
-<td align="left">Pipelining result : Target II = NA, Final II = 1, Depth = 5, loop 'VITIS_LOOP_9_1_VITIS_LOOP_10_2_VITIS_LOOP_12_3'
-</td>
-<td align="left"><a href="http:///docs.xilinx.com/access/sources/dita/map?Doc_Version=2024.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
-</tr>
-<tr>
-<td align="left">3</td>
+<td align="left">7</td>
 <td align="left">Kernel</td>
 <td align="left">ADVISORY</td>
 <td align="left"><undefined></td>
 <td align="left">HLS Kernel Related</td>
-<td align="left">Accelerator.mat_mul.Kernel</td>
-<td align="left">**** Estimated Fmax: 342.23 MHz
+<td align="left">Accelerator.attention.Kernel</td>
+<td align="left">**** Loop Constraint Status: All loop constraints were NOT satisfied.
+</td>
+<td align="left"><a href="http:///docs.xilinx.com/access/sources/dita/map?Doc_Version=2024.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">Kernel</td>
+<td align="left">WARNING</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Kernel Related</td>
+<td align="left">Accelerator.attention.Kernel</td>
+<td align="left">The II Violation in module 'attention_Pipeline_VITIS_LOOP_8_1' (loop 'VITIS_LOOP_8_1'): Unable to schedule 'store' operation 0 bit ('out_r_addr_1_write_ln15', C:/Users/liuut/Desktop/Project/modules/matmul.cpp:15->C:/Users/liuut/Desktop/Project/modules/attention.cpp:36) of variable 'sum', C:/Users/liuut/Desktop/Project/modules/matmul.cpp:13->C:/Users/liuut/Desktop/Project/modules/attention.cpp:36 on array 'out_r' due to limited memory ports (II = 1). Please consider using a memory core with more ports or partitioning the array 'out_r'.
+</td>
+<td align="left"><a href="http:///docs.xilinx.com/access/sources/dita/map?Doc_Version=2024.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.attention.Throughput</td>
+<td align="left">Pipelining result : Target II = NA, Final II = 1, Depth = 27, loop 'VITIS_LOOP_31_3_VITIS_LOOP_32_4'
 </td>
 <td align="left"><a href="http:///docs.xilinx.com/access/sources/dita/map?Doc_Version=2024.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
 </tr>
 <tr>
 <td align="left">2</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.attention.Throughput</td>
+<td align="left">Pipelining result : Target II = NA, Final II = 1, Depth = 6, loop 'VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3'
+</td>
+<td align="left"><a href="http:///docs.xilinx.com/access/sources/dita/map?Doc_Version=2024.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.attention.Throughput</td>
+<td align="left">Pipelining result : Target II = NA, Final II = 2, Depth = 5, loop 'VITIS_LOOP_8_1'
+</td>
+<td align="left"><a href="http:///docs.xilinx.com/access/sources/dita/map?Doc_Version=2024.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.attention.Throughput</td>
+<td align="left">Pipelining result : Target II = NA, Final II = 1, Depth = 36, loop 'VITIS_LOOP_25_1_VITIS_LOOP_26_2'
+</td>
+<td align="left"><a href="http:///docs.xilinx.com/access/sources/dita/map?Doc_Version=2024.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">Throughput</td>
+<td align="left">ADVISORY</td>
+<td align="left"><undefined></td>
+<td align="left">HLS Throughput Related</td>
+<td align="left">Accelerator.attention.Throughput</td>
+<td align="left">Pipelining result : Target II = NA, Final II = 1, Depth = 2, loop 'VITIS_LOOP_7_1_VITIS_LOOP_8_2'
+</td>
+<td align="left"><a href="http:///docs.xilinx.com/access/sources/dita/map?Doc_Version=2024.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
+</tr>
+<tr>
+<td align="left">8</td>
 <td align="left">Kernel</td>
 <td align="left">ADVISORY</td>
 <td align="left"><undefined></td>
 <td align="left">HLS Kernel Related</td>
-<td align="left">Accelerator.mat_mul.Kernel</td>
-<td align="left">**** Loop Constraint Status: All loop constraints were satisfied.
+<td align="left">Accelerator.attention.Kernel</td>
+<td align="left">**** Estimated Fmax: 341.41 MHz
 </td>
 <td align="left"><a href="http:///docs.xilinx.com/access/sources/dita/map?Doc_Version=2024.2%20English&url=ug1399-vitis-hls">Vitis HLS User Guide (UG1399)</a></td>
 </tr>

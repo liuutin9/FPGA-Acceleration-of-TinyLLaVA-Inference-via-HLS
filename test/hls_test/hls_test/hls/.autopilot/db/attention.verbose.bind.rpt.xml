@@ -1,0 +1,50 @@
+<profile>
+
+<section name = "Vitis HLS Report for 'attention'" level="0">
+<item name = "Date">Tue May 27 19:57:04 2025
+</item>
+<item name = "Version">2024.2 (Build 5238294 on Nov  8 2024)</item>
+<item name = "Project">hls_test</item>
+<item name = "Solution">hls (Vitis Kernel Flow Target)</item>
+<item name = "Product family">virtexuplusHBM</item>
+<item name = "Target device">xcu50-fsvh2104-2-e</item>
+</section>
+
+<section name = "Performance Estimates" level="0">
+<item name = "Timing">
+<section name = "" level="1">
+<item name = "Summary"><table name="" hasTotal="0">
+<keys size="4">Clock, Target, Estimated, Uncertainty</keys>
+<column name="ap_clk">3.33 ns, 2.929 ns, 0.40 ns</column>
+</table>
+</item>
+</section>
+</item>
+<item name = "Latency">
+<section name = "" level="1">
+<item name = "Summary"><table name="" hasTotal="0">
+<keys size="8">, min, max, min, max, min, max, Type</keys>
+<column name="">110, 110, 0.367 us, 0.367 us, 111, 111, no</column>
+</table>
+</item>
+<item name = "Detail">
+<section name = "" level="1">
+<item name = "Instance"><table name="" hasTotal="0">
+<keys size="9">Instance, Module, min, max, min, max, min, max, Type</keys>
+<column name="grp_attention_Pipeline_VITIS_LOOP_7_1_VITIS_LOOP_8_2_fu_181">attention_Pipeline_VITIS_LOOP_7_1_VITIS_LOOP_8_2, 8, 8, 26.664 ns, 26.664 ns, 7, 7, loop auto-rewind stp (delay=0 clock cycles(s))</column>
+<column name="grp_attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3_fu_189">attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3, 14, 14, 46.662 ns, 46.662 ns, 9, 9, loop auto-rewind stp (delay=0 clock cycles(s))</column>
+<column name="grp_attention_Pipeline_VITIS_LOOP_25_1_VITIS_LOOP_26_2_fu_200">attention_Pipeline_VITIS_LOOP_25_1_VITIS_LOOP_26_2, 40, 40, 0.133 us, 0.133 us, 5, 5, loop auto-rewind stp (delay=0 clock cycles(s))</column>
+<column name="grp_attention_Pipeline_VITIS_LOOP_31_3_VITIS_LOOP_32_4_fu_214">attention_Pipeline_VITIS_LOOP_31_3_VITIS_LOOP_32_4, 31, 31, 0.103 us, 0.103 us, 5, 5, loop auto-rewind stp (delay=0 clock cycles(s))</column>
+<column name="grp_attention_Pipeline_VITIS_LOOP_8_1_fu_226">attention_Pipeline_VITIS_LOOP_8_1, 8, 8, 26.664 ns, 26.664 ns, 6, 6, loop auto-rewind stp (delay=0 clock cycles(s))</column>
+</table>
+</item>
+<item name = "Loop"><table name="" hasTotal="0">
+<keys size="8">Loop Name, min, max, Latency, achieved, target, Count, Pipelined</keys>
+</table>
+</item>
+</section>
+</item>
+</section>
+</item>
+</section>
+</profile>

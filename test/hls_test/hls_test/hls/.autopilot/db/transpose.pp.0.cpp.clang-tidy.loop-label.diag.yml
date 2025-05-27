@@ -1,0 +1,22 @@
+---
+MainSourceFile:  'C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/.autopilot/db/transpose.pp.0.cpp'
+Diagnostics:     
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_7_1:  '
+    FileOffset:      7
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\transpose.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\transpose.pp.0.cpp'
+        Offset:          9722
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_7_1: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_8_2:  '
+    FileOffset:      8
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\transpose.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\transpose.pp.0.cpp'
+        Offset:          9760
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_8_2: '
+...

@@ -1,3 +1,6 @@
+// #define M 5
+// #define N 3
+
 template <int M, int N>
 void matadd(int out[M][N], int in1[M][N], int in2[M][N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite

@@ -1,27 +1,92 @@
 [
   {
-    "directory": "D:\\Project\\test\\hls_test",
+    "directory": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test",
     "arguments": [
       "C:\\Xilinx\\Vitis\\2024.2\\vcxx\\libexec\\clang++.exe",
       "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
       "-fhls",
       "-hls-syn-headers-dir=C:\\Xilinx\\Vitis\\2024.2\\common\\technology\\autopilot",
-      "-fhlstoplevel=mat_mul",
+      "-fhlstoplevel=attention",
       "-c",
-      "D:\\Project\\test\\hls_test\\mat_mul.cpp"
+      "C:\\Users\\liuut\\Desktop\\Project\\modules\\transpose.cpp"
     ],
-    "file": "D:\\Project\\test\\hls_test\\mat_mul.cpp"
+    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\transpose.cpp"
   },
   {
-    "directory": "D:\\Project\\test\\hls_test",
+    "directory": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test",
+    "arguments": [
+      "C:\\Xilinx\\Vitis\\2024.2\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\Vitis\\2024.2\\common\\technology\\autopilot",
+      "-fhlstoplevel=attention",
+      "-c",
+      "C:\\Users\\liuut\\Desktop\\Project\\modules\\maxval_1D.cpp"
+    ],
+    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\maxval_1D.cpp"
+  },
+  {
+    "directory": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test",
+    "arguments": [
+      "C:\\Xilinx\\Vitis\\2024.2\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\Vitis\\2024.2\\common\\technology\\autopilot",
+      "-fhlstoplevel=attention",
+      "-c",
+      "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp"
+    ],
+    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp"
+  },
+  {
+    "directory": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test",
+    "arguments": [
+      "C:\\Xilinx\\Vitis\\2024.2\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\Vitis\\2024.2\\common\\technology\\autopilot",
+      "-fhlstoplevel=attention",
+      "-c",
+      "C:\\Users\\liuut\\Desktop\\Project\\modules\\matadd.cpp"
+    ],
+    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\matadd.cpp"
+  },
+  {
+    "directory": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test",
+    "arguments": [
+      "C:\\Xilinx\\Vitis\\2024.2\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\Vitis\\2024.2\\common\\technology\\autopilot",
+      "-fhlstoplevel=attention",
+      "-c",
+      "C:\\Users\\liuut\\Desktop\\Project\\modules\\matmul.cpp"
+    ],
+    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\matmul.cpp"
+  },
+  {
+    "directory": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test",
+    "arguments": [
+      "C:\\Xilinx\\Vitis\\2024.2\\vcxx\\libexec\\clang++.exe",
+      "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+      "-fhls",
+      "-hls-syn-headers-dir=C:\\Xilinx\\Vitis\\2024.2\\common\\technology\\autopilot",
+      "-fhlstoplevel=attention",
+      "-c",
+      "C:\\Users\\liuut\\Desktop\\Project\\modules\\softmax.cpp"
+    ],
+    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\softmax.cpp"
+  },
+  {
+    "directory": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test",
     "arguments": [
       "C:\\Xilinx\\Vitis\\2024.2\\vcxx\\libexec\\clang++.exe",
       "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
       "-fhls-tb",
       "-hls-sim-headers-dir=C:\\Xilinx\\Vitis\\2024.2\\include",
       "-c",
-      "D:\\Project\\test\\hls_test\\mat_mul_tb.cpp"
+      "C:\\Users\\liuut\\Desktop\\Project\\testbenches\\top_tb.cpp"
     ],
-    "file": "D:\\Project\\test\\hls_test\\mat_mul_tb.cpp"
+    "file": "C:\\Users\\liuut\\Desktop\\Project\\testbenches\\top_tb.cpp"
   }
 ]

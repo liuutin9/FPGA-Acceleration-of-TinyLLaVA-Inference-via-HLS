@@ -1,5 +1,5 @@
 template <int M, int K, int N>
-void matmul(int out[M][N], int in1[M][N], int in2[M][N]) {
+void matmul(int out[M][N], int in1[M][K], int in2[K][N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite
     #pragma HLS INTERFACE port=out mode=bram
     #pragma HLS INTERFACE port=in1 mode=bram

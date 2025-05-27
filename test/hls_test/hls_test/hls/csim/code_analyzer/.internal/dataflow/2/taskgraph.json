@@ -1,0 +1,1387 @@
+[
+    {
+        "name": "_Z9attentionPA3_iS0_S0_S0_i",
+        "df_function": "%F212",
+        "df_type": "Function",
+        "project": "SLX",
+        "processes": {
+            "1": {
+                "id": "1",
+                "name": "Artificial<Start>",
+                "src_range": {
+                    "start_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 6,
+                        "column": 1
+                    },
+                    "end_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 37,
+                        "column": 1
+                    }
+                },
+                "display_name": "<START>",
+                "kind": "start"
+            },
+            "2": {
+                "id": "2",
+                "name": "Artificial<End>",
+                "src_range": {
+                    "start_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 6,
+                        "column": 1
+                    },
+                    "end_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 37,
+                        "column": 1
+                    }
+                },
+                "display_name": "<END>",
+                "kind": "end"
+            },
+            "3": {
+                "id": "3",
+                "name": "Region<OutlineCall(R2 attention) BB 'codeRepl' [Call] 'Outline_T3_F212_R2_Call'>",
+                "src_range": {
+                    "start_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 21,
+                        "column": 5
+                    },
+                    "end_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 21,
+                        "column": 27
+                    }
+                },
+                "display_name": "transpose<2, 3>()",
+                "io_signatures": {
+                    "has_unresolved_accesses": false,
+                    "accesses": [
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 20,
+                                    "column": 9
+                                },
+                                "id": "VId_37_[?(?,64)][?(?,32)]",
+                                "name": "k_t[*][*]",
+                                "display_name": "int k_t[3][2]"
+                            },
+                            "reads": [],
+                            "writes": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 24,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "store",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\transpose.cpp",
+                                        "line": 9,
+                                        "column": 23
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 6
+                                }
+                            ],
+                            "kind": "Ptr",
+                            "has_alias": false
+                        },
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 9,
+                                    "column": 0
+                                },
+                                "id": "VId_34_[?(?,96)]dc[?(?,32)]",
+                                "name": "k[*][*]",
+                                "display_name": "int k[2][3]"
+                            },
+                            "reads": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 24,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "load",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\transpose.cpp",
+                                        "line": 9,
+                                        "column": 25
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 6
+                                }
+                            ],
+                            "writes": [],
+                            "kind": "Ptr",
+                            "has_alias": false,
+                            "arg_idx": 2
+                        }
+                    ]
+                },
+                "metrics": {
+                    "initiation_interval": 15
+                },
+                "subregions": [
+                    {
+                        "id": "%F216_R2",
+                        "description": "<call 'transpose<2, 3>'>",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 21,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 21,
+                                "column": 27
+                            }
+                        }
+                    }
+                ],
+                "subdataflow": [
+                    {
+                        "id": "%F213",
+                        "region_type": "Function",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 21,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 21,
+                                "column": 27
+                            }
+                        }
+                    }
+                ],
+                "guidance": [
+                    {
+                        "type": "CallGuidance",
+                        "ti": {
+                            "min": 14,
+                            "max": 14
+                        },
+                        "ureg_id": "%F213",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 21,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 21,
+                                "column": 27
+                            }
+                        }
+                    }
+                ]
+            },
+            "4": {
+                "id": "4",
+                "name": "Region<OutlineCall(R3 attention) BB 'codeRepl1' [Call] 'Outline_T4_F212_R3_Call'>",
+                "src_range": {
+                    "start_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 23,
+                        "column": 5
+                    },
+                    "end_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 23,
+                        "column": 31
+                    }
+                },
+                "display_name": "matmul<2, 3, 2>()",
+                "io_signatures": {
+                    "has_unresolved_accesses": false,
+                    "accesses": [
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 22,
+                                    "column": 9
+                                },
+                                "id": "VId_38_[?(?,64)][?(?,32)]",
+                                "name": "qk[*][*]",
+                                "display_name": "int qk[2][2]"
+                            },
+                            "reads": [],
+                            "writes": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 16,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "store",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\matmul.cpp",
+                                        "line": 15,
+                                        "column": 23
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 4
+                                }
+                            ],
+                            "kind": "Ptr",
+                            "has_alias": false
+                        },
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 20,
+                                    "column": 9
+                                },
+                                "id": "VId_37_[?(?,64)][?(?,32)]",
+                                "name": "k_t[*][*]",
+                                "display_name": "int k_t[3][2]"
+                            },
+                            "reads": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 24,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "load",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\matmul.cpp",
+                                        "line": 13,
+                                        "column": 36
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 12
+                                }
+                            ],
+                            "writes": [],
+                            "kind": "Ptr",
+                            "has_alias": false
+                        },
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 8,
+                                    "column": 0
+                                },
+                                "id": "VId_33_[?(?,96)]dc[?(?,32)]",
+                                "name": "q[*][*]",
+                                "display_name": "int q[2][3]"
+                            },
+                            "reads": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 24,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "load",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\matmul.cpp",
+                                        "line": 13,
+                                        "column": 24
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 12
+                                }
+                            ],
+                            "writes": [],
+                            "kind": "Ptr",
+                            "has_alias": false,
+                            "arg_idx": 1
+                        }
+                    ]
+                },
+                "metrics": {
+                    "initiation_interval": 59
+                },
+                "subregions": [
+                    {
+                        "id": "%F217_R2",
+                        "description": "<call 'matmul<2, 3, 2>'>",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 23,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 23,
+                                "column": 31
+                            }
+                        }
+                    }
+                ],
+                "subdataflow": [
+                    {
+                        "id": "%F214",
+                        "region_type": "Function",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 23,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 23,
+                                "column": 31
+                            }
+                        }
+                    }
+                ],
+                "guidance": [
+                    {
+                        "type": "CallGuidance",
+                        "ti": {
+                            "min": 58,
+                            "max": 58
+                        },
+                        "ureg_id": "%F214",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 23,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 23,
+                                "column": 31
+                            }
+                        }
+                    }
+                ]
+            },
+            "5": {
+                "id": "5",
+                "name": "Region<OutlineCall(R4 attention) BB 'codeRepl2' [Loop] 'Outline_T5_F212_R4_Loop'>",
+                "src_range": {
+                    "start_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 25,
+                        "column": 5
+                    },
+                    "end_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 29,
+                        "column": 5
+                    }
+                },
+                "display_name": "Process 3",
+                "io_signatures": {
+                    "has_unresolved_accesses": false,
+                    "accesses": [
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 22,
+                                    "column": 9
+                                },
+                                "id": "VId_38_[?(?,64)][?(?,32)]",
+                                "name": "qk[*][*]",
+                                "display_name": "int qk[2][2]"
+                            },
+                            "reads": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 16,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "load",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                        "line": 27,
+                                        "column": 31
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 4
+                                }
+                            ],
+                            "writes": [],
+                            "kind": "Ptr",
+                            "has_alias": false
+                        },
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 24,
+                                    "column": 9
+                                },
+                                "id": "VId_39_[?(?,64)][?(?,32)]",
+                                "name": "qk_scaled[*][*]",
+                                "display_name": "int qk_scaled[2][2]"
+                            },
+                            "reads": [],
+                            "writes": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 16,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "store",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                        "line": 27,
+                                        "column": 29
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 4
+                                }
+                            ],
+                            "kind": "Ptr",
+                            "has_alias": false
+                        },
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 11,
+                                    "column": 0
+                                },
+                                "id": "VId_36_!c?(?,?)",
+                                "name": "d_k",
+                                "display_name": "int d_k"
+                            },
+                            "reads": [
+                                {
+                                    "access_kind": "SSA",
+                                    "range": {
+                                        "is_exact": true,
+                                        "is_empty": false
+                                    },
+                                    "instr": "call",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                        "line": 4294967295,
+                                        "column": 0
+                                    },
+                                    "exec_count": 1
+                                }
+                            ],
+                            "writes": [],
+                            "kind": "SSA",
+                            "has_alias": false,
+                            "arg_idx": 4
+                        }
+                    ]
+                },
+                "metrics": {
+                    "initiation_interval": 150
+                },
+                "subregions": [
+                    {
+                        "id": "%F218_R2",
+                        "description": "<loop 'for.cond'>",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 25,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 29,
+                                "column": 5
+                            }
+                        }
+                    }
+                ],
+                "subdataflow": [
+                    {
+                        "id": "%L19",
+                        "region_type": "Loop",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 25,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 29,
+                                "column": 5
+                            }
+                        }
+                    },
+                    {
+                        "id": "%L20",
+                        "region_type": "Loop",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 26,
+                                "column": 9
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 28,
+                                "column": 9
+                            }
+                        }
+                    }
+                ],
+                "guidance": [
+                    {
+                        "type": "LoopGuidance",
+                        "ti": {
+                            "min": 148,
+                            "max": 148
+                        },
+                        "ii": {
+                            "min": 74,
+                            "max": 74
+                        },
+                        "effective_tc": {
+                            "min": 2,
+                            "max": 2
+                        },
+                        "tc": {
+                            "min": 2,
+                            "max": 2
+                        },
+                        "ureg_id": "%L19",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 25,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 29,
+                                "column": 5
+                            }
+                        },
+                        "details": []
+                    },
+                    {
+                        "type": "LoopGuidance",
+                        "ti": {
+                            "min": 74,
+                            "max": 74
+                        },
+                        "ii": {
+                            "min": 37,
+                            "max": 37
+                        },
+                        "effective_tc": {
+                            "min": 2,
+                            "max": 2
+                        },
+                        "tc": {
+                            "min": 2,
+                            "max": 2
+                        },
+                        "ureg_id": "%L20",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 26,
+                                "column": 9
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 28,
+                                "column": 9
+                            }
+                        },
+                        "details": [
+                            {
+                                "type": "MemPortContention",
+                                "available_ports": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "required_ports": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "ii_lower_bound": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "variable": {
+                                    "name": "qk",
+                                    "display_name": "qk",
+                                    "id": "64",
+                                    "location": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                        "line": 22,
+                                        "column": 0
+                                    }
+                                }
+                            },
+                            {
+                                "type": "MemPortContention",
+                                "available_ports": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "required_ports": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "ii_lower_bound": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "variable": {
+                                    "name": "qk_scaled",
+                                    "display_name": "qk_scaled",
+                                    "id": "66",
+                                    "location": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                        "line": 24,
+                                        "column": 0
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "6": {
+                "id": "6",
+                "name": "Region<OutlineCall(R5 attention) BB 'codeRepl3' [Loop] 'Outline_T6_F212_R27_Loop'>",
+                "src_range": {
+                    "start_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 31,
+                        "column": 5
+                    },
+                    "end_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 35,
+                        "column": 5
+                    }
+                },
+                "display_name": "Process 4",
+                "io_signatures": {
+                    "has_unresolved_accesses": false,
+                    "accesses": [
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 24,
+                                    "column": 9
+                                },
+                                "id": "VId_39_[?(?,64)][?(?,32)]",
+                                "name": "qk_scaled[*][*]",
+                                "display_name": "int qk_scaled[2][2]"
+                            },
+                            "reads": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 16,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "load",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                        "line": 33,
+                                        "column": 39
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 4
+                                }
+                            ],
+                            "writes": [],
+                            "kind": "Ptr",
+                            "has_alias": false
+                        },
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 30,
+                                    "column": 9
+                                },
+                                "id": "VId_42_[?(?,64)][?(?,32)]",
+                                "name": "qk_scaled_exp[*][*]",
+                                "display_name": "int qk_scaled_exp[2][2]"
+                            },
+                            "reads": [],
+                            "writes": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 16,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "store",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                        "line": 33,
+                                        "column": 33
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 4
+                                }
+                            ],
+                            "kind": "Ptr",
+                            "has_alias": false
+                        }
+                    ]
+                },
+                "metrics": {
+                    "initiation_interval": 154
+                },
+                "subregions": [
+                    {
+                        "id": "%F219_R2",
+                        "description": "<loop 'for.cond16'>",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 31,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 35,
+                                "column": 5
+                            }
+                        }
+                    }
+                ],
+                "subdataflow": [
+                    {
+                        "id": "%L17",
+                        "region_type": "Loop",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 31,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 35,
+                                "column": 5
+                            }
+                        }
+                    },
+                    {
+                        "id": "%L18",
+                        "region_type": "Loop",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 32,
+                                "column": 9
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 34,
+                                "column": 9
+                            }
+                        }
+                    }
+                ],
+                "guidance": [
+                    {
+                        "type": "LoopGuidance",
+                        "ti": {
+                            "min": 152,
+                            "max": 152
+                        },
+                        "ii": {
+                            "min": 76,
+                            "max": 76
+                        },
+                        "effective_tc": {
+                            "min": 2,
+                            "max": 2
+                        },
+                        "tc": {
+                            "min": 2,
+                            "max": 2
+                        },
+                        "ureg_id": "%L17",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 31,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 35,
+                                "column": 5
+                            }
+                        },
+                        "details": []
+                    },
+                    {
+                        "type": "LoopGuidance",
+                        "ti": {
+                            "min": 76,
+                            "max": 76
+                        },
+                        "ii": {
+                            "min": 38,
+                            "max": 38
+                        },
+                        "effective_tc": {
+                            "min": 2,
+                            "max": 2
+                        },
+                        "tc": {
+                            "min": 2,
+                            "max": 2
+                        },
+                        "ureg_id": "%L18",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 32,
+                                "column": 9
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 34,
+                                "column": 9
+                            }
+                        },
+                        "details": [
+                            {
+                                "type": "MemPortContention",
+                                "available_ports": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "required_ports": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "ii_lower_bound": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "variable": {
+                                    "name": "qk_scaled",
+                                    "display_name": "qk_scaled",
+                                    "id": "67",
+                                    "location": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                        "line": 24,
+                                        "column": 0
+                                    }
+                                }
+                            },
+                            {
+                                "type": "MemPortContention",
+                                "available_ports": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "required_ports": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "ii_lower_bound": {
+                                    "min": 1,
+                                    "max": 1
+                                },
+                                "variable": {
+                                    "name": "qk_scaled_exp",
+                                    "display_name": "qk_scaled_exp",
+                                    "id": "68",
+                                    "location": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                        "line": 30,
+                                        "column": 0
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "7": {
+                "id": "7",
+                "name": "Region<OutlineCall(R6 attention) BB 'codeRepl4' [Call] 'Outline_T7_F212_R50_Call'>",
+                "src_range": {
+                    "start_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 36,
+                        "column": 5
+                    },
+                    "end_loc": {
+                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                        "line": 36,
+                        "column": 42
+                    }
+                },
+                "display_name": "matmul<2, 2, 3>()",
+                "io_signatures": {
+                    "has_unresolved_accesses": false,
+                    "accesses": [
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 30,
+                                    "column": 9
+                                },
+                                "id": "VId_42_[?(?,64)][?(?,32)]",
+                                "name": "qk_scaled_exp[*][*]",
+                                "display_name": "int qk_scaled_exp[2][2]"
+                            },
+                            "reads": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 16,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "load",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\matmul.cpp",
+                                        "line": 13,
+                                        "column": 24
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 12
+                                }
+                            ],
+                            "writes": [],
+                            "kind": "Ptr",
+                            "has_alias": false
+                        },
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 7,
+                                    "column": 0
+                                },
+                                "id": "VId_32_[?(?,96)]dc[?(?,32)]",
+                                "name": "out[*][*]",
+                                "display_name": "int out[2][3]"
+                            },
+                            "reads": [],
+                            "writes": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 24,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "store",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\matmul.cpp",
+                                        "line": 15,
+                                        "column": 23
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 6
+                                }
+                            ],
+                            "kind": "Ptr",
+                            "has_alias": false,
+                            "arg_idx": 0
+                        },
+                        {
+                            "variable": {
+                                "location": {
+                                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                    "line": 10,
+                                    "column": 0
+                                },
+                                "id": "VId_35_[?(?,96)]dc[?(?,32)]",
+                                "name": "v[*][*]",
+                                "display_name": "int v[2][3]"
+                            },
+                            "reads": [
+                                {
+                                    "access_kind": "Ptr",
+                                    "range": {
+                                        "ranges": [
+                                            {
+                                                "start": 0,
+                                                "end": 24,
+                                                "is_exact": true
+                                            }
+                                        ]
+                                    },
+                                    "instr": "load",
+                                    "src_loc": {
+                                        "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\matmul.cpp",
+                                        "line": 13,
+                                        "column": 36
+                                    },
+                                    "access_type": "i32",
+                                    "access_bit_width": 32,
+                                    "exec_count": 12
+                                }
+                            ],
+                            "writes": [],
+                            "kind": "Ptr",
+                            "has_alias": false,
+                            "arg_idx": 3
+                        }
+                    ]
+                },
+                "metrics": {
+                    "initiation_interval": 45
+                },
+                "subregions": [
+                    {
+                        "id": "%F220_R2",
+                        "description": "<call 'matmul<2, 2, 3>'>",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 36,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 36,
+                                "column": 42
+                            }
+                        }
+                    }
+                ],
+                "subdataflow": [
+                    {
+                        "id": "%F215",
+                        "region_type": "Function",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 36,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 36,
+                                "column": 42
+                            }
+                        }
+                    }
+                ],
+                "guidance": [
+                    {
+                        "type": "CallGuidance",
+                        "ti": {
+                            "min": 44,
+                            "max": 44
+                        },
+                        "ureg_id": "%F215",
+                        "src_range": {
+                            "start_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 36,
+                                "column": 5
+                            },
+                            "end_loc": {
+                                "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                                "line": 36,
+                                "column": 42
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "channels": {
+            "k[*][*]_RAW_1_3_#0": {
+                "name": "k[*][*]_RAW_1_3_#0",
+                "variable_id": "VId_34_[?(?,96)]dc[?(?,32)]",
+                "variable_name": "k[*][*]",
+                "declaration": "int k[2][3]",
+                "kind": "Ptr",
+                "dependence": "RAW",
+                "channel_width": 32,
+                "src_loc": {
+                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                    "line": 9,
+                    "column": 0
+                },
+                "metrics": {
+                    "volume": 192,
+                    "channel_rate": 1.2467532467532467E0
+                },
+                "source": "1",
+                "sink": "3"
+            },
+            "q[*][*]_RAW_1_4_#1": {
+                "name": "q[*][*]_RAW_1_4_#1",
+                "variable_id": "VId_33_[?(?,96)]dc[?(?,32)]",
+                "variable_name": "q[*][*]",
+                "declaration": "int q[2][3]",
+                "kind": "Ptr",
+                "dependence": "RAW",
+                "channel_width": 32,
+                "src_loc": {
+                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                    "line": 8,
+                    "column": 0
+                },
+                "metrics": {
+                    "volume": 384,
+                    "channel_rate": 2.4935064935064934E0
+                },
+                "source": "1",
+                "sink": "4"
+            },
+            "k_t[*][*]_RAW_3_4_#2": {
+                "name": "k_t[*][*]_RAW_3_4_#2",
+                "variable_id": "VId_37_[?(?,64)][?(?,32)]",
+                "variable_name": "k_t[*][*]",
+                "declaration": "int k_t[3][2]",
+                "kind": "Ptr",
+                "dependence": "RAW",
+                "channel_width": 32,
+                "src_loc": {
+                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                    "line": 20,
+                    "column": 9
+                },
+                "metrics": {
+                    "volume": 384,
+                    "channel_rate": 2.4935064935064934E0
+                },
+                "source": "3",
+                "sink": "4"
+            },
+            "d_k_RAW_1_5_#3": {
+                "name": "d_k_RAW_1_5_#3",
+                "variable_id": "VId_36_!c?(?,?)",
+                "variable_name": "d_k",
+                "declaration": "int d_k",
+                "kind": "SSA",
+                "dependence": "RAW",
+                "channel_width": 32,
+                "src_loc": {
+                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                    "line": 11,
+                    "column": 0
+                },
+                "metrics": {
+                    "volume": 32,
+                    "channel_rate": 2.077922077922078E-1
+                },
+                "source": "1",
+                "sink": "5"
+            },
+            "qk[*][*]_RAW_4_5_#4": {
+                "name": "qk[*][*]_RAW_4_5_#4",
+                "variable_id": "VId_38_[?(?,64)][?(?,32)]",
+                "variable_name": "qk[*][*]",
+                "declaration": "int qk[2][2]",
+                "kind": "Ptr",
+                "dependence": "RAW",
+                "channel_width": 32,
+                "src_loc": {
+                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                    "line": 22,
+                    "column": 9
+                },
+                "metrics": {
+                    "volume": 128,
+                    "channel_rate": 8.311688311688312E-1
+                },
+                "source": "4",
+                "sink": "5"
+            },
+            "qk_scaled[*][*]_RAW_5_6_#5": {
+                "name": "qk_scaled[*][*]_RAW_5_6_#5",
+                "variable_id": "VId_39_[?(?,64)][?(?,32)]",
+                "variable_name": "qk_scaled[*][*]",
+                "declaration": "int qk_scaled[2][2]",
+                "kind": "Ptr",
+                "dependence": "RAW",
+                "channel_width": 32,
+                "src_loc": {
+                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                    "line": 24,
+                    "column": 9
+                },
+                "metrics": {
+                    "volume": 128,
+                    "channel_rate": 8.311688311688312E-1
+                },
+                "source": "5",
+                "sink": "6"
+            },
+            "v[*][*]_RAW_1_7_#6": {
+                "name": "v[*][*]_RAW_1_7_#6",
+                "variable_id": "VId_35_[?(?,96)]dc[?(?,32)]",
+                "variable_name": "v[*][*]",
+                "declaration": "int v[2][3]",
+                "kind": "Ptr",
+                "dependence": "RAW",
+                "channel_width": 32,
+                "src_loc": {
+                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                    "line": 10,
+                    "column": 0
+                },
+                "metrics": {
+                    "volume": 384,
+                    "channel_rate": 2.4935064935064934E0
+                },
+                "source": "1",
+                "sink": "7"
+            },
+            "qk_scaled_exp[*][*]_RAW_6_7_#7": {
+                "name": "qk_scaled_exp[*][*]_RAW_6_7_#7",
+                "variable_id": "VId_42_[?(?,64)][?(?,32)]",
+                "variable_name": "qk_scaled_exp[*][*]",
+                "declaration": "int qk_scaled_exp[2][2]",
+                "kind": "Ptr",
+                "dependence": "RAW",
+                "channel_width": 32,
+                "src_loc": {
+                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                    "line": 30,
+                    "column": 9
+                },
+                "metrics": {
+                    "volume": 384,
+                    "channel_rate": 2.4935064935064934E0
+                },
+                "source": "6",
+                "sink": "7"
+            },
+            "out[*][*]_RAW_7_2_#8": {
+                "name": "out[*][*]_RAW_7_2_#8",
+                "variable_id": "VId_32_[?(?,96)]dc[?(?,32)]",
+                "variable_name": "out[*][*]",
+                "declaration": "int out[2][3]",
+                "kind": "Ptr",
+                "dependence": "RAW",
+                "channel_width": 32,
+                "src_loc": {
+                    "file": "C:\\Users\\liuut\\Desktop\\Project\\modules\\attention.cpp",
+                    "line": 7,
+                    "column": 0
+                },
+                "metrics": {
+                    "volume": 192,
+                    "channel_rate": 1.2467532467532467E0
+                },
+                "source": "7",
+                "sink": "2"
+            }
+        },
+        "control": [
+            {
+                "source": "3",
+                "sink": "4"
+            },
+            {
+                "source": "4",
+                "sink": "5"
+            },
+            {
+                "source": "5",
+                "sink": "6"
+            },
+            {
+                "source": "6",
+                "sink": "7"
+            },
+            {
+                "source": "1",
+                "sink": "3"
+            },
+            {
+                "source": "7",
+                "sink": "2"
+            }
+        ]
+    }
+]

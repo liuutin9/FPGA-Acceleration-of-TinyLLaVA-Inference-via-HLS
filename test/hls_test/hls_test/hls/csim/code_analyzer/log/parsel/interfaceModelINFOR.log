@@ -1,3 +1,4 @@
-interfaceModel::INFOR: interfaceModel:0:0: note: Applying interface constraints on the variable in1 which has the interface type bram
-interfaceModel::INFOR: interfaceModel:0:0: note: Applying interface constraints on the variable in2 which has the interface type bram
 interfaceModel::INFOR: interfaceModel:0:0: note: Applying interface constraints on the variable out which has the interface type bram
+interfaceModel::INFOR: interfaceModel:0:0: note: Applying interface constraints on the variable q which has the interface type bram
+interfaceModel::INFOR: interfaceModel:0:0: note: Applying interface constraints on the variable k which has the interface type bram
+interfaceModel::INFOR: interfaceModel:0:0: note: Applying interface constraints on the variable v which has the interface type bram

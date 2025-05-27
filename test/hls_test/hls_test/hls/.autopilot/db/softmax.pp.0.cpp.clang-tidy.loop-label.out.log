@@ -1,0 +1,15 @@
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\softmax.pp.0.cpp:3534:2: warning: Added loop label VITIS_LOOP_9_1:   [xilinx-label-all-loops]
+ for (int i = 0; i < M; i++) {
+ ^~~
+ VITIS_LOOP_9_1: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\softmax.pp.0.cpp:3534:2: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\softmax.pp.0.cpp:3538:9: warning: Added loop label VITIS_LOOP_13_2:   [xilinx-label-all-loops]
+        for (int j = 0; j < N; j++) {
+        ^~~
+        VITIS_LOOP_13_2: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\softmax.pp.0.cpp:3538:9: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\softmax.pp.0.cpp:3542:9: warning: Added loop label VITIS_LOOP_17_3:   [xilinx-label-all-loops]
+        for (int j = 0; j < N; j++) {
+        ^~~
+        VITIS_LOOP_17_3: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\softmax.pp.0.cpp:3542:9: note: FIX-IT applied suggested code changes

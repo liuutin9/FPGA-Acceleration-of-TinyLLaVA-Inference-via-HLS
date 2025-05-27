@@ -1,0 +1,10 @@
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\matadd.pp.0.cpp:166:2: warning: Added loop label VITIS_LOOP_11_1:   [xilinx-label-all-loops]
+ for (int i = 0; i < M; i++) {
+ ^~~
+ VITIS_LOOP_11_1: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\matadd.pp.0.cpp:166:2: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\matadd.pp.0.cpp:167:9: warning: Added loop label VITIS_LOOP_12_2:   [xilinx-label-all-loops]
+        for (int j = 0; j < N; j++) {
+        ^~~
+        VITIS_LOOP_12_2: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\matadd.pp.0.cpp:167:9: note: FIX-IT applied suggested code changes

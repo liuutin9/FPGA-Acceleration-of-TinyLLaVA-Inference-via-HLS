@@ -1,0 +1,103 @@
+---
+MainSourceFile:  'C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/.autopilot/db/attention.pp.0.cpp'
+Diagnostics:     
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_11_1:  '
+    FileOffset:      11
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\matadd.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          9838
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_11_1: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_12_2:  '
+    FileOffset:      12
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\matadd.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          9876
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_12_2: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_8_1:  '
+    FileOffset:      8
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\matmul.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          10354
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_8_1: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_9_2:  '
+    FileOffset:      9
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\matmul.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          10392
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_9_2: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_11_3:  '
+    FileOffset:      11
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\matmul.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          10459
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_11_3: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_7_1:  '
+    FileOffset:      7
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\transpose.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          10933
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_7_1: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_8_2:  '
+    FileOffset:      8
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\transpose.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          10971
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_8_2: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_25_1:  '
+    FileOffset:      25
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\attention.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          110863
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_25_1: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_26_2:  '
+    FileOffset:      26
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\attention.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          110901
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_26_2: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_31_3:  '
+    FileOffset:      31
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\attention.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          111026
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_31_3: '
+  - DiagnosticName:  xilinx-label-all-loops
+    Message:         'Added loop label VITIS_LOOP_32_4:  '
+    FileOffset:      32
+    FilePath:        'C:\Users\liuut\Desktop\Project\modules\attention.cpp'
+    Replacements:    
+      - FilePath:        'C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp'
+        Offset:          111064
+        Length:          0
+        ReplacementText: 'VITIS_LOOP_32_4: '
+...

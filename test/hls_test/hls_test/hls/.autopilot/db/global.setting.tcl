@@ -1,5 +1,5 @@
 
-set TopModule "mat_mul"
+set TopModule "attention"
 set ClockPeriod 3.333
 set ClockList ap_clk
 set AxiliteClockList {}
@@ -9,7 +9,7 @@ set PipelineFlag 0
 set DataflowTaskPipelineFlag 1
 set TrivialPipelineFlag 0
 set noPortSwitchingFlag 0
-set FloatingPointFlag 0
+set FloatingPointFlag 1
 set FftOrFirFlag 0
 set NbRWValue 0
 set intNbAccess 0
@@ -24,7 +24,7 @@ set ResetRegisterNum 3
 set FsmEncStyle onehot
 set MaxFanout 0
 set RtlPrefix {}
-set RtlSubPrefix mat_mul_
+set RtlSubPrefix attention_
 set ExtraCCFlags {}
 set ExtraCLdFlags {}
 set SynCheckOptions {}
@@ -43,10 +43,10 @@ set SCTraceFileName mytrace
 set SCTraceFileFormat vcd
 set SCTraceOption all
 set TargetInfo xcu50:-fsvh2104:-2-e
-set SourceFiles {sc {} c ../../mat_mul.cpp}
-set SourceFlags {sc {} c {{}}}
+set SourceFiles {sc {} c {C:/Users/liuut/Desktop/Project/modules/transpose.cpp C:/Users/liuut/Desktop/Project/modules/softmax.cpp C:/Users/liuut/Desktop/Project/modules/maxval_1D.cpp C:/Users/liuut/Desktop/Project/modules/matmul.cpp C:/Users/liuut/Desktop/Project/modules/attention.cpp C:/Users/liuut/Desktop/Project/modules/matadd.cpp}}
+set SourceFlags {sc {} c {{} {} {} {} {} {}}}
 set DirectiveFile {}
-set TBFiles {verilog D:/Project/test/hls_test/mat_mul_tb.cpp bc D:/Project/test/hls_test/mat_mul_tb.cpp vhdl D:/Project/test/hls_test/mat_mul_tb.cpp sc D:/Project/test/hls_test/mat_mul_tb.cpp cas D:/Project/test/hls_test/mat_mul_tb.cpp c {}}
+set TBFiles {verilog C:/Users/liuut/Desktop/Project/testbenches/top_tb.cpp bc C:/Users/liuut/Desktop/Project/testbenches/top_tb.cpp vhdl C:/Users/liuut/Desktop/Project/testbenches/top_tb.cpp sc C:/Users/liuut/Desktop/Project/testbenches/top_tb.cpp cas C:/Users/liuut/Desktop/Project/testbenches/top_tb.cpp c {}}
 set SpecLanguage C
 set TVInFiles {bc {} c {} sc {} cas {} vhdl {} verilog {}}
 set TVOutFiles {bc {} c {} sc {} cas {} vhdl {} verilog {}}

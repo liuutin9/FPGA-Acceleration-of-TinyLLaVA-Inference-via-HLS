@@ -1,103 +1,273 @@
   **** HLS Build v2024.2 5238294
-INFO: [HLS 200-2005] Using work_dir D:/Project/test/hls_test/hls_test 
+INFO: [HLS 200-2005] Using work_dir C:/Users/liuut/Desktop/Project/test/hls_test/hls_test 
 INFO: [HLS 200-1505] Using default flow_target 'vivado'
 Resolution: For help on HLS 200-1505 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.2%20English&url=ug1448-hls-guidance&resourceid=200-1505.html
-INFO: [HLS 200-1465] Applying ini 'syn.file=mat_mul.cpp' from D:/Project/test/hls_test/hls_config.cfg(9)
-INFO: [HLS 200-10] Adding design file 'D:/Project/test/hls_test/mat_mul.cpp' to the project
-INFO: [HLS 200-1465] Applying ini 'tb.file=mat_mul_tb.cpp' from D:/Project/test/hls_test/hls_config.cfg(10)
-INFO: [HLS 200-10] Adding test bench file 'D:/Project/test/hls_test/mat_mul_tb.cpp' to the project
-INFO: [HLS 200-1465] Applying ini 'syn.top=mat_mul' from D:/Project/test/hls_test/hls_config.cfg(12)
-INFO: [HLS 200-1465] Applying ini 'flow_target=vitis' from D:/Project/test/hls_test/hls_config.cfg(4)
+INFO: [HLS 200-1465] Applying ini 'syn.file=C:\Users\liuut\Desktop\Project\modules\matadd.cpp' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(10)
+INFO: [HLS 200-10] Adding design file 'C:/Users/liuut/Desktop/Project/modules/matadd.cpp' to the project
+INFO: [HLS 200-1465] Applying ini 'syn.file=C:\Users\liuut\Desktop\Project\modules\attention.cpp' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(11)
+INFO: [HLS 200-10] Adding design file 'C:/Users/liuut/Desktop/Project/modules/attention.cpp' to the project
+INFO: [HLS 200-1465] Applying ini 'syn.file=C:\Users\liuut\Desktop\Project\modules\matmul.cpp' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(12)
+INFO: [HLS 200-10] Adding design file 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp' to the project
+INFO: [HLS 200-1465] Applying ini 'syn.file=C:\Users\liuut\Desktop\Project\modules\maxval_1D.cpp' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(13)
+INFO: [HLS 200-10] Adding design file 'C:/Users/liuut/Desktop/Project/modules/maxval_1D.cpp' to the project
+INFO: [HLS 200-1465] Applying ini 'syn.file=C:\Users\liuut\Desktop\Project\modules\softmax.cpp' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(14)
+INFO: [HLS 200-10] Adding design file 'C:/Users/liuut/Desktop/Project/modules/softmax.cpp' to the project
+INFO: [HLS 200-1465] Applying ini 'syn.file=C:\Users\liuut\Desktop\Project\modules\transpose.cpp' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(15)
+INFO: [HLS 200-10] Adding design file 'C:/Users/liuut/Desktop/Project/modules/transpose.cpp' to the project
+INFO: [HLS 200-1465] Applying ini 'tb.file=C:\Users\liuut\Desktop\Project\testbenches\top_tb.cpp' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(16)
+INFO: [HLS 200-10] Adding test bench file 'C:/Users/liuut/Desktop/Project/testbenches/top_tb.cpp' to the project
+INFO: [HLS 200-1465] Applying ini 'syn.top=attention' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(17)
+INFO: [HLS 200-1465] Applying ini 'flow_target=vitis' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(4)
 INFO: [HLS 200-1505] Using flow_target 'vitis'
 Resolution: For help on HLS 200-1505 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.2%20English&url=ug1448-hls-guidance&resourceid=200-1505.html
 INFO: [HLS 200-435] Setting 'open_solution -flow_target vitis' configuration: config_interface -m_axi_latency=64
 INFO: [HLS 200-435] Setting 'open_solution -flow_target vitis' configuration: config_interface -m_axi_alignment_byte_size=64
 INFO: [HLS 200-435] Setting 'open_solution -flow_target vitis' configuration: config_interface -m_axi_max_widen_bitwidth=512
 INFO: [HLS 200-435] Setting 'open_solution -flow_target vitis' configuration: config_rtl -register_reset_num=3
-INFO: [HLS 200-1465] Applying ini 'part=xcu50-fsvh2104-2-e' from D:/Project/test/hls_test/hls_config.cfg(1)
+INFO: [HLS 200-1465] Applying ini 'part=xcu50-fsvh2104-2-e' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(1)
 INFO: [HLS 200-1611] Setting target device to 'xcu50-fsvh2104-2-e'
-INFO: [HLS 200-1465] Applying ini 'clock=300MHz' from D:/Project/test/hls_test/hls_config.cfg(7)
+INFO: [HLS 200-1465] Applying ini 'clock=300MHz' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(7)
 INFO: [SYN 201-201] Setting up clock 'default' with a period of 3.333ns.
-INFO: [HLS 200-1465] Applying ini 'clock_uncertainty=0.4ns' from D:/Project/test/hls_test/hls_config.cfg(8)
+INFO: [HLS 200-1465] Applying ini 'clock_uncertainty=0.4ns' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(8)
 INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 0.4ns.
-INFO: [HLS 200-1465] Applying ini 'csim.code_analyzer=1' from D:/Project/test/hls_test/hls_config.cfg(11)
-INFO: [HLS 200-1465] Applying ini 'package.output.format=ip_catalog' from D:/Project/test/hls_test/hls_config.cfg(5)
-INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 2 seconds. CPU system time: 1 seconds. Elapsed time: 3.096 seconds; current allocated memory: 273.387 MB.
-INFO: [HLS 200-10] Analyzing design file 'mat_mul.cpp' ... 
-INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 1.053 seconds; current allocated memory: 276.617 MB.
+INFO: [HLS 200-1465] Applying ini 'csim.code_analyzer=1' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(9)
+INFO: [HLS 200-1465] Applying ini 'package.output.format=ip_catalog' from C:/Users/liuut/Desktop/Project/test/hls_test/hls_config.cfg(5)
+INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 3 seconds. CPU system time: 2 seconds. Elapsed time: 4.114 seconds; current allocated memory: 274.117 MB.
+INFO: [HLS 200-10] Analyzing design file 'C:/Users/liuut/Desktop/Project/modules/transpose.cpp' ... 
+INFO: [HLS 200-10] Analyzing design file 'C:/Users/liuut/Desktop/Project/modules/softmax.cpp' ... 
+INFO: [HLS 200-10] Analyzing design file 'C:/Users/liuut/Desktop/Project/modules/maxval_1D.cpp' ... 
+INFO: [HLS 200-10] Analyzing design file 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp' ... 
+INFO: [HLS 200-10] Analyzing design file 'C:/Users/liuut/Desktop/Project/modules/attention.cpp' ... 
+INFO: [HLS 200-10] Analyzing design file 'C:/Users/liuut/Desktop/Project/modules/matadd.cpp' ... 
+INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 17.349 seconds; current allocated memory: 277.180 MB.
 INFO: [HLS 200-777] Using interface defaults for 'Vitis' flow target.
-INFO: [HLS 200-1995] There were 50 instructions in the design after the 'Compile/Link' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 47 instructions in the design after the 'Unroll/Inline (step 1)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 40 instructions in the design after the 'Unroll/Inline (step 2)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 37 instructions in the design after the 'Unroll/Inline (step 3)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 37 instructions in the design after the 'Unroll/Inline (step 4)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 40 instructions in the design after the 'Array/Struct (step 1)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 40 instructions in the design after the 'Array/Struct (step 2)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 40 instructions in the design after the 'Array/Struct (step 3)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 40 instructions in the design after the 'Array/Struct (step 4)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 41 instructions in the design after the 'Array/Struct (step 5)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 41 instructions in the design after the 'Performance (step 1)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 40 instructions in the design after the 'Performance (step 2)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 40 instructions in the design after the 'Performance (step 3)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 40 instructions in the design after the 'Performance (step 4)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 40 instructions in the design after the 'HW Transforms (step 1)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 200-1995] There were 51 instructions in the design after the 'HW Transforms (step 2)' phase of compilation. See the Design Size Report for more details: D:/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
-INFO: [HLS 214-188] Unrolling loop 'VITIS_LOOP_12_3' (mat_mul.cpp:12:30) in function 'mat_mul' partially with a factor of 2 (mat_mul.cpp:3:0)
-INFO: [HLS 214-376] automatically set the pipeline for Loop< VITIS_LOOP_12_3> at mat_mul.cpp:12:30 
-INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 7.502 seconds; current allocated memory: 278.465 MB.
-INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.001 seconds; current allocated memory: 278.465 MB.
+INFO: [HLS 200-1995] There were 2,350 instructions in the design after the 'Compile/Link' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 328 instructions in the design after the 'Unroll/Inline (step 1)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 204 instructions in the design after the 'Unroll/Inline (step 2)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 183 instructions in the design after the 'Unroll/Inline (step 3)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 152 instructions in the design after the 'Unroll/Inline (step 4)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 156 instructions in the design after the 'Array/Struct (step 1)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 156 instructions in the design after the 'Array/Struct (step 2)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 156 instructions in the design after the 'Array/Struct (step 3)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 156 instructions in the design after the 'Array/Struct (step 4)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 157 instructions in the design after the 'Array/Struct (step 5)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 157 instructions in the design after the 'Performance (step 1)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 169 instructions in the design after the 'Performance (step 2)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 250 instructions in the design after the 'Performance (step 3)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 232 instructions in the design after the 'Performance (step 4)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 229 instructions in the design after the 'HW Transforms (step 1)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 265 instructions in the design after the 'HW Transforms (step 2)' phase of compilation. See the Design Size Report for more details: C:/Users/liuut/Desktop/Project/test/hls_test/hls_test/hls/syn/report/csynth_design_size.rpt
+INFO: [HLS 214-359] Unrolling loop 'VITIS_LOOP_11_3' (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30) in function 'matmul<2, 2, 3>': changing partial unrolling into complete unrolling since the unrolling factor (=2) is no less than the loop trip count (=2). (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:2:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_11_3' (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30) in function 'matmul<2, 2, 3>' completely with a factor of 2 (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:2:0)
+INFO: [HLS 214-188] Unrolling loop 'VITIS_LOOP_11_3' (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30) in function 'matmul<2, 3, 2>' partially with a factor of 2 (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:2:0)
+INFO: [HLS 214-178] Inlining function 'fp_struct<double>::fp_struct(double)' into 'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)' (C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h:12:0)
+INFO: [HLS 214-178] Inlining function 'fp_struct<double>::mantissa() const' into 'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)' (C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h:12:0)
+INFO: [HLS 214-178] Inlining function 'fp_struct<double>::expv() const' into 'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)' (C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h:12:0)
+INFO: [HLS 214-178] Inlining function 'fp_struct<double>::__signbit() const' into 'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)' (C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h:12:0)
+INFO: [HLS 214-178] Inlining function 'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)' into 'int generic_cast_IEEE754<int, double>(double, bool)' (C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h:116:0)
+INFO: [HLS 214-178] Inlining function 'int generic_cast_IEEE754<int, double>(double, bool)' into '__hls_fptosi_double_i32' (C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp:55:0)
+INFO: [HLS 214-178] Inlining function 'void transpose<2, 3>(int (*) [2], int (*) [3])' into 'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)' (C:/Users/liuut/Desktop/Project/modules/attention.cpp:12:0)
+INFO: [HLS 214-178] Inlining function 'void matmul<2, 3, 2>(int (*) [2], int (*) [3], int (*) [2])' into 'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)' (C:/Users/liuut/Desktop/Project/modules/attention.cpp:12:0)
+INFO: [HLS 214-178] Inlining function '__hls_fptosi_double_i32' into 'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)' (C:/Users/liuut/Desktop/Project/modules/attention.cpp:12:0)
+INFO: [HLS 214-178] Inlining function 'void matmul<2, 2, 3>(int (*) [3], int (*) [2], int (*) [3])' into 'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)' (C:/Users/liuut/Desktop/Project/modules/attention.cpp:12:0)
+INFO: [HLS 214-376] automatically set the pipeline for Loop< VITIS_LOOP_8_2> at C:/Users/liuut/Desktop/Project/modules/transpose.cpp:8:25 
+INFO: [HLS 214-376] automatically set the pipeline for Loop< VITIS_LOOP_11_3> at C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30 
+INFO: [HLS 214-376] automatically set the pipeline for Loop< VITIS_LOOP_26_2> at C:/Users/liuut/Desktop/Project/modules/attention.cpp:26:26 
+INFO: [HLS 214-376] automatically set the pipeline for Loop< VITIS_LOOP_32_4> at C:/Users/liuut/Desktop/Project/modules/attention.cpp:32:26 
+INFO: [HLS 214-376] automatically set the pipeline for Loop< VITIS_LOOP_8_1> at C:/Users/liuut/Desktop/Project/modules/matmul.cpp:8:18 
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_9_2' is marked as complete unroll implied by the pipeline pragma (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:9:25)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_9_2' (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:9:25) in function 'attention' completely with a factor of 3 (C:/Users/liuut/Desktop/Project/modules/attention.cpp:12:0)
+INFO: [HLS 214-421] Automatically partitioning small array 'out' completely based on array size. (C:/Users/liuut/Desktop/Project/modules/attention.cpp:22:9)
+INFO: [HLS 214-421] Automatically partitioning small array 'qk_scaled' completely based on array size. (C:/Users/liuut/Desktop/Project/modules/attention.cpp:24:9)
+INFO: [HLS 214-421] Automatically partitioning small array 'in1' completely based on array size. (C:/Users/liuut/Desktop/Project/modules/attention.cpp:30:9)
+INFO: [HLS 214-270] Inferring pragma 'array_partition type=complete dim=1' for array 'qk' due to pipeline pragma (C:/Users/liuut/Desktop/Project/modules/attention.cpp:22:9)
+INFO: [HLS 214-270] Inferring pragma 'array_partition type=complete dim=2' for array 'qk' due to pipeline pragma (C:/Users/liuut/Desktop/Project/modules/attention.cpp:22:9)
+INFO: [HLS 214-270] Inferring pragma 'array_partition type=complete dim=1' for array 'qk_scaled' due to pipeline pragma (C:/Users/liuut/Desktop/Project/modules/attention.cpp:24:9)
+INFO: [HLS 214-270] Inferring pragma 'array_partition type=complete dim=2' for array 'qk_scaled' due to pipeline pragma (C:/Users/liuut/Desktop/Project/modules/attention.cpp:24:9)
+INFO: [HLS 214-270] Inferring pragma 'array_partition type=complete dim=1' for array 'qk_scaled_exp' due to pipeline pragma (C:/Users/liuut/Desktop/Project/modules/attention.cpp:30:9)
+INFO: [HLS 214-270] Inferring pragma 'array_partition type=complete dim=2' for array 'qk_scaled_exp' due to pipeline pragma (C:/Users/liuut/Desktop/Project/modules/attention.cpp:30:9)
+INFO: [HLS 214-248] Applying array_partition to 'qk': Complete partitioning on dimension 1. Complete partitioning on dimension 2. (C:/Users/liuut/Desktop/Project/modules/attention.cpp:22:9)
+INFO: [HLS 214-248] Applying array_partition to 'qk_scaled': Complete partitioning on dimension 1. Complete partitioning on dimension 2. (C:/Users/liuut/Desktop/Project/modules/attention.cpp:24:9)
+INFO: [HLS 214-248] Applying array_partition to 'qk_scaled_exp': Complete partitioning on dimension 1. Complete partitioning on dimension 2. (C:/Users/liuut/Desktop/Project/modules/attention.cpp:30:9)
+INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 13.596 seconds; current allocated memory: 279.488 MB.
+INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.002 seconds; current allocated memory: 279.496 MB.
 INFO: [HLS 200-10] Starting code transformations ...
-INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.067 seconds; current allocated memory: 282.410 MB.
+INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.149 seconds; current allocated memory: 285.285 MB.
 INFO: [HLS 200-10] Checking synthesizability ...
-INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.027 seconds; current allocated memory: 283.727 MB.
-INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.044 seconds; current allocated memory: 304.258 MB.
-INFO: [HLS 200-2061] Successfully converted nested loops 'VITIS_LOOP_10_2'(mat_mul.cpp:10:26) and 'VITIS_LOOP_12_3'(mat_mul.cpp:12:30) in function 'mat_mul' into perfectly nested loops.
-INFO: [HLS 200-2061] Successfully converted nested loops 'VITIS_LOOP_9_1'(mat_mul.cpp:9:18) and 'VITIS_LOOP_10_2'(mat_mul.cpp:10:26) in function 'mat_mul' into perfectly nested loops.
-INFO: [XFORM 203-541] Flattening a loop nest 'VITIS_LOOP_10_2' (mat_mul.cpp:10:26) in function 'mat_mul'.
-INFO: [XFORM 203-541] Flattening a loop nest 'VITIS_LOOP_9_1' (mat_mul.cpp:9:18) in function 'mat_mul'.
-INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.068 seconds; current allocated memory: 304.270 MB.
+INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.092 seconds; current allocated memory: 288.188 MB.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:54) to (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30) in function 'attention'... converting 5 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:15:23) to (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:9:25) in function 'attention'... converting 6 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (C:/Users/liuut/Desktop/Project/modules/attention.cpp:24:9) to (C:/Users/liuut/Desktop/Project/modules/attention.cpp:26:26) in function 'attention'... converting 4 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (C:/Users/liuut/Desktop/Project/modules/attention.cpp:30:9) to (C:/Users/liuut/Desktop/Project/modules/attention.cpp:32:26) in function 'attention'... converting 4 basic blocks.
+INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 1.569 seconds; current allocated memory: 311.066 MB.
+INFO: [HLS 200-2061] Successfully converted nested loops 'VITIS_LOOP_7_1'(C:/Users/liuut/Desktop/Project/modules/transpose.cpp:7:18) and 'VITIS_LOOP_8_2'(C:/Users/liuut/Desktop/Project/modules/transpose.cpp:8:25) in function 'attention' into perfectly nested loops.
+INFO: [HLS 200-2061] Successfully converted nested loops 'VITIS_LOOP_9_2'(C:/Users/liuut/Desktop/Project/modules/matmul.cpp:9:25) and 'VITIS_LOOP_11_3'(C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30) in function 'attention' into perfectly nested loops.
+INFO: [HLS 200-2061] Successfully converted nested loops 'VITIS_LOOP_8_1'(C:/Users/liuut/Desktop/Project/modules/matmul.cpp:8:18) and 'VITIS_LOOP_9_2'(C:/Users/liuut/Desktop/Project/modules/matmul.cpp:9:25) in function 'attention' into perfectly nested loops.
+INFO: [HLS 200-2061] Successfully converted nested loops 'VITIS_LOOP_25_1'(C:/Users/liuut/Desktop/Project/modules/attention.cpp:25:22) and 'VITIS_LOOP_26_2'(C:/Users/liuut/Desktop/Project/modules/attention.cpp:26:26) in function 'attention' into perfectly nested loops.
+INFO: [HLS 200-2061] Successfully converted nested loops 'VITIS_LOOP_31_3'(C:/Users/liuut/Desktop/Project/modules/attention.cpp:31:22) and 'VITIS_LOOP_32_4'(C:/Users/liuut/Desktop/Project/modules/attention.cpp:32:26) in function 'attention' into perfectly nested loops.
+INFO: [XFORM 203-541] Flattening a loop nest 'VITIS_LOOP_7_1' (C:/Users/liuut/Desktop/Project/modules/transpose.cpp:7:18) in function 'attention'.
+INFO: [XFORM 203-541] Flattening a loop nest 'VITIS_LOOP_9_2' (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:9:25) in function 'attention'.
+INFO: [XFORM 203-541] Flattening a loop nest 'VITIS_LOOP_8_1' (C:/Users/liuut/Desktop/Project/modules/matmul.cpp:8:18) in function 'attention'.
+INFO: [XFORM 203-541] Flattening a loop nest 'VITIS_LOOP_25_1' (C:/Users/liuut/Desktop/Project/modules/attention.cpp:25:22) in function 'attention'.
+INFO: [XFORM 203-541] Flattening a loop nest 'VITIS_LOOP_31_3' (C:/Users/liuut/Desktop/Project/modules/attention.cpp:31:22) in function 'attention'.
+INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.575 seconds; current allocated memory: 350.594 MB.
 INFO: [HLS 200-10] Starting hardware synthesis ...
-INFO: [HLS 200-10] Synthesizing 'mat_mul' ...
+INFO: [HLS 200-10] Synthesizing 'attention' ...
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-42] -- Implementing module 'mat_mul' 
+INFO: [HLS 200-42] -- Implementing module 'attention_Pipeline_VITIS_LOOP_7_1_VITIS_LOOP_8_2' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
-INFO: [SCHED 204-61] Pipelining loop 'VITIS_LOOP_9_1_VITIS_LOOP_10_2_VITIS_LOOP_12_3'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 5, loop 'VITIS_LOOP_9_1_VITIS_LOOP_10_2_VITIS_LOOP_12_3'
+INFO: [SCHED 204-61] Pipelining loop 'VITIS_LOOP_7_1_VITIS_LOOP_8_2'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, loop 'VITIS_LOOP_7_1_VITIS_LOOP_8_2'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.204 seconds; current allocated memory: 304.270 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.846 seconds; current allocated memory: 354.145 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.054 seconds; current allocated memory: 304.270 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.204 seconds; current allocated memory: 355.215 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-10] -- Generating RTL for module 'mat_mul' 
+INFO: [HLS 200-42] -- Implementing module 'attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 6, loop 'VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.433 seconds; current allocated memory: 356.023 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.183 seconds; current allocated memory: 356.074 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'attention_Pipeline_VITIS_LOOP_25_1_VITIS_LOOP_26_2' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'VITIS_LOOP_25_1_VITIS_LOOP_26_2'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 36, loop 'VITIS_LOOP_25_1_VITIS_LOOP_26_2'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.231 seconds; current allocated memory: 356.465 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.163 seconds; current allocated memory: 356.531 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'attention_Pipeline_VITIS_LOOP_31_3_VITIS_LOOP_32_4' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'VITIS_LOOP_31_3_VITIS_LOOP_32_4'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 27, loop 'VITIS_LOOP_31_3_VITIS_LOOP_32_4'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.217 seconds; current allocated memory: 357.059 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.167 seconds; current allocated memory: 357.195 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'attention_Pipeline_VITIS_LOOP_8_1' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'VITIS_LOOP_8_1'.
+WARNING: [HLS 200-885] The II Violation in module 'attention_Pipeline_VITIS_LOOP_8_1' (loop 'VITIS_LOOP_8_1'): Unable to schedule 'store' operation 0 bit ('out_r_addr_1_write_ln15', C:/Users/liuut/Desktop/Project/modules/matmul.cpp:15->C:/Users/liuut/Desktop/Project/modules/attention.cpp:36) of variable 'sum', C:/Users/liuut/Desktop/Project/modules/matmul.cpp:13->C:/Users/liuut/Desktop/Project/modules/attention.cpp:36 on array 'out_r' due to limited memory ports (II = 1). Please consider using a memory core with more ports or partitioning the array 'out_r'.
+Resolution: For help on HLS 200-885 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.2%20English&url=ug1448-hls-guidance&resourceid=200-885.html
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 2, Depth = 5, loop 'VITIS_LOOP_8_1'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.785 seconds; current allocated memory: 357.531 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.146 seconds; current allocated memory: 357.812 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'attention' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.153 seconds; current allocated memory: 358.059 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.156 seconds; current allocated memory: 358.488 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'attention_Pipeline_VITIS_LOOP_7_1_VITIS_LOOP_8_2' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'attention_Pipeline_VITIS_LOOP_7_1_VITIS_LOOP_8_2' pipeline 'VITIS_LOOP_7_1_VITIS_LOOP_8_2' pipeline type 'loop pipeline'
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention_Pipeline_VITIS_LOOP_7_1_VITIS_LOOP_8_2/k_WEN_A' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention_Pipeline_VITIS_LOOP_7_1_VITIS_LOOP_8_2/k_Din_A' to 0.
+INFO: [RTGEN 206-100] Finished creating RTL model for 'attention_Pipeline_VITIS_LOOP_7_1_VITIS_LOOP_8_2'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.193 seconds; current allocated memory: 359.926 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3' pipeline 'VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3' pipeline type 'loop pipeline'
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3/q_WEN_A' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3/q_Din_A' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3/q_WEN_B' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3/q_Din_B' to 0.
+INFO: [RTGEN 206-100] Generating core module 'mul_32s_32s_32_2_1': 2 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'attention_Pipeline_VITIS_LOOP_8_1_VITIS_LOOP_9_2_VITIS_LOOP_11_3'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 1 seconds. Elapsed time: 0.412 seconds; current allocated memory: 363.156 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'attention_Pipeline_VITIS_LOOP_25_1_VITIS_LOOP_26_2' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'attention_Pipeline_VITIS_LOOP_25_1_VITIS_LOOP_26_2' pipeline 'VITIS_LOOP_25_1_VITIS_LOOP_26_2' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Generating core module 'sdiv_32ns_32ns_32_36_1': 1 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'attention_Pipeline_VITIS_LOOP_25_1_VITIS_LOOP_26_2'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.931 seconds; current allocated memory: 366.609 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'attention_Pipeline_VITIS_LOOP_31_3_VITIS_LOOP_32_4' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'attention_Pipeline_VITIS_LOOP_31_3_VITIS_LOOP_32_4' pipeline 'VITIS_LOOP_31_3_VITIS_LOOP_32_4' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Generating core module 'dexp_64ns_64ns_64_20_full_dsp_1': 1 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'sitodp_32ns_64_4_no_dsp_1': 1 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'attention_Pipeline_VITIS_LOOP_31_3_VITIS_LOOP_32_4'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.615 seconds; current allocated memory: 369.188 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'attention_Pipeline_VITIS_LOOP_8_1' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'attention_Pipeline_VITIS_LOOP_8_1' pipeline 'VITIS_LOOP_8_1' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Generating core module 'mul_32s_32s_32_2_1': 3 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'attention_Pipeline_VITIS_LOOP_8_1'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.655 seconds; current allocated memory: 371.594 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'attention' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 WARNING: [RTGEN 206-101] Design contains AXI ports. Reset is fixed to synchronous and active low.
-INFO: [RTGEN 206-500] Setting interface mode on port 'mat_mul/in1' to 'bram'.
-INFO: [RTGEN 206-500] Setting interface mode on port 'mat_mul/in2' to 'bram'.
-INFO: [RTGEN 206-500] Setting interface mode on port 'mat_mul/out_r' to 'bram'.
-INFO: [RTGEN 206-500] Setting interface mode on function 'mat_mul' to 's_axilite & ap_ctrl_chain'.
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'mat_mul' pipeline 'VITIS_LOOP_9_1_VITIS_LOOP_10_2_VITIS_LOOP_12_3' pipeline type 'loop pipeline'
-INFO: [RTGEN 206-100] Bundling port 'return' to AXI-Lite port control.
-WARNING: [RTGEN 206-101] Setting dangling out port 'mat_mul/in1_WEN_A' to 0.
-WARNING: [RTGEN 206-101] Setting dangling out port 'mat_mul/in1_Din_A' to 0.
-WARNING: [RTGEN 206-101] Setting dangling out port 'mat_mul/in1_WEN_B' to 0.
-WARNING: [RTGEN 206-101] Setting dangling out port 'mat_mul/in1_Din_B' to 0.
-WARNING: [RTGEN 206-101] Setting dangling out port 'mat_mul/in2_WEN_A' to 0.
-WARNING: [RTGEN 206-101] Setting dangling out port 'mat_mul/in2_Din_A' to 0.
-WARNING: [RTGEN 206-101] Setting dangling out port 'mat_mul/in2_WEN_B' to 0.
-WARNING: [RTGEN 206-101] Setting dangling out port 'mat_mul/in2_Din_B' to 0.
+INFO: [RTGEN 206-500] Setting interface mode on port 'attention/out_r' to 'bram'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'attention/q' to 'bram'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'attention/k' to 'bram'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'attention/v' to 'bram'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'attention/d_k' to 's_axilite & ap_none'.
+INFO: [RTGEN 206-500] Setting interface mode on function 'attention' to 's_axilite & ap_ctrl_chain'.
+INFO: [RTGEN 206-100] Bundling port 'd_k' and 'return' to AXI-Lite port control.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/q_WEN_A' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/q_Din_A' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/q_WEN_B' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/q_Din_B' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/k_WEN_A' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/k_Din_A' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/v_WEN_A' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/v_Din_A' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/v_WEN_B' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'attention/v_Din_B' to 0.
 INFO: [RTGEN 206-100] Generating core module 'mul_32s_32s_32_2_1': 2 instance(s).
-INFO: [RTGEN 206-100] Finished creating RTL model for 'mat_mul'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 1.587 seconds; current allocated memory: 305.598 MB.
-INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.385 seconds; current allocated memory: 310.746 MB.
-INFO: [HLS 200-111] Finished Updating report files: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.5 seconds; current allocated memory: 315.082 MB.
-INFO: [VHDL 208-304] Generating VHDL RTL for mat_mul.
-INFO: [VLOG 209-307] Generating Verilog RTL for mat_mul.
-INFO: [HLS 200-790] **** Loop Constraint Status: All loop constraints were satisfied.
-INFO: [HLS 200-789] **** Estimated Fmax: 342.23 MHz
-INFO: [HLS 200-112] Total CPU user time: 3 seconds. Total CPU system time: 1 seconds. Total elapsed time: 16.012 seconds; peak allocated memory: 315.426 MB.
-INFO: [v++ 60-791] Total elapsed time: 0h 0m 21s
+INFO: [RTGEN 206-100] Finished creating RTL model for 'attention'.
+INFO: [RTMG 210-278] Implementing memory 'attention_k_t_RAM_AUTO_1R1W' using auto RAMs.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 1.209 seconds; current allocated memory: 373.715 MB.
+INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 0 seconds. CPU system time: 1 seconds. Elapsed time: 1.59 seconds; current allocated memory: 377.730 MB.
+INFO: [HLS 200-111] Finished Updating report files: CPU user time: 1 seconds. CPU system time: 1 seconds. Elapsed time: 2.127 seconds; current allocated memory: 384.957 MB.
+INFO: [VHDL 208-304] Generating VHDL RTL for attention.
+INFO: [VLOG 209-307] Generating Verilog RTL for attention.
+INFO: [HLS 200-790] **** Loop Constraint Status: All loop constraints were NOT satisfied.
+INFO: [HLS 200-789] **** Estimated Fmax: 341.41 MHz
+INFO: [HLS 200-112] Total CPU user time: 8 seconds. Total CPU system time: 5 seconds. Total elapsed time: 49.49 seconds; peak allocated memory: 385.559 MB.
+INFO: [v++ 60-791] Total elapsed time: 0h 0m 54s

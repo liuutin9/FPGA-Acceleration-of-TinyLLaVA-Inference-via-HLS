@@ -1,7 +1,7 @@
 [
   {
     "functionLabel": "",
-    "functionName": "mat_mul",
+    "functionName": "attention",
     "id": 0,
     "ifcond": "",
     "insert_position": "",
@@ -11,7 +11,7 @@
       "option": [
         {
           "name": "name",
-          "value": "mat_mul"
+          "value": "attention"
         }
       ]
     },

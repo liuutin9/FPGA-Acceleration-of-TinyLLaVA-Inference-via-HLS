@@ -1,3 +1,5 @@
+#include <cmath>
+
 template <int M, int N>
 void softmax(int out[M][N], int in[M][N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite
@@ -9,7 +11,7 @@ void softmax(int out[M][N], int in[M][N]) {
         maxval_1D(&max_val, in[i]);
         int sum_exp = 0;
         for (int j = 0; j < N; j++) {
-            out[i][j] = std::exp(in[i][j] - max_val);
+            out[i][j] = exp(in[i][j] - max_val);
             sum_exp += out[i][j];
         }
         for (int j = 0; j < N; j++) {

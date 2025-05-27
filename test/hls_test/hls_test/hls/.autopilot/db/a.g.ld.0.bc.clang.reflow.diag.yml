@@ -1,16 +1,214 @@
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 13, Column: 17 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - Callee:          'fp_struct<double>::fp_struct(double)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 456, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 15, Column: 57 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - Callee:          'fp_struct<double>::mantissa() const'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 503, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 59, Column: 8 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - Callee:          'fp_struct<double>::__signbit() const'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 512, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 18, Column: 79 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - Callee:          'fp_struct<double>::expv() const'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 485, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 117, Column: 10 }
+Function:        _Z20generic_cast_IEEE754IidET_T0_b
+Args:            
+  - Callee:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'int generic_cast_IEEE754<int, double>(double, bool)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 116, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp', 
+                   Line: 55, Column: 56 }
+Function:        __hls_fptosi_double_i32
+Args:            
+  - Callee:          'int generic_cast_IEEE754<int, double>(double, bool)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 116, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          __hls_fptosi_double_i32
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp', 
+                       Line: 55, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 21, Column: 5 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - Callee:          'void transpose<2, 3>(int (*) [2], int (*) [3])'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/transpose.cpp', 
+                       Line: 2, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 23, Column: 5 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - Callee:          'void matmul<2, 3, 2>(int (*) [2], int (*) [3], int (*) [2])'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                       Line: 2, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 33, Column: 35 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - Callee:          __hls_fptosi_double_i32
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp', 
+                       Line: 55, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 36, Column: 5 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - Callee:          'void matmul<2, 2, 3>(int (*) [3], int (*) [2], int (*) [3])'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                       Line: 2, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Passed
+Pass:            reflow-pragma-loop-unroll
+Name:            PragmaPartially2FullyUnroll
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                   Line: 2, Column: 0 }
+Function:        _Z6matmulILi2ELi2ELi3EEvPAT1__iPAT0__iS1_
+Args:            
+  - String:          'Unrolling loop '''
+  - LoopName:        VITIS_LOOP_11_3
+  - String:          ''' ('
+  - LoopLoc:         'C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30'
+  - String:          ') '
+  - String:          'in function '''
+  - String:          'matmul<2, 2, 3>'
+  - String:          ''': changing partial unrolling into complete unrolling since the unrolling factor (='
+  - Factor:          '2'
+  - String:          ') is no less than the loop trip count (='
+  - TripCount:       '2'
+  - String:          ').'
+...
+--- !Passed
+Pass:            reflow-pragma-loop-unroll
+Name:            PragmaFullyUnroll
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                   Line: 2, Column: 0 }
+Function:        _Z6matmulILi2ELi2ELi3EEvPAT1__iPAT0__iS1_
+Args:            
+  - String:          'Unrolling loop '''
+  - LoopName:        VITIS_LOOP_11_3
+  - String:          ''' ('
+  - LoopLoc:         'C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30'
+  - String:          ') '
+  - String:          'in function '''
+  - String:          'matmul<2, 2, 3>'
+  - String:          ''' completely with a factor of '
+  - Factor:          '2'
+...
 --- !Passed
 Pass:            reflow-pragma-loop-unroll
 Name:            PragmaPartiallyUnroll
-DebugLoc:        { File: mat_mul.cpp, Line: 3, Column: 0 }
-Function:        _Z7mat_mulPA4_iS0_S0_
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                   Line: 2, Column: 0 }
+Function:        _Z6matmulILi2ELi3ELi2EEvPAT1__iPAT0__iS1_
 Args:            
   - String:          'Unrolling loop '''
-  - LoopName:        VITIS_LOOP_12_3
+  - LoopName:        VITIS_LOOP_11_3
   - String:          ''' ('
-  - LoopLoc:         'mat_mul.cpp:12:30'
+  - LoopLoc:         'C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30'
   - String:          ') '
   - String:          'in function '''
-  - String:          mat_mul
+  - String:          'matmul<2, 3, 2>'
   - String:          ''' partially '
   - String:          ''
   - String:          'with a factor of '
@@ -19,21 +217,768 @@ Args:
 --- !Missed
 Pass:            inline
 Name:            NeverInline
-Function:        apatb_mat_mul_ir
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 13, Column: 17 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
 Args:            
-  - Callee:          'mat_mul(int (*) [4], int (*) [4], int (*) [4])'
-    DebugLoc:        { File: mat_mul.cpp, Line: 3, Column: 0 }
+  - Callee:          'fp_struct<double>::fp_struct(double)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 456, Column: 0 }
   - String:          ' not inlined into '
-  - Caller:          apatb_mat_mul_ir
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
   - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 15, Column: 57 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - Callee:          'fp_struct<double>::mantissa() const'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 503, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 18, Column: 79 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - Callee:          'fp_struct<double>::expv() const'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 485, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 59, Column: 8 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - Callee:          'fp_struct<double>::__signbit() const'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 512, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 117, Column: 10 }
+Function:        _Z20generic_cast_IEEE754IidET_T0_b
+Args:            
+  - Callee:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'int generic_cast_IEEE754<int, double>(double, bool)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 116, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp', 
+                   Line: 55, Column: 56 }
+Function:        __hls_fptosi_double_i32
+Args:            
+  - Callee:          'int generic_cast_IEEE754<int, double>(double, bool)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 116, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          __hls_fptosi_double_i32
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp', 
+                       Line: 55, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 21, Column: 5 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - Callee:          'void transpose<2, 3>(int (*) [2], int (*) [3])'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/transpose.cpp', 
+                       Line: 2, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 23, Column: 5 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - Callee:          'void matmul<2, 3, 2>(int (*) [2], int (*) [3], int (*) [2])'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                       Line: 2, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 33, Column: 35 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - Callee:          __hls_fptosi_double_i32
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp', 
+                       Line: 55, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 36, Column: 5 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - Callee:          'void matmul<2, 2, 3>(int (*) [3], int (*) [2], int (*) [3])'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                       Line: 2, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Missed
+Pass:            inline
+Name:            NeverInline
+Function:        apatb_attention_ir
+Args:            
+  - Callee:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ' not inlined into '
+  - Caller:          apatb_attention_ir
+  - String:          ' because it should never be inlined (cost=never)'
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 12, Column: 0 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'fp_struct<double>::fp_struct(double)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 456, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 12, Column: 0 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'fp_struct<double>::mantissa() const'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 503, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 12, Column: 0 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'fp_struct<double>::expv() const'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 485, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 12, Column: 0 }
+Function:        _Z20generic_cast_IEEE754IiL9ap_q_mode6EdET_T1_bN3hls9enable_ifIXsr3std14numeric_limitsIS1_EE9is_signedEbE4typeE
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'fp_struct<double>::__signbit() const'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/src/hls\utils/x_hls_utils.h', 
+                       Line: 512, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                   Line: 116, Column: 0 }
+Function:        _Z20generic_cast_IEEE754IidET_T0_b
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'int generic_cast_IEEE754<int, (ap_q_mode)6, double>(double, bool, hls::enable_if<std::numeric_limits<int>::is_signed, bool>::type)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 12, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'int generic_cast_IEEE754<int, double>(double, bool)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 116, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp', 
+                   Line: 55, Column: 0 }
+Function:        __hls_fptosi_double_i32
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'int generic_cast_IEEE754<int, double>(double, bool)'
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib/hlsmath/include/FloatingPoint\hls_case_IEEE754.h', 
+                       Line: 116, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          __hls_fptosi_double_i32
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp', 
+                       Line: 55, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 12, Column: 0 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'void transpose<2, 3>(int (*) [2], int (*) [3])'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/transpose.cpp', 
+                       Line: 2, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 12, Column: 0 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'void matmul<2, 3, 2>(int (*) [2], int (*) [3], int (*) [2])'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                       Line: 2, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 12, Column: 0 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          __hls_fptosi_double_i32
+    DebugLoc:        { File: 'C:\scratch\2024.2\hls_product\495\2024.2\src\shared\hls\clib\hlsmath\src\lib_floatconversion.cpp', 
+                       Line: 55, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ''''
+...
+--- !Passed
+Pass:            reflow-inliner
+Name:            Inline
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 12, Column: 0 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inlining function '''
+  - Callee:          'void matmul<2, 2, 3>(int (*) [3], int (*) [2], int (*) [3])'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                       Line: 2, Column: 0 }
+  - String:          ''' into '''
+  - Caller:          'attention(int (*) [3], int (*) [3], int (*) [3], int (*) [3], int)'
+    DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                       Line: 12, Column: 0 }
+  - String:          ''''
 ...
 --- !HLSReportInfo
 Pass:            auto-loop-pipeline
 Name:            AutoLoopPipeline
 Args:            
   - String:          'automatically set the pipeline for Loop< '
-  - LoopName:        VITIS_LOOP_12_3
+  - LoopName:        VITIS_LOOP_8_2
   - String:          '> at '
-  - LoopLoc:         'mat_mul.cpp:12:30'
+  - LoopLoc:         'C:/Users/liuut/Desktop/Project/modules/transpose.cpp:8:25'
   - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'automatically set the pipeline for Loop< '
+  - LoopName:        VITIS_LOOP_11_3
+  - String:          '> at '
+  - LoopLoc:         'C:/Users/liuut/Desktop/Project/modules/matmul.cpp:11:30'
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'automatically set the pipeline for Loop< '
+  - LoopName:        VITIS_LOOP_26_2
+  - String:          '> at '
+  - LoopLoc:         'C:/Users/liuut/Desktop/Project/modules/attention.cpp:26:26'
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'automatically set the pipeline for Loop< '
+  - LoopName:        VITIS_LOOP_32_4
+  - String:          '> at '
+  - LoopLoc:         'C:/Users/liuut/Desktop/Project/modules/attention.cpp:32:26'
+  - String:          ' '
+...
+--- !HLSReportInfo
+Pass:            auto-loop-pipeline
+Name:            AutoLoopPipeline
+Args:            
+  - String:          'automatically set the pipeline for Loop< '
+  - LoopName:        VITIS_LOOP_8_1
+  - String:          '> at '
+  - LoopLoc:         'C:/Users/liuut/Desktop/Project/modules/matmul.cpp:8:18'
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-infer-unroll
+Name:            ImplicitUnroll
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/matmul.cpp', 
+                   Line: 9, Column: 25 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Loop '''
+  - LoopName:        VITIS_LOOP_9_2
+  - String:          ''' is marked as complete unroll implied by the pipeline pragma'
+...
+--- !Passed
+Pass:            reflow-pragma-loop-unroll
+Name:            PragmaFullyUnroll
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 12, Column: 0 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Unrolling loop '''
+  - LoopName:        VITIS_LOOP_9_2
+  - String:          ''' ('
+  - LoopLoc:         'C:/Users/liuut/Desktop/Project/modules/matmul.cpp:9:25'
+  - String:          ') '
+  - String:          'in function '''
+  - String:          attention
+  - String:          ''' completely with a factor of '
+  - Factor:          '3'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoSmallArrayPartition
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 22, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Automatically partitioning small array '''
+  - Value:           out
+  - String:          ''' completely based on array size.'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoSmallArrayPartition
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 24, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Automatically partitioning small array '''
+  - Value:           qk_scaled
+  - String:          ''' completely based on array size.'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoSmallArrayPartition
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 30, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Automatically partitioning small array '''
+  - Value:           in1
+  - String:          ''' completely based on array size.'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 22, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - PragmaType:      array_partition
+  - String:          ' '
+  - PragmaOptions:   'dim=1 type=complete  variable=qk'
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  attention
+  - String:          ' '
+  - varLoc:          'C:/Users/liuut/Desktop/Project/modules/attention.cpp:22:9'
+  - String:          ' '
+  - VarName:         qk
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoArrayXform
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 22, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inferring pragma '''
+  - PragmaType:      array_partition
+  - String:          ' type='
+  - Mode:            complete
+  - String:          ' dim='
+  - Dim:             '1'
+  - String:          ''' for array '''
+  - Name:            qk
+  - String:          ''''
+  - String:          ' due to '
+  - String:          pipeline
+  - String:          ' pragma'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 22, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - PragmaType:      array_partition
+  - String:          ' '
+  - PragmaOptions:   'dim=2 type=complete  variable=qk'
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  attention
+  - String:          ' '
+  - varLoc:          'C:/Users/liuut/Desktop/Project/modules/attention.cpp:22:9'
+  - String:          ' '
+  - VarName:         qk
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoArrayXform
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 22, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inferring pragma '''
+  - PragmaType:      array_partition
+  - String:          ' type='
+  - Mode:            complete
+  - String:          ' dim='
+  - Dim:             '2'
+  - String:          ''' for array '''
+  - Name:            qk
+  - String:          ''''
+  - String:          ' due to '
+  - String:          pipeline
+  - String:          ' pragma'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 24, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - PragmaType:      array_partition
+  - String:          ' '
+  - PragmaOptions:   'dim=1 type=complete  variable=qk_scaled'
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  attention
+  - String:          ' '
+  - varLoc:          'C:/Users/liuut/Desktop/Project/modules/attention.cpp:24:9'
+  - String:          ' '
+  - VarName:         qk_scaled
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoArrayXform
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 24, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inferring pragma '''
+  - PragmaType:      array_partition
+  - String:          ' type='
+  - Mode:            complete
+  - String:          ' dim='
+  - Dim:             '1'
+  - String:          ''' for array '''
+  - Name:            qk_scaled
+  - String:          ''''
+  - String:          ' due to '
+  - String:          pipeline
+  - String:          ' pragma'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 24, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - PragmaType:      array_partition
+  - String:          ' '
+  - PragmaOptions:   'dim=2 type=complete  variable=qk_scaled'
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  attention
+  - String:          ' '
+  - varLoc:          'C:/Users/liuut/Desktop/Project/modules/attention.cpp:24:9'
+  - String:          ' '
+  - VarName:         qk_scaled
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoArrayXform
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 24, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inferring pragma '''
+  - PragmaType:      array_partition
+  - String:          ' type='
+  - Mode:            complete
+  - String:          ' dim='
+  - Dim:             '2'
+  - String:          ''' for array '''
+  - Name:            qk_scaled
+  - String:          ''''
+  - String:          ' due to '
+  - String:          pipeline
+  - String:          ' pragma'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 30, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - PragmaType:      array_partition
+  - String:          ' '
+  - PragmaOptions:   'dim=1 type=complete  variable=qk_scaled_exp'
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  attention
+  - String:          ' '
+  - varLoc:          'C:/Users/liuut/Desktop/Project/modules/attention.cpp:30:9'
+  - String:          ' '
+  - VarName:         qk_scaled_exp
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoArrayXform
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 30, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inferring pragma '''
+  - PragmaType:      array_partition
+  - String:          ' type='
+  - Mode:            complete
+  - String:          ' dim='
+  - Dim:             '1'
+  - String:          ''' for array '''
+  - Name:            qk_scaled_exp
+  - String:          ''''
+  - String:          ' due to '
+  - String:          pipeline
+  - String:          ' pragma'
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoParallelPerformanceDrivenVerbosePassed
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 30, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - PragmaType:      array_partition
+  - String:          ' '
+  - PragmaOptions:   'dim=2 type=complete  variable=qk_scaled_exp'
+  - String:          ' '
+  - PragmaIsAuto:    '1'
+  - String:          ' '
+  - PragmaFunction:  attention
+  - String:          ' '
+  - varLoc:          'C:/Users/liuut/Desktop/Project/modules/attention.cpp:30:9'
+  - String:          ' '
+  - VarName:         qk_scaled_exp
+  - String:          ' '
+...
+--- !Passed
+Pass:            reflow-auto-array-partition
+Name:            AutoArrayXform
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 30, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Inferring pragma '''
+  - PragmaType:      array_partition
+  - String:          ' type='
+  - Mode:            complete
+  - String:          ' dim='
+  - Dim:             '2'
+  - String:          ''' for array '''
+  - Name:            qk_scaled_exp
+  - String:          ''''
+  - String:          ' due to '
+  - String:          pipeline
+  - String:          ' pragma'
+...
+--- !Passed
+Pass:            reflow-array-partition
+Name:            ArrayXform
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 22, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Applying '
+  - String:          array_partition
+  - String:          ' to '''
+  - UOName:          qk
+  - String:          ''':'
+  - String:          ' '
+  - Mode:            Complete
+  - String:          ' partitioning'
+  - String:          ' on dimension '
+  - Dim:             '1'
+  - String:          .
+  - String:          ' '
+  - Mode:            Complete
+  - String:          ' partitioning'
+  - String:          ' on dimension '
+  - Dim:             '2'
+  - String:          .
+...
+--- !Passed
+Pass:            reflow-array-partition
+Name:            ArrayXform
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 24, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Applying '
+  - String:          array_partition
+  - String:          ' to '''
+  - UOName:          qk_scaled
+  - String:          ''':'
+  - String:          ' '
+  - Mode:            Complete
+  - String:          ' partitioning'
+  - String:          ' on dimension '
+  - Dim:             '1'
+  - String:          .
+  - String:          ' '
+  - Mode:            Complete
+  - String:          ' partitioning'
+  - String:          ' on dimension '
+  - Dim:             '2'
+  - String:          .
+...
+--- !Passed
+Pass:            reflow-array-partition
+Name:            ArrayXform
+DebugLoc:        { File: 'C:/Users/liuut/Desktop/Project/modules/attention.cpp', 
+                   Line: 30, Column: 9 }
+Function:        _Z9attentionPA3_iS0_S0_S0_i
+Args:            
+  - String:          'Applying '
+  - String:          array_partition
+  - String:          ' to '''
+  - UOName:          qk_scaled_exp
+  - String:          ''':'
+  - String:          ' '
+  - Mode:            Complete
+  - String:          ' partitioning'
+  - String:          ' on dimension '
+  - Dim:             '1'
+  - String:          .
+  - String:          ' '
+  - Mode:            Complete
+  - String:          ' partitioning'
+  - String:          ' on dimension '
+  - Dim:             '2'
+  - String:          .
 ...

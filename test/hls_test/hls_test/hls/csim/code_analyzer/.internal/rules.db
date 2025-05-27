@@ -70,11 +70,16 @@
         "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\syn_srcs.bc']": {
             "command": [
                 "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/llvm-link.exe",
-                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul.cpp.0.bc",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matadd.cpp.0.bc",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\attention.cpp.0.bc",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matmul.cpp.0.bc",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\maxval_1D.cpp.0.bc",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\softmax.cpp.0.bc",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\transpose.cpp.0.bc",
                 "-o",
                 "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\syn_srcs.bc"
             ],
-            "exectime": 0.051886558532714844,
+            "exectime": 0.4409952163696289,
             "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
         },
         "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\syn_srcs.opt.bc']": {
@@ -86,7 +91,7 @@
                 "-o",
                 "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\syn_srcs.opt.bc"
             ],
-            "exectime": 0.03792595863342285,
+            "exectime": 0.12599825859069824,
             "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
         },
         "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\app.exe']": {
@@ -94,11 +99,16 @@
                 "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang++.exe",
                 "-o",
                 "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\app.exe",
-                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul_tb.cpp.0.o",
-                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\mat_mul.cpp.0.o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\top_tb.cpp.0.o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\attention.cpp.0.o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matadd.cpp.0.o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matmul.cpp.0.o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\maxval_1D.cpp.0.o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\softmax.cpp.0.o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\transpose.cpp.0.o",
                 "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\syn_srcs.opt.bc",
                 "-fhls",
-                "-fhlstoplevel=mat_mul",
+                "-fhlstoplevel=attention",
                 "-LC:\\Xilinx\\Vitis\\2024.2\\win64\\tools\\dds_v6_0",
                 "-lIp_dds_compiler_v6_0_bitacc_cmodel",
                 "-LC:\\Xilinx\\Vitis\\2024.2\\win64\\tools\\fft_v9_1",
@@ -125,7 +135,7 @@
                 "-fslxpthreads",
                 "-lpthread"
             ],
-            "exectime": 0.34662365913391113,
+            "exectime": 0.75284743309021,
             "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
         },
         "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\instrument\\\\app_0\\\\hls_ir_info.json']": {
@@ -136,9 +146,9 @@
                 "--json-output",
                 "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_0\\hls_ir_info.json",
                 "--hw-function",
-                "mat_mul"
+                "attention"
             ],
-            "exectime": 0.03319048881530762,
+            "exectime": 0.11144757270812988,
             "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
         },
         "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\instrument\\\\app_0\\\\binary_dependencies.json']": {
@@ -149,14 +159,14 @@
                 "--reuse-filemanager=false",
                 "--output=C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_0\\binary_dependencies.json"
             ],
-            "exectime": 0.04991340637207031,
+            "exectime": 0.20733261108398438,
             "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
         },
         "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\bin\\\\.tracing_stdout.txt', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\bin\\\\.tracing_stderr.txt']": {
             "command": [
                 "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\app.exe"
             ],
-            "exectime": 0.06386709213256836,
+            "exectime": 0.41126227378845215,
             "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\tracing\\csim\\build"
         },
         "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\instrument\\\\app_0\\\\annotated.bc']": {
@@ -171,11 +181,11 @@
                 "-staticFile",
                 "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_0\\static.xml",
                 "-traceFile",
-                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\profiler\\0\\app_0_2\\thread0000-trace.txt",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\profiler\\0\\app_0_6\\thread0000-trace.txt",
                 "-o",
                 "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_0\\annotated.bc"
             ],
-            "exectime": 0.07310223579406738,
+            "exectime": 0.19045758247375488,
             "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
         },
         "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\dataflow\\\\0\\\\taskgraph.json']": {
@@ -460,6 +470,425 @@
             ],
             "exectime": 0.8040070533752441,
             "cwd": "D:\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matadd.cpp.0.bc', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matadd.cpp.0.bc.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-emit-llvm",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matadd.cpp.0.bc.d",
+                "-fhls",
+                "-hls-syn-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\autopilot",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-hls-clock-period=3.333",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/matadd.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matadd.cpp.0.bc"
+            ],
+            "exectime": 0.16318678855895996,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matadd_tb.cpp.0.o', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matadd_tb.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matadd_tb.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=matadd",
+                "C:/Users/liuut/Desktop/Project/modules/matadd_tb.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matadd_tb.cpp.0.o"
+            ],
+            "exectime": 0.6535744667053223,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matadd.cpp.0.o', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matadd.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matadd.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/matadd.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matadd.cpp.0.o"
+            ],
+            "exectime": 0.10600018501281738,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\instrument\\\\app_1\\\\binary_dependencies.json']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\libexec\\clang-scan-deps.exe",
+                "--compilation-database=C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\compile_commands.json",
+                "--format=vitiscxx",
+                "--reuse-filemanager=false",
+                "--output=C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_1\\binary_dependencies.json"
+            ],
+            "exectime": 0.09556794166564941,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\dataflow\\\\1\\\\taskgraph.json']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/parallelismSelector.exe",
+                "--basepath",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test",
+                "--fpga-part",
+                "xcu50-fsvh2104-2-e",
+                "--device-totals",
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\platform\\logic\\fpga.devicetotals",
+                "--clock-frequency",
+                "300.03000300030004",
+                "--out-dir",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\output",
+                "--log-dir",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\log",
+                "--objective",
+                "none",
+                "--performance-target",
+                "target_both",
+                "--max-array-optimization-factor",
+                "1024",
+                "--complete-partition-limit",
+                "4",
+                "--lut-constraint",
+                "100.0",
+                "--ff-constraint",
+                "100.0",
+                "--dsp-constraint",
+                "100.0",
+                "--bram-constraint",
+                "100.0",
+                "--uram-constraint",
+                "100.0",
+                "--max-iterations",
+                "1000",
+                "--max-iterations-branch-full-log",
+                "20",
+                "--ir-module",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_0\\annotated.bc",
+                "--df-id",
+                "1",
+                "--df-target",
+                "%F211"
+            ],
+            "exectime": 1.194014310836792,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\attention.cpp.0.bc', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\attention.cpp.0.bc.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-emit-llvm",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\attention.cpp.0.bc.d",
+                "-fhls",
+                "-hls-syn-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\autopilot",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-hls-clock-period=3.333",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/attention.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\attention.cpp.0.bc"
+            ],
+            "exectime": 0.15298795700073242,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matmul.cpp.0.bc', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matmul.cpp.0.bc.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-emit-llvm",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matmul.cpp.0.bc.d",
+                "-fhls",
+                "-hls-syn-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\autopilot",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-hls-clock-period=3.333",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/matmul.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matmul.cpp.0.bc"
+            ],
+            "exectime": 0.12096405029296875,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\maxval_1D.cpp.0.bc', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\maxval_1D.cpp.0.bc.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-emit-llvm",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\maxval_1D.cpp.0.bc.d",
+                "-fhls",
+                "-hls-syn-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\autopilot",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-hls-clock-period=3.333",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/maxval_1D.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\maxval_1D.cpp.0.bc"
+            ],
+            "exectime": 0.09499931335449219,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\softmax.cpp.0.bc', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\softmax.cpp.0.bc.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-emit-llvm",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\softmax.cpp.0.bc.d",
+                "-fhls",
+                "-hls-syn-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\autopilot",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-hls-clock-period=3.333",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/softmax.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\softmax.cpp.0.bc"
+            ],
+            "exectime": 0.17000818252563477,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\transpose.cpp.0.bc', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\transpose.cpp.0.bc.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-emit-llvm",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\transpose.cpp.0.bc.d",
+                "-fhls",
+                "-hls-syn-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\autopilot",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-hls-clock-period=3.333",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/transpose.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\transpose.cpp.0.bc"
+            ],
+            "exectime": 0.10299921035766602,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\top_tb.cpp.0.o', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\top_tb.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\top_tb.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/testbenches/top_tb.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\top_tb.cpp.0.o"
+            ],
+            "exectime": 0.4759984016418457,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\attention.cpp.0.o', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\attention.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\attention.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/attention.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\attention.cpp.0.o"
+            ],
+            "exectime": 0.15020179748535156,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matmul.cpp.0.o', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\matmul.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matmul.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/matmul.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\matmul.cpp.0.o"
+            ],
+            "exectime": 0.10999870300292969,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\maxval_1D.cpp.0.o', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\maxval_1D.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\maxval_1D.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/maxval_1D.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\maxval_1D.cpp.0.o"
+            ],
+            "exectime": 0.11600589752197266,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\softmax.cpp.0.o', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\softmax.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\softmax.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/softmax.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\softmax.cpp.0.o"
+            ],
+            "exectime": 0.1335597038269043,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\transpose.cpp.0.o', 'C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\build\\\\transpose.cpp.0.o.d']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/clang.exe",
+                "-c",
+                "-MD",
+                "-MF",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\transpose.cpp.0.o.d",
+                "-fhls-tb",
+                "-hls-sim-headers-dir=c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\include",
+                "-vitis-hls=C:\\Xilinx\\Vitis\\2024.2",
+                "--sysroot=C:\\Xilinx\\Vitis\\2024.2\\tps\\mingw\\10.0.0\\win64.o\\nt",
+                "-fslxtrace",
+                "-fslx-compile-mode",
+                "-fslxskipfunctionbody",
+                "-fhlstoplevel=attention",
+                "C:/Users/liuut/Desktop/Project/modules/transpose.cpp",
+                "-o",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\build\\transpose.cpp.0.o"
+            ],
+            "exectime": 0.11900138854980469,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
+        },
+        "['C:\\\\Users\\\\liuut\\\\Desktop\\\\Project\\\\test\\\\hls_test\\\\hls_test\\\\hls\\\\csim\\\\code_analyzer\\\\.internal\\\\dataflow\\\\2\\\\taskgraph.json']": {
+            "command": [
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\/libexec/parallelismSelector.exe",
+                "--basepath",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test",
+                "--fpga-part",
+                "xcu50-fsvh2104-2-e",
+                "--device-totals",
+                "c:\\xilinx\\vitis\\2024.2\\vcxx\\data\\platform\\logic\\fpga.devicetotals",
+                "--clock-frequency",
+                "300.03000300030004",
+                "--out-dir",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\output",
+                "--log-dir",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\log",
+                "--objective",
+                "none",
+                "--performance-target",
+                "target_both",
+                "--max-array-optimization-factor",
+                "1024",
+                "--complete-partition-limit",
+                "4",
+                "--lut-constraint",
+                "100.0",
+                "--ff-constraint",
+                "100.0",
+                "--dsp-constraint",
+                "100.0",
+                "--bram-constraint",
+                "100.0",
+                "--uram-constraint",
+                "100.0",
+                "--max-iterations",
+                "1000",
+                "--max-iterations-branch-full-log",
+                "20",
+                "--ir-module",
+                "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test\\hls_test\\hls\\csim\\code_analyzer\\.internal\\instrument\\app_0\\annotated.bc",
+                "--df-id",
+                "2",
+                "--df-target",
+                "%F212"
+            ],
+            "exectime": 1.3453764915466309,
+            "cwd": "C:\\Users\\liuut\\Desktop\\Project\\test\\hls_test"
         }
     }
 }

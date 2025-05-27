@@ -1,0 +1,55 @@
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:167:2: warning: Added loop label VITIS_LOOP_11_1:   [xilinx-label-all-loops]
+ for (int i = 0; i < M; i++) {
+ ^~~
+ VITIS_LOOP_11_1: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:167:2: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:168:9: warning: Added loop label VITIS_LOOP_12_2:   [xilinx-label-all-loops]
+        for (int j = 0; j < N; j++) {
+        ^~~
+        VITIS_LOOP_12_2: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:168:9: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:182:2: warning: Added loop label VITIS_LOOP_8_1:   [xilinx-label-all-loops]
+ for (int i = 0; i < M; i++) {
+ ^~~
+ VITIS_LOOP_8_1: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:182:2: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:183:9: warning: Added loop label VITIS_LOOP_9_2:   [xilinx-label-all-loops]
+        for (int j = 0; j < N; j++) {
+        ^~~
+        VITIS_LOOP_9_2: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:183:9: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:185:13: warning: Added loop label VITIS_LOOP_11_3:   [xilinx-label-all-loops]
+            for (int k = 0; k < K; k++) {
+            ^~~
+            VITIS_LOOP_11_3: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:185:13: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:201:2: warning: Added loop label VITIS_LOOP_7_1:   [xilinx-label-all-loops]
+ for (int i = 0; i < M; i++) {
+ ^~~
+ VITIS_LOOP_7_1: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:201:2: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:202:9: warning: Added loop label VITIS_LOOP_8_2:   [xilinx-label-all-loops]
+        for (int j = 0; j < N; j++) {
+        ^~~
+        VITIS_LOOP_8_2: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:202:9: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:3603:5: warning: Added loop label VITIS_LOOP_25_1:   [xilinx-label-all-loops]
+    for (int i = 0; i < 2; i++) {
+    ^~~
+    VITIS_LOOP_25_1: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:3603:5: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:3604:9: warning: Added loop label VITIS_LOOP_26_2:   [xilinx-label-all-loops]
+        for (int j = 0; j < 2; j++) {
+        ^~~
+        VITIS_LOOP_26_2: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:3604:9: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:3609:5: warning: Added loop label VITIS_LOOP_31_3:   [xilinx-label-all-loops]
+    for (int i = 0; i < 2; i++) {
+    ^~~
+    VITIS_LOOP_31_3: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:3609:5: note: FIX-IT applied suggested code changes
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:3610:9: warning: Added loop label VITIS_LOOP_32_4:   [xilinx-label-all-loops]
+        for (int j = 0; j < 2; j++) {
+        ^~~
+        VITIS_LOOP_32_4: 
+C:\Users\liuut\Desktop\Project\test\hls_test\hls_test\hls\.autopilot\db\attention.pp.0.cpp:3610:9: note: FIX-IT applied suggested code changes
