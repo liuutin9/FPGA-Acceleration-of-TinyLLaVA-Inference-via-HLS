@@ -1,3 +1,5 @@
+#include "transformer.hpp"
+
 template <int M, int K, int N>
 void matmul(int out[M][N], int in1[M][K], int in2[K][N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite

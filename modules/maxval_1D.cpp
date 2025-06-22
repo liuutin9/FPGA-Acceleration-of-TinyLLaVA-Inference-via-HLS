@@ -1,3 +1,5 @@
+#include "transformer.hpp"
+
 template <int N>
 void maxval_1D(int* max_val, int in[N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite bundle=CTRL

@@ -1,3 +1,5 @@
+#include "transformer.hpp"
+
 template <int M, int N>
 void transpose(int out[N][M], int in[M][N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite
