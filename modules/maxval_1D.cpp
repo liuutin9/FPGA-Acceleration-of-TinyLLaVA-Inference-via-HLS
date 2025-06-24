@@ -1,7 +1,7 @@
 #include "transformer.hpp"
 
-template <int N>
-void maxval_1D(int* max_val, int in[N]) {
+template <int N, class T>
+void maxval_1D(T* max_val, T in[N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite bundle=CTRL
     #pragma HLS INTERFACE port=max_val mode=s_axilite bundle=CTRL
     #pragma HLS INTERFACE port=in mode=bram

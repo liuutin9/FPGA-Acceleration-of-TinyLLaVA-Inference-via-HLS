@@ -1,8 +1,8 @@
 #include "transformer.hpp"
 #include <cmath>
 
-template <int M, int N>
-void relu(int out[M][N], int in[M][N]) {
+template <int M, int N, class T>
+void relu(T out[M][N], T in[M][N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite
     #pragma HLS INTERFACE port=out mode=bram
     #pragma HLS INTERFACE port=in mode=bram

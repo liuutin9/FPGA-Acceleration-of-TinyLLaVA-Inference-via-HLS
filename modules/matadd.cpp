@@ -1,7 +1,7 @@
 #include "transformer.hpp"
 
-template <int M, int N>
-void matadd(int out[M][N], int in1[M][N], int in2[M][N]) {
+template <int M, int N, class T>
+void matadd(T out[M][N], T in1[M][N], T in2[M][N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite
     #pragma HLS INTERFACE port=out mode=bram
     #pragma HLS INTERFACE port=in1 mode=bram

@@ -1,7 +1,7 @@
 #include "transformer.hpp"
 
-template <int M, int N>
-void transpose(int out[N][M], int in[M][N]) {
+template <int M, int N, class T>
+void transpose(T out[N][M], T in[M][N]) {
     #pragma HLS INTERFACE port=return mode=s_axilite
     #pragma HLS INTERFACE port=out mode=bram
     #pragma HLS INTERFACE port=in mode=bram
