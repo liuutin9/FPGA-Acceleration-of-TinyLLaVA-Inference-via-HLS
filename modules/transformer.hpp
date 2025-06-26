@@ -30,3 +30,6 @@ void feed_forward(T out[M][N], T in_x[M][N], T in_w1[N][4 * N], T in_w2[4 * N][N
 
 template <int M, int N, class T>
 void relu(T out[M][N], T in[M][N]);
+
+template <int M, int N, class T>
+void elementwise_mul(T out[M][N], T in[M][N], double in_scaling);
