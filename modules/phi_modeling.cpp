@@ -110,6 +110,7 @@ void eager_attention_forward(
         }
     }
 
+    // shape 1, 2 transpose for attn_output
     for (int i = 0; i < batch; i++) {
         for (int j = 0; j < num_key_value_heads * n_rep_k; j++) {
             for (int k = 0; k < slen; k++) {
@@ -120,4 +121,40 @@ void eager_attention_forward(
         }
     }
     
+}
+
+template<int batch, int num_key_value_heads, int slen, int head_dim, class T>
+void PhiAttention_forward(
+    bool qk_layernorm
+) {
+    T hidden_states;
+
+    // cast to the shape of hidden_states and transpose 1, 2
+    T query_states;
+    T key_states;
+    T value_states;
+
+    if (qk_layernorm) {
+        // do layernorm to q, k
+    }
+
+    T cos, sin;
+    int rotary_dim; // < -> rotate, > -> do nothing
+    apply_rotary_pos_emb<batch, num_key_value_heads, slen, rotary_dim, T>();
+
+    // 接回去
+
+    // kv_cache
+    bool past_key_value;
+
+    // attention 實作選擇：eager_attention_forward, flash_attention_2, sdpa
+
+    // 進 attention，拿出 attn_output, attn_weights
+    int n_rep_k, n_rep_v;
+    eager_attention_forward<batch, num_key_value_heads, slen, head_dim, n_rep_k, n_rep_v, T>();
+
+    // attn_output 進 Linear
+
+    // 回傳 attn_output, attn_weights
+
 }
