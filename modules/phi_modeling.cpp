@@ -1,12 +1,12 @@
 #include <string.h>
 #include "transformer.hpp"
 
-template<int batch, int num_key_value_heads, int slen, int head_dim, class T>
+template<int batch, int num_key_value_heads, int slen, int rotary_dim, class T>
 void rotate_half(
-    T out[batch][num_key_value_heads][slen][head_dim],
-    T hidden_states[batch][num_key_value_heads][slen][head_dim]
+    T out[batch][num_key_value_heads][slen][rotary_dim],
+    T hidden_states[batch][num_key_value_heads][slen][rotary_dim]
 ) {
-    int half_dim = head_dim / 2;
+    int half_dim = rotary_dim / 2;
     for (int i = 0; i < batch; i++) {
         for (int j = 0; j < num_key_value_heads; j++) {
             for (int k = 0; k < slen; k++) {
@@ -19,23 +19,23 @@ void rotate_half(
     }
 }
 
-template<int batch, int num_key_value_heads, int slen, int head_dim, class T>
+template<int batch, int num_key_value_heads, int slen, int rotary_dim, class T>
 void apply_rotary_pos_emb(
-    T out_q_embed[batch][num_key_value_heads][slen][head_dim],
-    T out_k_embed[batch][num_key_value_heads][slen][head_dim],
-    T in_q[batch][num_key_value_heads][slen][head_dim],
-    T in_k[batch][num_key_value_heads][slen][head_dim],
-    T in_cos[batch][slen][head_dim],
-    T in_sin[batch][slen][head_dim]
+    T out_q_embed[batch][num_key_value_heads][slen][rotary_dim],
+    T out_k_embed[batch][num_key_value_heads][slen][rotary_dim],
+    T in_q[batch][num_key_value_heads][slen][rotary_dim],
+    T in_k[batch][num_key_value_heads][slen][rotary_dim],
+    T in_cos[batch][slen][rotary_dim],
+    T in_sin[batch][slen][rotary_dim]
 ) {
-    T rotate_half_q[batch][num_key_value_heads][slen][head_dim];
-    T rotate_half_k[batch][num_key_value_heads][slen][head_dim];
-    rotate_half<batch, num_key_value_heads, slen, head_dim, T>(rotate_half_q, in_q);
-    rotate_half<batch, num_key_value_heads, slen, head_dim, T>(rotate_half_k, in_k);
+    T rotate_half_q[batch][num_key_value_heads][slen][rotary_dim];
+    T rotate_half_k[batch][num_key_value_heads][slen][rotary_dim];
+    rotate_half<batch, num_key_value_heads, slen, rotary_dim, T>(rotate_half_q, in_q);
+    rotate_half<batch, num_key_value_heads, slen, rotary_dim, T>(rotate_half_k, in_k);
     for (int i = 0; i < batch; i++) {
         for (int j = 0; j < num_key_value_heads; j++) {
             for (int k = 0; k < slen; k++) {
-                for (int l = 0; l < head_dim; l++) {
+                for (int l = 0; l < rotary_dim; l++) {
                     out_q_embed[i][j][k][j] = in_q[i][j][k][l] * in_cos[i][k][l];
                     out_k_embed[i][j][k][j] = in_k[i][j][k][l] * in_cos[i][k][l];
                     out_q_embed[i][j][k][j] += rotate_half_q[i][j][k][l] * in_sin[i][k][l];
@@ -70,8 +70,8 @@ void repeat_kv(
 // TODO: Have not implemented causal mask
 template<int batch, int num_key_value_heads, int slen, int head_dim, int n_rep_k, int n_rep_v, class T>
 void eager_attention_forward(
-    T out_attn_output[batch][num_key_value_heads * n_rep_k][slen][slen],
-    T out_attn_weights[batch][num_key_value_heads * n_rep_k][slen][head_dim],
+    T out_attn_output[batch][slen][num_key_value_heads * n_rep_k][head_dim],
+    T out_attn_weights[batch][num_key_value_heads * n_rep_k][slen][slen],
     T in_q[batch][num_key_value_heads][slen][head_dim],
     T in_k[batch][num_key_value_heads][slen][head_dim],
     T in_v[batch][num_key_value_heads][slen][head_dim],
@@ -81,8 +81,8 @@ void eager_attention_forward(
     T repeated_v[batch][num_key_value_heads * n_rep_v][slen][head_dim];
     repeat_kv<batch, num_key_value_heads, slen, head_dim, n_rep_k>(repeated_k, in_k);
     repeat_kv<batch, num_key_value_heads, slen, head_dim, n_rep_v>(repeated_v, in_v);
+    T attn_output[batch][num_key_value_heads * n_rep_k][slen][head_dim];
     T attn_weights[batch][num_key_value_heads * n_rep_k][slen][slen];
-    T attn_output[batch][num_key_value_heads * n_rep_k][slen][slen];
     for (int i = 0; i < batch; i++) {
         for (int j = 0; j < num_key_value_heads; j++) {
             for (int k = 0; k < n_rep_k; k++) {
@@ -112,8 +112,8 @@ void eager_attention_forward(
 
     // shape 1, 2 transpose for attn_output
     for (int i = 0; i < batch; i++) {
-        for (int j = 0; j < num_key_value_heads * n_rep_k; j++) {
-            for (int k = 0; k < slen; k++) {
+        for (int j = 0; j < slen; j++) {
+            for (int k = 0; k < num_key_value_heads * n_rep_k; k++) {
                 for (int l = 0; l < head_dim; l++) {
                     out_attn_output[i][j][k][l] = attn_output[i][k][j][l];
                 }
@@ -123,38 +123,119 @@ void eager_attention_forward(
     
 }
 
-template<int batch, int num_key_value_heads, int slen, int head_dim, class T>
+template<int batch, int num_key_value_heads, int slen, int head_dim, int hidden_size, int n_rep, class T>
 void PhiAttention_forward(
-    bool qk_layernorm
+    bool qk_layernorm,
+    T hidden_states[batch][slen][hidden_size],
+    T out_attn_output[batch][slen][num_key_value_heads * n_rep * head_dim],
+    T out_attn_weights[batch][num_key_value_heads * n_rep][slen][slen]
 ) {
-    T hidden_states;
+    T linear_q[batch][slen][num_key_value_heads * head_dim];
+    T linear_k[batch][slen][num_key_value_heads * head_dim];
+    T linear_v[batch][slen][num_key_value_heads * head_dim];
 
-    // cast to the shape of hidden_states and transpose 1, 2
-    T query_states;
-    T key_states;
-    T value_states;
+    T wq[num_key_value_heads * head_dim][hidden_size] = {0};
+    T wk[num_key_value_heads * head_dim][hidden_size] = {0};
+    T wv[num_key_value_heads * head_dim][hidden_size] = {0};
+    T b[num_key_value_heads * head_dim] = {0};
 
-    if (qk_layernorm) {
-        // do layernorm to q, k
+    for (int i = 0; i < batch; i++) {
+        linear<hidden_size, num_key_value_heads * head_dim, slen>(linear_q, hidden_states, wq, b);
+        linear<hidden_size, num_key_value_heads * head_dim, slen>(linear_k, hidden_states, wk, b);
+        linear<hidden_size, num_key_value_heads * head_dim, slen>(linear_v, hidden_states, wv, b);
     }
 
-    T cos, sin;
-    int rotary_dim; // < -> rotate, > -> do nothing
-    apply_rotary_pos_emb<batch, num_key_value_heads, slen, rotary_dim, T>();
+    // T reshaped_q[batch][slen][num_key_value_heads][head_dim];
+    // T reshaped_k[batch][slen][num_key_value_heads][head_dim];
+    // T reshaped_v[batch][slen][num_key_value_heads][head_dim];
+
+    // memcpy(reshaped_q, linear_q, sizeof(T) * batch * slen * num_key_value_heads * head_dim);
+    // memcpy(reshaped_k, linear_k, sizeof(T) * batch * slen * num_key_value_heads * head_dim);
+    // memcpy(reshaped_v, linear_v, sizeof(T) * batch * slen * num_key_value_heads * head_dim);
+
+    T query_states[batch][num_key_value_heads][slen][head_dim];
+    T key_states[batch][num_key_value_heads][slen][head_dim];
+    T value_states[batch][num_key_value_heads][slen][head_dim];
+
+    // transpose 1, 2
+    for (int i = 0; i < batch; i++) {
+        for (int j = 0; j < num_key_value_heads; j++) {
+            for (int k = 0; k < slen; k++) {
+                for (int l = 0; l < head_dim; l++) {
+                    query_states[i][j][k][l] = linear_q[i][k][j * head_dim + l];
+                    key_states[i][j][k][l] = linear_k[i][k][j * head_dim + l];
+                    value_states[i][j][k][l] = linear_v[i][k][j * head_dim + l];
+                }
+            }
+        }
+    }
+
+    if (qk_layernorm) {
+        T tmp_q[batch][num_key_value_heads][slen][head_dim];
+        T tmp_k[batch][num_key_value_heads][slen][head_dim];
+        memcpy(tmp_q, query_states, sizeof(T) * batch * num_key_value_heads * slen * head_dim);
+        memcpy(tmp_k, key_states, sizeof(T) * batch * num_key_value_heads * slen * head_dim);
+        for (int i = 0; i < batch; i++) {
+            for (int j = 0; j < num_key_value_heads; j++) {
+                layer_norm<slen, head_dim>(query_states, tmp_q);
+                layer_norm<slen, head_dim>(key_states, tmp_k);
+            }
+        }
+    }
+
+    int rotary_dim = head_dim / 2; // < -> rotate, > -> do nothing = (int(self.head_dim * config.partial_rotary_factor))
+    T cos[batch][slen][rotary_dim] = {0};
+    T sin[batch][slen][rotary_dim] = {0};
+    T rotary_q[batch][num_key_value_heads][slen][rotary_dim];
+    T rotary_k[batch][num_key_value_heads][slen][rotary_dim];
+    T embed_q[batch][num_key_value_heads][slen][rotary_dim];
+    T embed_k[batch][num_key_value_heads][slen][rotary_dim];
+
+    for (int i = 0; i < batch; i++) {
+        for (int j = 0; j < num_key_value_heads; j++) {
+            for (int k = 0; k < slen; k++) {
+                for (int l = 0; l < rotary_dim; l++) {
+                    rotary_q[i][j][k][l] = query_states[i][j][k][l];
+                    rotary_k[i][j][k][l] = key_states[i][j][k][l];
+                }
+            }
+        }
+    }
+
+    apply_rotary_pos_emb<batch, num_key_value_heads, slen, rotary_dim, T>(embed_q, embed_k, rotary_q, rotary_k, cos, sin);
 
     // 接回去
+    for (int i = 0; i < batch; i++) {
+        for (int j = 0; j < num_key_value_heads; j++) {
+            for (int k = 0; k < slen; k++) {
+                for (int l = 0; l < rotary_dim; l++) {
+                    query_states[i][j][k][l] = embed_q[i][j][k][l];
+                    key_states[i][j][k][l] = embed_k[i][j][k][l];
+                }
+            }
+        }
+    }
 
-    // kv_cache
+    // TODO kv_cache
     bool past_key_value;
 
     // attention 實作選擇：eager_attention_forward, flash_attention_2, sdpa
 
     // 進 attention，拿出 attn_output, attn_weights
-    int n_rep_k, n_rep_v;
-    eager_attention_forward<batch, num_key_value_heads, slen, head_dim, n_rep_k, n_rep_v, T>();
+    // int n_rep_k, n_rep_v;
+    double scaling = 1.0;
+    T attn_output[batch][slen][num_key_value_heads * n_rep][head_dim];
+    // T attn_weights[batch][num_key_value_heads * n_rep][slen][slen];
+    eager_attention_forward<batch, num_key_value_heads, slen, head_dim, n_rep, n_rep, T>(attn_output, out_attn_weights, query_states, key_states, value_states, scaling);
 
     // attn_output 進 Linear
-
+    T reshaped_attn_output[batch][slen][num_key_value_heads * n_rep * head_dim];
+    T wo[num_key_value_heads * n_rep * head_dim][slen] = {0};
+    T bo[num_key_value_heads * n_rep * head_dim] = {0};
+    memcpy(reshaped_attn_output, attn_output, sizeof(T) * batch * slen * num_key_value_heads * n_rep * head_dim);
+    for (int i = 0; i < batch; i++) {
+        linear<slen, num_key_value_heads * n_rep * head_dim>(out_attn_output, reshaped_attn_output, wo, bo);
+    }
     // 回傳 attn_output, attn_weights
 
 }

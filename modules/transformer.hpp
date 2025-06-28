@@ -33,3 +33,6 @@ void relu(T out[M][N], T in[M][N]);
 
 template <int M, int N, class T>
 void elementwise_mul(T out[M][N], T in[M][N], double in_scaling);
+
+template <int in_features, int out_features, int n_samples, class T>
+void linear(T out[n_samples][out_features], T in[n_samples][in_features], T weight[out_features][in_features], T bias[out_features]);
