@@ -20,6 +20,7 @@
 #define ROPE_SCALING null
 #define ROPE_THETA 10000.0
 #define ROTARY_DIM 32 // HEAD_DIM * PARTIAL_ROTARY_FACTOR
+#define SLEN 2048 // 最大序列長度
 #define TIE_WORD_EMBEDDINGS false
 #define TORCH_DTYPE_FLOAT16 // 使用特殊處理
 #define TRANSFORMERS_VERSION_4_37_0 // 使用特殊處理
