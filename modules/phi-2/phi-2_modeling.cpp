@@ -98,7 +98,7 @@ void eager_attention_forward(
         matadd<SLEN, SLEN, float>(unsoftmax_attn_weights[i], unmasked_attn_weights[i], in_attention_mask[i]);
     }
 
-    // softmax
+    // softmax 會擴成 32-bit 去算
     for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
         softmax<SLEN, SLEN>(out_attn_weights[i], unsoftmax_attn_weights[i]);
     }
