@@ -1,3 +1,5 @@
+// phi-2 config
+
 #define ATTENTION_DROPOUT 0.0
 #define BOS_TOKEN_ID 50256
 #define EMBD_DROPOUT 0.0
@@ -26,3 +28,7 @@
 #define TRANSFORMERS_VERSION_4_37_0 // 使用特殊處理
 #define USE_CACHE true
 #define VOCAB_SIZE 51200
+
+// pretrained config
+#define OUTPUT_HIDDEN_STATES false
+#define OUTPUT_ATTENTIONS false
