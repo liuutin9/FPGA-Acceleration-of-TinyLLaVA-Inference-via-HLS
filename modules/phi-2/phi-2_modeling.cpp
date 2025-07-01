@@ -1,7 +1,7 @@
 #include <string.h>
 #include <hls_math.h>
 #include <ap_fixed.h>
-#include "../basic/transformer.hpp"
+#include "../utils/transformer.hpp"
 #include "./phi-2_config.hpp"
 
 void rotate_half(
