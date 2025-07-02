@@ -220,7 +220,7 @@ void PhiAttention_forward(
     // attention 實作可選擇：eager_attention_forward, flash_attention_2, sdpa
 
     // 進 attention，拿出 attn_output, attn_weights
-    float scaling = 1.0;
+    float scaling = hls::sqrt(HEAD_DIM);
     float attn_output[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM];
     eager_attention_forward(attn_output, out_attn_weights, query_states, key_states, value_states, in_attention_mask, scaling);
 
