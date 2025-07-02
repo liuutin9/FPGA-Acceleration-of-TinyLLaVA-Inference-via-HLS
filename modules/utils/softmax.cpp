@@ -10,7 +10,7 @@ void softmax(float out[M][N], float in[M][N]) {
 
     for (int i = 0; i < M; i++) {
         float max_val = in[i][0];
-        maxval_1D(&max_val, in[i]);
+        maxval_1D<N, float>(&max_val, in[i]);
         float sum_exp = 0;
         for (int j = 0; j < N; j++) {
             out[i][j] = hls::exp(in[i][j] - max_val);

@@ -401,6 +401,12 @@ void PhiForCausalLM_forward(
     int input_ids[SLEN],
     float past_key_values[NUM_HIDDEN_LAYERS][NUM_ATTENTION_HEADS][SLEN][HEAD_DIM] // cache
 ) {
+    #pragma HLS INTERFACE port=return mode=s_axilite
+    #pragma HLS INTERFACE port=out_logits mode=bram
+    #pragma HLS INTERFACE port=out_past_key_values mode=bram
+    #pragma HLS INTERFACE port=input_ids mode=bram
+    #pragma HLS INTERFACE port=past_key_values mode=bram
+
     float last_hidden_state[SLEN][HIDDEN_SIZE];
     PhiModel_forward(last_hidden_state, out_past_key_values, input_ids, past_key_values);
 
