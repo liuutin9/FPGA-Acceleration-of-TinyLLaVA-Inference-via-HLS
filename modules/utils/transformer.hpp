@@ -182,3 +182,18 @@ void rms_norm(float out[N][M], float in[N][M], float gamma[M]) {
         }
     }
 }
+
+template<int N, class T>
+void argmax(
+    int* out,
+    T arr[N]
+) {
+    *out = 0;
+    T max = arr[0];
+    for (int i = 1; i < N; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+            *out = i;
+        }
+    }
+}

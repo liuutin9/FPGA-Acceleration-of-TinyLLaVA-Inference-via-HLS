@@ -404,24 +404,35 @@ void PhiModel_forward(
 }
 
 void PhiForCausalLM_forward(
-    float out_logits[SLEN][VOCAB_SIZE],
+    int output_ids[SLEN],
     float out_past_key_values[NUM_HIDDEN_LAYERS][NUM_ATTENTION_HEADS][SLEN][HEAD_DIM],
     int input_ids[SLEN],
-    float past_key_values[NUM_HIDDEN_LAYERS][NUM_ATTENTION_HEADS][SLEN][HEAD_DIM] // cache
+    float past_key_values[NUM_HIDDEN_LAYERS][NUM_ATTENTION_HEADS][SLEN][HEAD_DIM], // cache
+    int curr_len
 ) {
-    #pragma HLS INTERFACE port=return mode=s_axilite
-    #pragma HLS INTERFACE port=out_logits mode=bram
-    #pragma HLS INTERFACE port=out_past_key_values mode=bram
-    #pragma HLS INTERFACE port=input_ids mode=bram
-    #pragma HLS INTERFACE port=past_key_values mode=bram
+    // #pragma HLS INTERFACE port=return mode=s_axilite
+    // #pragma HLS INTERFACE port=output_ids mode=bram
+    // #pragma HLS INTERFACE port=out_past_key_values mode=bram
+    // #pragma HLS INTERFACE port=input_ids mode=bram
+    // #pragma HLS INTERFACE port=past_key_values mode=bram
 
-    float last_hidden_state[SLEN][HIDDEN_SIZE];
-    PhiModel_forward(last_hidden_state, out_past_key_values, input_ids, past_key_values);
+    while (curr_len < SLEN) {
+        float last_hidden_state[SLEN][HIDDEN_SIZE];
+        PhiModel_forward(last_hidden_state, out_past_key_values, input_ids, past_key_values);
 
-    // flag: load_weight
-    float language_model_lm_head_weight[VOCAB_SIZE][HIDDEN_SIZE];
-    float language_model_lm_head_bias[VOCAB_SIZE];
-    linear<HIDDEN_SIZE, VOCAB_SIZE, SLEN, float>(out_logits, last_hidden_state, language_model_lm_head_weight, language_model_lm_head_bias);
+        // flag: load_weight
+        float language_model_lm_head_weight[VOCAB_SIZE][HIDDEN_SIZE];
+        float language_model_lm_head_bias[VOCAB_SIZE];
+        float logits[SLEN][VOCAB_SIZE];
+        linear<HIDDEN_SIZE, VOCAB_SIZE, SLEN, float>(logits, last_hidden_state, language_model_lm_head_weight, language_model_lm_head_bias);
+        for (int i = 0; i < SLEN; i++) {
+            argmax<VOCAB_SIZE>(&output_ids[i], logits[i]);
+        }
+        curr_len++;
+        if (curr_len < SLEN) {
+            memcpy(input_ids, output_ids, sizeof(int) * SLEN);
+        }
+    }
 }
 
 // 算完之後的值應該就固定了，可能可以寫死
