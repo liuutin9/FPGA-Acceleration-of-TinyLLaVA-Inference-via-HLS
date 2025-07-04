@@ -86,7 +86,7 @@ void layer_norm(
     float out[M][N],
     float in[M][N],
     float eps,
-    float weight[M][N],
+    float weight[N],
     float bias[N]
 ) {
 
@@ -117,7 +117,7 @@ void layer_norm(
         // Step 3: 標準化
         for (int j = 0; j < N; j++) {
             #pragma HLS UNROLL
-            out[i][j] = (in[i][j] - mean) * stddev_inv * weight[i][j] + bias[j];
+            out[i][j] = (in[i][j] - mean) * stddev_inv * weight[j] + bias[j];
         }
     }
 }

@@ -219,7 +219,7 @@ void PhiAttention_forward(
     // attention 實作可選擇：eager_attention_forward, flash_attention_2, sdpa
 
     // 進 attention，拿出 attn_output, attn_weights
-    float scaling = hls::sqrt(HEAD_DIM);
+    float scaling = 1.0 / hls::sqrt(HEAD_DIM);
     float attn_output[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM];
     eager_attention_forward(attn_output, out_attn_weights, query_states, key_states, value_states, in_attention_mask, scaling);
 
@@ -282,7 +282,7 @@ void PhiDecoderLayer_forward(
 
     // flag: load_weight
     // 要看 layer_id
-    float language_model_model_layers_0_input_layernorm_weight[SLEN][HIDDEN_SIZE];
+    float language_model_model_layers_0_input_layernorm_weight[HIDDEN_SIZE];
     float language_model_model_layers_0_input_layernorm_bias[HIDDEN_SIZE];
     layer_norm<SLEN, HIDDEN_SIZE>(in_hidden_states, residual, LAYER_NORM_EPS, language_model_model_layers_0_input_layernorm_weight, language_model_model_layers_0_input_layernorm_bias);
 
@@ -398,7 +398,7 @@ void PhiModel_forward(
     }
 
     // flag: load_weight
-    float language_model_model_final_layernorm_weight[SLEN][HIDDEN_SIZE];
+    float language_model_model_final_layernorm_weight[HIDDEN_SIZE];
     float language_model_model_final_layernorm_bias[HIDDEN_SIZE];
     layer_norm<SLEN, HIDDEN_SIZE>(hidden_states, inputs_embeds, LAYER_NORM_EPS, language_model_model_final_layernorm_weight, language_model_model_final_layernorm_bias);
 }
@@ -434,6 +434,12 @@ void PhiForCausalLM_forward(
         }
     }
 }
+
+// [0, 1, 2] id
+
+// [1, 2, 3] hidden state
+// [4, 5, 6]
+// [7, 8, 9]
 
 // 算完之後的值應該就固定了，可能可以寫死
 void compute_default_rope_parameters(
