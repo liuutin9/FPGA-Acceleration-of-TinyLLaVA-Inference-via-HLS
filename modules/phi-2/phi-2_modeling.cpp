@@ -66,7 +66,8 @@ void eager_attention_forward(
     float in_k[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
     float in_v[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
     float in_attention_mask[NUM_ATTENTION_HEADS][SLEN][SLEN],
-    float in_scaling
+    float in_scaling,
+    int position_idx
 ) {
     // phi doesn't need to repeat k, v
     // float repeated_k[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
@@ -120,6 +121,113 @@ void eager_attention_forward(
         }
     }
     
+}
+
+void eager_attention_forward_with_kv_cache(
+    float out_attn_output[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM],
+    float out_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN],
+    float in_q[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
+    float in_k[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
+    float in_v[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
+    float in_scaling,
+    int position_idx
+) {
+    // phi doesn't need to repeat k, v
+    // float repeated_k[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
+    // float repeated_v[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
+    // repeat_kv(repeated_k, in_k);
+    // repeat_kv(repeated_v, in_v);
+
+    float transposed_k[NUM_ATTENTION_HEADS][HEAD_DIM][SLEN];
+    for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
+        // phi doesn't need to repeat k, v
+        // transpose<SLEN, HEAD_DIM, float>(transposed_k[i], repeated_k[i]);
+        transpose<SLEN, HEAD_DIM, float>(transposed_k[i], in_k[i]);
+    }
+
+    float unscaled_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN];
+    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
+        matmul<SLEN, HEAD_DIM, SLEN, float>(unscaled_attn_weights[i], in_q[i], transposed_k[i]);
+    }
+
+    float unsoftmax_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN];
+    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
+        elementwise_mul<SLEN, SLEN, float>(unsoftmax_attn_weights[i], unscaled_attn_weights[i], in_scaling);
+    }
+
+    // softmax 會擴成 32-bit 去算
+    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
+        softmax<SLEN, SLEN>(out_attn_weights[i], unsoftmax_attn_weights[i]);
+    }
+
+    // Do not need drop out during inferrence
+
+    float attn_output[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
+    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
+        // phi doesn't need to repeat k, v
+        // matmul<SLEN, SLEN, HEAD_DIM>(attn_output[i], out_attn_weights[i], repeated_v[i]);
+        matmul<SLEN, SLEN, HEAD_DIM, float>(attn_output[i], out_attn_weights[i], in_v[i]);
+    }
+
+    // shape 0, 1 transpose for attn_output
+    for (int i = 0; i < SLEN; i++) {
+        for (int j = 0; j < NUM_ATTENTION_HEADS; j++) {
+            for (int k = 0; k < HEAD_DIM; k++) {
+                out_attn_output[i][j][k] = attn_output[j][i][k];
+            }
+        }
+    }
+    
+}
+
+void kv_cache(
+    
+) {
+
+}
+
+void qkv_with_cache(
+    float* out_attention, // 1-dimension
+    float* in_q, // 1-dimension
+    float* in_k, // 2-dimension
+    float* in_v, // 2-dimension
+    float scale,
+    int curr_len,
+    int maxlen
+) {
+    float qkt[SLEN];
+    memset(out_attention, 0, sizeof(float) * HEAD_DIM);
+    memset(qkt, 0, sizeof(float) * SLEN);
+    for (int i = 0; i < curr_len; i++) {
+        float sum = 0;
+        for (int j = 0; j < HEAD_DIM; j++) {
+            sum += in_q[j] * in_k[i * HEAD_DIM + j];
+        }
+        qkt[i] = sum / scale;
+    }
+
+    float maxval = qkt[0];
+    for (int i = 1; i < curr_len; i++) {
+        if (qkt[i] > maxval) {
+            maxval = qkt[i];
+        }
+    }
+    float sum_exp = 0;
+    float qkt_softmax[SLEN];
+    memset(qkt_softmax, 0, sizeof(float) * SLEN);
+    for (int i = 0; i < curr_len; i++) {
+        qkt_softmax[i] = hls::exp(qkt[i] - maxval);
+        sum_exp += qkt_softmax[i];
+    }
+    for (int i = 0; i < curr_len; i++) {
+        qkt_softmax[i] /= sum_exp;
+    }
+
+    for (int i = 0; i < curr_len; i++) {
+        for (int j = 0; j < HEAD_DIM; j++) {
+            out_attention[j] += qkt_softmax[i] * in_v[i * HEAD_DIM + j];
+        }
+    }
 }
 
 void PhiAttention_forward(
