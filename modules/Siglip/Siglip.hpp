@@ -38,7 +38,7 @@ void Pos_Embedding(
 
 void Conv2D(
     float output[HIDDEN_SIZE][NUM_PATCH][NUM_PATCH],
-    float pixel_values[IN_CHANNELS][IMAGE_SIZE][IMAGE_SIZE],
+    float pixel_values[IN_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
 );
 
 float mult_with_kernel(

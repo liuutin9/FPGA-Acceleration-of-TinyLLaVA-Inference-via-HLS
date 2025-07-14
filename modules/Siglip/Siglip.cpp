@@ -6,6 +6,8 @@
 
 #define INPUT_SIZE
 #define OUTPUT_SIZE 
+#define num_patch_x 27
+#define num_patch_y 27
 
 void Siglip_Transformer_forward(
     float output[INPUT_DIM][OUTPUT_DIM],
@@ -24,7 +26,7 @@ void Siglip_Transformer_forward(
         encoder_output,
         embedded_vector
     );
-    memccpy(output, encoder_output, sizeof(float) * INPUT_DIM * OUTPUT_DIM);
+    memcpy(output, encoder_output, sizeof(float) * INPUT_DIM * OUTPUT_DIM);
     /*
     // Step 3: Layer Norm
     float norm_output[INPUT_DIM][OUTPUT_DIM] = {0};
@@ -68,17 +70,18 @@ void Siglip_Encoder(
 ) {
     // copy input to working buffer
     float hidden_state[INPUT_DIM][OUTPUT_DIM];
-    for (int layer = 0; layer < NUM_HIDDEN_LAYERS; layer++) {
+    for (int layer = 0; layer < NUM_HIDDEN_LAYERS - 1; layer++) {
         memcpy(hidden_state, embedded_vector, sizeof(float) * INPUT_DIM * HIDDEN_SIZE);
-        SiglipEncoderLayer(embedded_vector, hidden_state, i);
+        SiglipEncoderLayer(embedded_vector, hidden_state, layer);
     }
 
     // write final output
-    for (int i = 0; i < INPUT_DIM; i++) {
-        for (int j = 0; j < OUTPUT_DIM; j++) {
-            encoder_output[i][j] = embedded_vector[i][j];
-        }
-    }
+    memcpy(encoder_output, embedded_vector, sizeof(float) * INPUT_DIM * HIDDEN_SIZE);
+    // for (int i = 0; i < INPUT_DIM; i++) {
+    //     for (int j = 0; j < OUTPUT_DIM; j++) {
+    //         encoder_output[i][j] = embedded_vector[i][j];
+    //     }
+    // }
 }
 
 void SiglipEncoderLayer(
@@ -100,11 +103,11 @@ void SiglipEncoderLayer(
     // // First LayerNorm
     // for (int i = 0; i < INPUT_DIM; i++) {
     //     for (int j = 0; j < HIDDEN_SIZE; j++) {
-    //         residual1[i][j] = hidden_states[i][j];  // Save residual
+    //         residual1[i][j] = hidden_state[i][j];  // Save residual
     //     }
     // }
 
-    memcpy(residual, hidden_states, sizeof(float) * INPUT_DIM * HIDDEN_SIZE);
+    memcpy(residual, hidden_state, sizeof(float) * INPUT_DIM * HIDDEN_SIZE);
 
     layer_norm<INPUT_DIM, HIDDEN_SIZE>(
         layer_norm_out, hidden_state, LAYER_NORM_EPS,
@@ -120,14 +123,14 @@ void SiglipEncoderLayer(
 
     for (int i = 0; i < INPUT_DIM; i++) {
         for (int j = 0; j < HIDDEN_SIZE; j++) {
-            hidden_states[i][j] = residual[i][j] + attn_out[i][j];
+            hidden_state[i][j] = residual[i][j] + attn_out[i][j];
         }
     }
 
-    memcpy(residual, hidden_states, sizeof(float) * INPUT_DIM * HIDDEN_SIZE);
+    memcpy(residual, hidden_state, sizeof(float) * INPUT_DIM * HIDDEN_SIZE);
 
     layer_norm<INPUT_DIM, HIDDEN_SIZE>(
-        layer_norm_out, hidden_states, LAYER_NORM_EPS,
+        layer_norm_out, hidden_state, LAYER_NORM_EPS,
         vision_tower_vision_tower_vision_model_encoder_layers_0_layer_norm2_weight,
         vision_tower_vision_tower_vision_model_encoder_layers_0_layer_norm2_bias
     );

@@ -13,7 +13,7 @@ float gelu(float x) {
 
 void Connector_forward(
     float out[SLEN][HIDDEN_SIZE],
-    float in[SLEN][VISION_HIDDEN_SIZE],
+    float in[SLEN][VISION_HIDDEN_SIZE]
     // int layer_id
 ) {    
     // weights
@@ -23,7 +23,7 @@ void Connector_forward(
     float connector_connector_2_bias[HIDDEN_SIZE];
 
     float linear_out[SLEN][HIDDEN_SIZE];   
-    float gelu_out[SLEN][INTERMEDIATE_SIZE];
+    float gelu_out[SLEN][HIDDEN_SIZE];
 
     linear<VISION_HIDDEN_SIZE, HIDDEN_SIZE, SLEN, float>(
         linear_out, in, 

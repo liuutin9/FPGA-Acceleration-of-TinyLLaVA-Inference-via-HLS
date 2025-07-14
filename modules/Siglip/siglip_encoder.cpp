@@ -1,7 +1,7 @@
 #include <string.h>
 #include <hls_math.h>
 #include <ap_fixed.h>
-#include "./siglip_config.hpp"
+#include "Siglip_config.hpp"
 
 float gelu(float x) {
     const float sqrt_2_over_pi = 0.7978845608f;
@@ -84,7 +84,7 @@ void eager_attention_per_head(
 }
 
 void SiglipAttention(
-    float attn_out[SLEN][HIDDEN_SIZE],
+    float out[SLEN][HIDDEN_SIZE],
     float hidden_states[SLEN][HIDDEN_SIZE],
     int layer_id
 ) {
@@ -132,7 +132,7 @@ void SiglipAttention(
     float scaling = 1 / hls::sqrt(HEAD_DIM);
     float attn_scores[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
     for (int h = 0; h < NUM_ATTENTION_HEADS; h++) {
-        eager_attention_per_head<T>(attn_scores[h], query[h], key[h], value[h], scaling);
+        eager_attention_per_head(attn_scores[h], query[h], key[h], value[h], scaling);
     }
 
     // Transpose
@@ -151,7 +151,7 @@ void SiglipAttention(
     
     // Project the attention output
     linear<HIDDEN_SIZE, HIDDEN_SIZE, SLEN, float>(
-        attn_out, reshaped_attn_out,
+        out, reshaped_attn_out,
         vision_tower_vision_tower_vision_model_encoder_layers_0_self_attn_out_proj_weight, 
         vision_tower_vision_tower_vision_model_encoder_layers_0_self_attn_out_proj_bias
     );

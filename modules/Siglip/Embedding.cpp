@@ -39,7 +39,7 @@ void Pos_Embedding(
         for (int j = 0; j < NUM_PATCH; j++) {
             int patch_id = i * NUM_PATCH + j;
             for (int c = 0; c < HIDDEN_SIZE; c++) {
-                embedded_vector[patch_id][c] = (float)flatten_patched_pixel_values[c][i][j]
+                embedded_vector[patch_id][c] = (float)flatten_patched_pixel_values[c][patch_id]
                                              + vision_tower_vision_tower_vision_model_embeddings_position_embedding_weight[patch_id][c];
             }
         }
@@ -48,7 +48,7 @@ void Pos_Embedding(
 
 void Conv2D(
     float output[HIDDEN_SIZE][NUM_PATCH][NUM_PATCH],
-    float pixel_values[IN_CHANNELS][IMAGE_SIZE][IMAGE_SIZE],
+    float pixel_values[IN_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
 ){
     float kernels[HIDDEN_SIZE][IN_CHANNELS][KERNEL_SIZE][KERNEL_SIZE];
     float bias[HIDDEN_SIZE];
