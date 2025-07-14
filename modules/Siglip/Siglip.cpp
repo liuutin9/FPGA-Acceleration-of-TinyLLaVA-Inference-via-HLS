@@ -2,7 +2,6 @@
 #include<string.h>
 #include"../utils/transformer.hpp"
 #include"Siglip_config.hpp"
-#include "Siglip.hpp"
 
 #define INPUT_SIZE
 #define OUTPUT_SIZE 
@@ -10,29 +9,29 @@
 #define num_patch_y 27
 
 void Siglip_Transformer_forward(
-    float output[INPUT_DIM][OUTPUT_DIM],
-    float input[IN_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
+    float output[INPUT_DIM][HIDDEN_SIZE],
+    float input[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
 ) {
     // Step 1: Patch + Position Embedding
-    float embedded_vector[INPUT_DIM][OUTPUT_DIM] = {0};
+    float embedded_vector[INPUT_DIM][HIDDEN_SIZE] = {0};
     Embedding(
         embedded_vector,
         input
     );
 
     // Step 2: Encoder
-    float encoder_output[INPUT_DIM][OUTPUT_DIM] = {0};
+    float encoder_output[INPUT_DIM][HIDDEN_SIZE] = {0};
     Siglip_Encoder(
         encoder_output,
         embedded_vector
     );
-    memcpy(output, encoder_output, sizeof(float) * INPUT_DIM * OUTPUT_DIM);
+    memcpy(output, encoder_output, sizeof(float) * INPUT_DIM * HIDDEN_SIZE);
     /*
     // Step 3: Layer Norm
-    float norm_output[INPUT_DIM][OUTPUT_DIM] = {0};
-    T vision_tower_vision_tower_vision_model_post_layernorm_weight[OUTPUT_DIM] = {0};
-    T vision_tower_vision_tower_vision_model_post_layernorm_bias[OUTPUT_DIM] = {0};
-    layer_norm<INPUT_DIM, OUTPUT_DIM>(
+    float norm_output[INPUT_DIM][HIDDEN_SIZE] = {0};
+    T vision_tower_vision_tower_vision_model_post_layernorm_weight[HIDDEN_SIZE] = {0};
+    T vision_tower_vision_tower_vision_model_post_layernorm_bias[HIDDEN_SIZE] = {0};
+    layer_norm<INPUT_DIM, HIDDEN_SIZE>(
         norm_output, encoder_output, LAYER_NORM_EPS,
         vision_tower_vision_tower_vision_model_post_layernorm_weight,
         vision_tower_vision_tower_vision_model_post_layernorm_bias
@@ -45,15 +44,15 @@ void Siglip_Transformer_forward(
 
 //in : [3][384][384], out : [1152]
 void Embedding(
-    float embedded_vector[INPUT_DIM][OUTPUT_DIM],
-    float pixel_values[IN_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
+    float embedded_vector[INPUT_DIM][HIDDEN_SIZE],
+    float pixel_values[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
 ){
     float patched_pixel_values[HIDDEN_SIZE][num_patch_x][num_patch_y] = {0};
     Patch_Embedding(
         patched_pixel_values, 
         pixel_values
     );
-    float flatten_patched_pixel_values[num_patch_x * num_patch_y][OUTPUT_DIM];
+    float flatten_patched_pixel_values[num_patch_x * num_patch_y][HIDDEN_SIZE];
     flatten(
         flatten_patched_pixel_values,
         patched_pixel_values
@@ -65,11 +64,11 @@ void Embedding(
 }
 
 void Siglip_Encoder(
-    float encoder_output[INPUT_DIM][OUTPUT_DIM],
-    float embedded_vector[INPUT_DIM][OUTPUT_DIM]
+    float encoder_output[INPUT_DIM][HIDDEN_SIZE],
+    float embedded_vector[INPUT_DIM][HIDDEN_SIZE]
 ) {
     // copy input to working buffer
-    float hidden_state[INPUT_DIM][OUTPUT_DIM];
+    float hidden_state[INPUT_DIM][HIDDEN_SIZE];
     for (int layer = 0; layer < NUM_HIDDEN_LAYERS - 1; layer++) {
         memcpy(hidden_state, embedded_vector, sizeof(float) * INPUT_DIM * HIDDEN_SIZE);
         SiglipEncoderLayer(embedded_vector, hidden_state, layer);
@@ -78,7 +77,7 @@ void Siglip_Encoder(
     // write final output
     memcpy(encoder_output, embedded_vector, sizeof(float) * INPUT_DIM * HIDDEN_SIZE);
     // for (int i = 0; i < INPUT_DIM; i++) {
-    //     for (int j = 0; j < OUTPUT_DIM; j++) {
+    //     for (int j = 0; j < HIDDEN_SIZE; j++) {
     //         encoder_output[i][j] = embedded_vector[i][j];
     //     }
     // }

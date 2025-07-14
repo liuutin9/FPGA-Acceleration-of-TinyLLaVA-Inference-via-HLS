@@ -18,24 +18,85 @@
 //SIGLIP
 #define INITIALIZER_FACTOR 1_0
 
-/*
-    vocab_size=32000,
-    hidden_size=768,
-    intermediate_size=3072,
-    num_hidden_layers=12,
-    num_attention_heads=12,
-    max_position_embeddings=64,
-    hidden_act="gelu_pytorch_tanh",
-    layer_norm_eps=1e-6,
-    attention_dropout=0.0,
-    # This differs from `CLIPTokenizer`'s default and from openai/siglip
-    # See https://github.com/huggingface/transformers/pull/24773#issuecomment-1632287538
-    pad_token_id=1,
-    bos_token_id=49406,
-    eos_token_id=49407,
-    projection_size=None,
-*/
+#define NUM_PATCH ((IMAGE_SIZE - PATHC_SIZE + 1) / PATHC_SIZE + 1)
+#define INPUT_DIM NUM_PATCH * NUM_PATCH
 
-// "vision_tower__vision_tower_vision_model_embeddings_patch_embedding_bias": "model-00002-of-00002.safetensors",
-// "vision_tower__vision_tower_vision_model_embeddings_patch_embedding_weight": "model-00002-of-00002.safetensors",
-// "vision_tower__vision_tower_vision_model_embeddings_position_embedding_weight": "model-00002-of-00002.safetensors",
+void Siglip_Transformer_forward(
+    float output[INPUT_DIM][HIDDEN_SIZE],
+    float input[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
+);
+
+void Embedding(
+    float embedded_vector[INPUT_DIM][HIDDEN_SIZE],
+    float pixel_values[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
+);
+
+void Patch_Embedding(
+    float patched_pixel_values[HIDDEN_SIZE][NUM_PATCH][NUM_PATCH],
+    float pixel_values[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
+);
+
+void flatten(
+    float output[NUM_PATCH * NUM_PATCH][HIDDEN_SIZE],
+    float input[HIDDEN_SIZE][NUM_PATCH][NUM_PATCH]
+);
+
+void Pos_Embedding(
+    float embedded_vector[INPUT_DIM][HIDDEN_SIZE],
+    float flatten_patched_pixel_values[INPUT_DIM][HIDDEN_SIZE]
+);
+
+void Conv2D(
+    float output[HIDDEN_SIZE][NUM_PATCH][NUM_PATCH],
+    float pixel_values[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
+);
+
+float mult_with_kernel(
+    float input[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE], 
+    float kernel[NUM_CHANNELS][PATHC_SIZE][PATHC_SIZE], 
+    int kernel_x, 
+    int kernel_y
+);
+
+void Siglip_Encoder(
+    float encoder_output[INPUT_DIM][HIDDEN_SIZE],
+    float embedded_vector[INPUT_DIM][HIDDEN_SIZE]
+);
+
+void SiglipEncoderLayer(
+    float output[INPUT_DIM][HIDDEN_SIZE], 
+    float hidden_state[INPUT_DIM][HIDDEN_SIZE],
+    int layer_id
+);
+
+// Activation
+float gelu(float x);
+
+// MLP
+void SiglipMLP(
+    float out[SLEN][HIDDEN_SIZE], 
+    float hidden_state[SLEN][HIDDEN_SIZE],
+    int layer_id
+);
+
+void matmul_with_scale(
+    float out[SLEN][SLEN], 
+    float in1[SLEN][HEAD_DIM], float in2[HEAD_DIM][SLEN], 
+    float scaling
+);
+
+void eager_attention_per_head(
+    float out[SLEN][HEAD_DIM],
+    float query[SLEN][HEAD_DIM],
+    float key[SLEN][HEAD_DIM],
+    float value[SLEN][HEAD_DIM],
+    float scaling
+);
+
+// Transformer Layer Attention
+void SiglipAttention(
+    float attn_out[SLEN][HIDDEN_SIZE],
+    float hidden_states[SLEN][HIDDEN_SIZE],
+    int layer_id
+);
+//add other func?
