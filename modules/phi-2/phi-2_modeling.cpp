@@ -1,6 +1,7 @@
 #include <string.h>
 #include <hls_math.h>
 #include <ap_fixed.h>
+#include <ap_int.h>
 #include "./phi-2_config.hpp"
 
 void rotate_half(
@@ -123,63 +124,6 @@ void eager_attention_forward(
     
 }
 
-void eager_attention_forward_with_kv_cache(
-    float out_attn_output[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM],
-    float out_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN],
-    float in_q[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
-    float in_k[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
-    float in_v[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
-    float in_scaling,
-    int position_idx
-) {
-    // phi doesn't need to repeat k, v
-    // float repeated_k[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
-    // float repeated_v[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
-    // repeat_kv(repeated_k, in_k);
-    // repeat_kv(repeated_v, in_v);
-
-    float transposed_k[NUM_ATTENTION_HEADS][HEAD_DIM][SLEN];
-    for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        // phi doesn't need to repeat k, v
-        // transpose<SLEN, HEAD_DIM, float>(transposed_k[i], repeated_k[i]);
-        transpose<SLEN, HEAD_DIM, float>(transposed_k[i], in_k[i]);
-    }
-
-    float unscaled_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN];
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        matmul<SLEN, HEAD_DIM, SLEN, float>(unscaled_attn_weights[i], in_q[i], transposed_k[i]);
-    }
-
-    float unsoftmax_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN];
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        elementwise_mul<SLEN, SLEN, float>(unsoftmax_attn_weights[i], unscaled_attn_weights[i], in_scaling);
-    }
-
-    // softmax 會擴成 32-bit 去算
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        softmax<SLEN, SLEN>(out_attn_weights[i], unsoftmax_attn_weights[i]);
-    }
-
-    // Do not need drop out during inferrence
-
-    float attn_output[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        // phi doesn't need to repeat k, v
-        // matmul<SLEN, SLEN, HEAD_DIM>(attn_output[i], out_attn_weights[i], repeated_v[i]);
-        matmul<SLEN, SLEN, HEAD_DIM, float>(attn_output[i], out_attn_weights[i], in_v[i]);
-    }
-
-    // shape 0, 1 transpose for attn_output
-    for (int i = 0; i < SLEN; i++) {
-        for (int j = 0; j < NUM_ATTENTION_HEADS; j++) {
-            for (int k = 0; k < HEAD_DIM; k++) {
-                out_attn_output[i][j][k] = attn_output[j][i][k];
-            }
-        }
-    }
-    
-}
-
 void kv_cache(
     
 ) {
@@ -187,10 +131,10 @@ void kv_cache(
 }
 
 void qkv_with_cache(
-    float* out_attention, // 1-dimension
-    float* in_q, // 1-dimension
-    float* in_k, // 2-dimension
-    float* in_v, // 2-dimension
+    float out_attention[HEAD_DIM], // 1-dimension
+    float in_q[HEAD_DIM], // 1-dimension
+    float in_k[SLEN * HEAD_DIM], // 2-dimension
+    float in_v[SLEN * HEAD_DIM], // 2-dimension
     float scale,
     int curr_len,
     int maxlen
@@ -227,6 +171,25 @@ void qkv_with_cache(
         for (int j = 0; j < HEAD_DIM; j++) {
             out_attention[j] += qkt_softmax[i] * in_v[i * HEAD_DIM + j];
         }
+    }
+}
+
+void eager_attention_forward_with_kv_cache(
+    float out_attention[NUM_ATTENTION_HEADS * HEAD_DIM],
+    float in_q[NUM_KEY_VALUE_HEADS * HEAD_DIM],
+    float in_k[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM],
+    float in_v[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM],
+    float in_scaling,
+    int currlen
+) {
+    for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
+        float head_q[HEAD_DIM];
+        float head_k[SLEN * HEAD_DIM];
+        float head_v[SLEN * HEAD_DIM];
+        memcpy(head_q, in_q + i * NUM_KEY_VALUE_HEADS, sizeof(float) * HEAD_DIM);
+        memcpy(head_k, in_k + i * NUM_KEY_VALUE_HEADS, sizeof(float) * SLEN * HEAD_DIM);
+        memcpy(head_v, in_v + i * NUM_KEY_VALUE_HEADS, sizeof(float) * SLEN * HEAD_DIM);
+        qkv_with_cache(out_attention + i * HEAD_DIM, head_q, head_k, head_v, in_scaling, currlen, SLEN);
     }
 }
 
@@ -280,20 +243,6 @@ void PhiAttention_forward(
             }
         }
     }
-
-    // QK_LAYERNORM is false
-    // if (QK_LAYERNORM) {
-    //     T tmp_q[num_key_value_heads][SLEN][head_dim];
-    //     T tmp_k[num_key_value_heads][SLEN][head_dim];
-    //     memcpy(tmp_q, query_states, sizeof(T) * batch * num_key_value_heads * SLEN * head_dim);
-    //     memcpy(tmp_k, key_states, sizeof(T) * batch * num_key_value_heads * SLEN * head_dim);
-    //     for (int i = 0; i < batch; i++) {
-    //         for (int j = 0; j < num_key_value_heads; j++) {
-    //             layer_norm<SLEN, head_dim>(query_states, tmp_q);
-    //             layer_norm<SLEN, head_dim>(key_states, tmp_k);
-    //         }
-    //     }
-    // }
 
     float rotary_q[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM];
     float rotary_k[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM];
