@@ -5,129 +5,52 @@
 #include "./phi-2_config.hpp"
 
 void rotate_half(
-    float out[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM],
-    float hidden_states[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM]
+    float out[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
+    float in[NUM_KEY_VALUE_HEADS * ROTARY_DIM]
 ) {
     int half_dim = ROTARY_DIM / 2;
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        for (int j = 0; j < SLEN; j++) {
-            for (int k = 0; k < half_dim; k++) {
-                out[i][j][k] = (-1) * hidden_states[i][j][k + half_dim];
-                out[i][j][k + half_dim] = hidden_states[i][j][k];
-            }
+        for (int j = 0; j < half_dim; j++) {
+            out[i * ROTARY_DIM + j] = -in[i * ROTARY_DIM + j + half_dim];
+            out[i * ROTARY_DIM + j + half_dim] = in[i * ROTARY_DIM + j];
         }
     }
 }
 
 void apply_rotary_pos_emb(
-    float out_q_embed[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM],
-    float out_k_embed[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM],
-    float in_q[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM],
-    float in_k[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM],
-    float in_cos[SLEN][ROTARY_DIM],
-    float in_sin[SLEN][ROTARY_DIM]
+    float out_q_embed[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
+    float out_k_embed[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
+    float in_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
+    float in_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
+    float in_cos[ROTARY_DIM],
+    float in_sin[ROTARY_DIM] // for given position_idx
 ) {
-    float rotate_half_q[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM];
-    float rotate_half_k[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM];
+    float rotate_half_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
+    float rotate_half_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
     rotate_half(rotate_half_q, in_q);
     rotate_half(rotate_half_k, in_k);
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        for (int j = 0; j < SLEN; j++) {
-            for (int k = 0; k < ROTARY_DIM; k++) {
-                out_q_embed[i][j][k] = in_q[i][j][k] * in_cos[j][k];
-                out_k_embed[i][j][k] = in_k[i][j][k] * in_cos[j][k];
-                out_q_embed[i][j][k] += rotate_half_q[i][j][k] * in_sin[j][k];
-                out_k_embed[i][j][k] += rotate_half_k[i][j][k] * in_sin[j][k];
-            }
+        for (int j = 0; j < ROTARY_DIM; j++) {
+            out_q_embed[i * ROTARY_DIM + j] = in_q[i * ROTARY_DIM + j] * in_cos[j];
+            out_k_embed[i * ROTARY_DIM + j] = in_k[i * ROTARY_DIM + j] * in_cos[j];
+            out_q_embed[i * ROTARY_DIM + j] += rotate_half_q[i * ROTARY_DIM + j] * in_sin[j];
+            out_k_embed[i * ROTARY_DIM + j] += rotate_half_k[i * ROTARY_DIM + j] * in_sin[j];
         }
     }
 }
 
-void repeat_kv(
-    float out[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM],
-    float hidden_states[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM]
+void write_kv_cache(
+    int layer_id,
+    int position_idx,
+    float in_k[NUM_KEY_VALUE_HEADS * HEAD_DIM],
+    float in_v[NUM_KEY_VALUE_HEADS * HEAD_DIM]
 ) {
-    if (NUM_KEY_VALUE_GROUPS == 1) {
-        memcpy(out, hidden_states, sizeof(float) * NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM);
-        return;
-    }
-    int area_per_square = SLEN * HEAD_DIM;
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        for (int rep = 0; rep < NUM_KEY_VALUE_GROUPS; rep++) {
-            memcpy(out[i * NUM_KEY_VALUE_GROUPS + rep], hidden_states[i], sizeof(float) * area_per_square);
+        for (int j = 0; j < HEAD_DIM; j++) {
+            k_cache[layer_id][i][position_idx][j] = in_k[i * HEAD_DIM + j];
+            v_cache[layer_id][i][position_idx][j] = in_v[i * HEAD_DIM + j];
         }
     }
-}
-
-// TODO: Have not implemented causal mask
-void eager_attention_forward(
-    float out_attn_output[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM],
-    float out_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN],
-    float in_q[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
-    float in_k[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
-    float in_v[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM],
-    float in_attention_mask[NUM_ATTENTION_HEADS][SLEN][SLEN],
-    float in_scaling,
-    int position_idx
-) {
-    // phi doesn't need to repeat k, v
-    // float repeated_k[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
-    // float repeated_v[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
-    // repeat_kv(repeated_k, in_k);
-    // repeat_kv(repeated_v, in_v);
-
-    float transposed_k[NUM_ATTENTION_HEADS][HEAD_DIM][SLEN];
-    for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        // phi doesn't need to repeat k, v
-        // transpose<SLEN, HEAD_DIM, float>(transposed_k[i], repeated_k[i]);
-        transpose<SLEN, HEAD_DIM, float>(transposed_k[i], in_k[i]);
-    }
-
-    float unscaled_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN];
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        matmul<SLEN, HEAD_DIM, SLEN, float>(unscaled_attn_weights[i], in_q[i], transposed_k[i]);
-    }
-
-    float unmasked_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN];
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        elementwise_mul<SLEN, SLEN, float>(unmasked_attn_weights[i], unscaled_attn_weights[i], in_scaling);
-    }
-
-    // causal mask
-    float unsoftmax_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN];
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        matadd<SLEN, SLEN, float>(unsoftmax_attn_weights[i], unmasked_attn_weights[i], in_attention_mask[i]);
-    }
-
-    // softmax 會擴成 32-bit 去算
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        softmax<SLEN, SLEN>(out_attn_weights[i], unsoftmax_attn_weights[i]);
-    }
-
-    // Do not need drop out during inferrence
-
-    float attn_output[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        // phi doesn't need to repeat k, v
-        // matmul<SLEN, SLEN, HEAD_DIM>(attn_output[i], out_attn_weights[i], repeated_v[i]);
-        matmul<SLEN, SLEN, HEAD_DIM, float>(attn_output[i], out_attn_weights[i], in_v[i]);
-    }
-
-    // shape 0, 1 transpose for attn_output
-    for (int i = 0; i < SLEN; i++) {
-        for (int j = 0; j < NUM_ATTENTION_HEADS; j++) {
-            for (int k = 0; k < HEAD_DIM; k++) {
-                out_attn_output[i][j][k] = attn_output[j][i][k];
-            }
-        }
-    }
-    
-}
-
-void kv_cache(
-    
-) {
-
 }
 
 void qkv_with_cache(
@@ -136,8 +59,7 @@ void qkv_with_cache(
     float in_k[SLEN * HEAD_DIM], // 2-dimension
     float in_v[SLEN * HEAD_DIM], // 2-dimension
     float scale,
-    int curr_len,
-    int maxlen
+    int curr_len
 ) {
     float qkt[SLEN];
     memset(out_attention, 0, sizeof(float) * HEAD_DIM);
@@ -180,7 +102,7 @@ void eager_attention_forward_with_kv_cache(
     float in_k[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM],
     float in_v[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM],
     float in_scaling,
-    int currlen
+    int position_idx
 ) {
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
         float head_q[HEAD_DIM];
@@ -189,105 +111,170 @@ void eager_attention_forward_with_kv_cache(
         memcpy(head_q, in_q + i * NUM_KEY_VALUE_HEADS, sizeof(float) * HEAD_DIM);
         memcpy(head_k, in_k + i * NUM_KEY_VALUE_HEADS, sizeof(float) * SLEN * HEAD_DIM);
         memcpy(head_v, in_v + i * NUM_KEY_VALUE_HEADS, sizeof(float) * SLEN * HEAD_DIM);
-        qkv_with_cache(out_attention + i * HEAD_DIM, head_q, head_k, head_v, in_scaling, currlen, SLEN);
+        qkv_with_cache(out_attention + i * HEAD_DIM, head_q, head_k, head_v, in_scaling, position_idx + 1);
+    }
+}
+
+void phi_linear(
+    float out[HIDDEN_SIZE],
+    float in[HIDDEN_SIZE],
+    float weight[HIDDEN_SIZE * HIDDEN_SIZE],
+    float bias[HIDDEN_SIZE]
+) {
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        out[i] = bias[i];
+        for (int j = 0; j < HIDDEN_SIZE; j++) {
+            out[i] += in[j] * weight[i * HIDDEN_SIZE + j];
+        }
+    }
+}
+
+void phi_mlp_linear_1(
+    float out[INTERMEDIATE_SIZE],
+    float in[HIDDEN_SIZE],
+    float weight[INTERMEDIATE_SIZE * HIDDEN_SIZE],
+    float bias[INTERMEDIATE_SIZE]
+) {
+    for (int i = 0; i < INTERMEDIATE_SIZE; i++) {
+        out[i] = bias[i];
+        for (int j = 0; j < HIDDEN_SIZE; j++) {
+            out[i] += in[j] * weight[i * HIDDEN_SIZE + j];
+        }
+    }
+}
+
+void phi_mlp_linear_2(
+    float out[HIDDEN_SIZE],
+    float in[INTERMEDIATE_SIZE],
+    float weight[HIDDEN_SIZE * INTERMEDIATE_SIZE],
+    float bias[HIDDEN_SIZE]
+) {
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        out[i] = bias[i];
+        for (int j = 0; j < INTERMEDIATE_SIZE; j++) {
+            out[i] += in[j] * weight[i * INTERMEDIATE_SIZE + j];
+        }
+    }
+}
+
+void phi_vocab_linear_argmax(
+    int* output_id,
+    float in[HIDDEN_SIZE],
+    float weight[VOCAB_SIZE * HIDDEN_SIZE],
+    float bias[VOCAB_SIZE]
+) {
+    out = 0;
+    float max_value = bias[0];
+    for (int j = 0; j < HIDDEN_SIZE; j++) {
+        max_value += in[j] * weight[j];
+    }
+
+    float sum;
+    for (int i = 1; i < VOCAB_SIZE; i++) {
+        sum = bias[i];
+        for (int j = 0; j < HIDDEN_SIZE; j++) {
+            sum += in[j] * weight[i * HIDDEN_SIZE + j];
+        }
+        if (sum > max_value) {
+            max_value = sum;
+            out = i;
+        }
     }
 }
 
 void PhiAttention_forward(
-    float out_attn_output[SLEN][NUM_ATTENTION_HEADS * HEAD_DIM],
-    float out_attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN],
+    float out_attn_output[NUM_ATTENTION_HEADS * HEAD_DIM],
     int layer_id,
-    float in_hidden_states[SLEN][HIDDEN_SIZE],
-    float in_cos[SLEN][ROTARY_DIM],
-    float in_sin[SLEN][ROTARY_DIM],
-    float in_attention_mask[NUM_ATTENTION_HEADS][SLEN][SLEN]
+    int position_idx,
+    float in_hidden_state[HIDDEN_SIZE],
+    float in_cos[ROTARY_DIM],
+    float in_sin[ROTARY_DIM]
 ) {
-    float linear_q[SLEN][NUM_KEY_VALUE_HEADS * HEAD_DIM];
-    float linear_k[SLEN][NUM_KEY_VALUE_HEADS * HEAD_DIM];
-    float linear_v[SLEN][NUM_KEY_VALUE_HEADS * HEAD_DIM];
+    float linear_q[NUM_KEY_VALUE_HEADS * HEAD_DIM];
+    float linear_k[NUM_KEY_VALUE_HEADS * HEAD_DIM];
+    float linear_v[NUM_KEY_VALUE_HEADS * HEAD_DIM];
 
     // flag: load_weight
     // 要看 layer_id
     // q_proj
-    float language_model_model_layers_0_self_attn_q_proj_weight[NUM_KEY_VALUE_HEADS * HEAD_DIM][HIDDEN_SIZE];
-    float language_model_model_layers_0_self_attn_q_proj_bias[NUM_KEY_VALUE_HEADS * HEAD_DIM];
-    linear<HIDDEN_SIZE, NUM_KEY_VALUE_HEADS * HEAD_DIM, SLEN>(linear_q, in_hidden_states, language_model_model_layers_0_self_attn_q_proj_weight, language_model_model_layers_0_self_attn_q_proj_bias);
+    float language_model_model_layers_0_self_attn_q_proj_weight[HIDDEN_SIZE * HIDDEN_SIZE];
+    float language_model_model_layers_0_self_attn_q_proj_bias[HIDDEN_SIZE];
+    phi_linear(
+        linear_q,
+        in_hidden_state,
+        language_model_model_layers_0_self_attn_q_proj_weight,
+        language_model_model_layers_0_self_attn_q_proj_bias
+    );
     // k_proj
-    float language_model_model_layers_0_self_attn_k_proj_weight[NUM_KEY_VALUE_HEADS * HEAD_DIM][HIDDEN_SIZE];
-    float language_model_model_layers_0_self_attn_k_proj_bias[NUM_KEY_VALUE_HEADS * HEAD_DIM];
-    linear<HIDDEN_SIZE, NUM_KEY_VALUE_HEADS * HEAD_DIM, SLEN>(linear_k, in_hidden_states, language_model_model_layers_0_self_attn_k_proj_weight, language_model_model_layers_0_self_attn_k_proj_bias);
+    float language_model_model_layers_0_self_attn_k_proj_weight[HIDDEN_SIZE * HIDDEN_SIZE];
+    float language_model_model_layers_0_self_attn_k_proj_bias[HIDDEN_SIZE];
+    phi_linear(
+        linear_k,
+        in_hidden_state,
+        language_model_model_layers_0_self_attn_k_proj_weight,
+        language_model_model_layers_0_self_attn_k_proj_bias
+    );
     // v_proj
-    float language_model_model_layers_0_self_attn_v_proj_weight[NUM_KEY_VALUE_HEADS * HEAD_DIM][HIDDEN_SIZE];
-    float language_model_model_layers_0_self_attn_v_proj_bias[NUM_KEY_VALUE_HEADS * HEAD_DIM];
-    linear<HIDDEN_SIZE, NUM_KEY_VALUE_HEADS * HEAD_DIM, SLEN>(linear_v, in_hidden_states, language_model_model_layers_0_self_attn_v_proj_weight, language_model_model_layers_0_self_attn_v_proj_bias);
+    float language_model_model_layers_0_self_attn_v_proj_weight[HIDDEN_SIZE * HIDDEN_SIZE];
+    float language_model_model_layers_0_self_attn_v_proj_bias[HIDDEN_SIZE];
+    phi_linear(
+        linear_v,
+        in_hidden_state,
+        language_model_model_layers_0_self_attn_v_proj_weight,
+        language_model_model_layers_0_self_attn_v_proj_bias
+    );
 
-    float reshaped_linear_q[SLEN][NUM_KEY_VALUE_HEADS][HEAD_DIM];
-    float reshaped_linear_k[SLEN][NUM_KEY_VALUE_HEADS][HEAD_DIM];
-    float reshaped_linear_v[SLEN][NUM_KEY_VALUE_HEADS][HEAD_DIM];
 
-    memcpy(reshaped_linear_q, linear_q, sizeof(float) * NUM_KEY_VALUE_HEADS * HEAD_DIM);
-    memcpy(reshaped_linear_k, linear_k, sizeof(float) * NUM_KEY_VALUE_HEADS * HEAD_DIM);
-    memcpy(reshaped_linear_v, linear_v, sizeof(float) * NUM_KEY_VALUE_HEADS * HEAD_DIM);
+    float rotary_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
+    float rotary_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
+    // 將 linear_q, linear_k 轉成 rotary_q, rotary_k
+    memcpy(rotary_q, linear_q, sizeof(float) * NUM_KEY_VALUE_HEADS * ROTARY_DIM);
+    memcpy(rotary_k, linear_k, sizeof(float) * NUM_KEY_VALUE_HEADS * ROTARY_DIM);
 
-    float query_states[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM];
-    float key_states[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM];
-    float value_states[NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM];
-
-    // transpose 0, 1
-    for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        for (int j = 0; j < SLEN; j++) {
-            for (int k = 0; k < HEAD_DIM; k++) {
-                query_states[i][j][k] = reshaped_linear_q[j][i][k];
-                key_states[i][j][k] = reshaped_linear_k[j][i][k];
-                value_states[i][j][k] = reshaped_linear_v[j][i][k];
-            }
-        }
-    }
-
-    float rotary_q[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM];
-    float rotary_k[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM];
-    float embed_q[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM];
-    float embed_k[NUM_KEY_VALUE_HEADS][SLEN][ROTARY_DIM];
-
-    for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        for (int j = 0; j < SLEN; j++) {
-            for (int k = 0; k < ROTARY_DIM; k++) {
-                rotary_q[i][j][k] = query_states[i][j][k];
-                rotary_k[i][j][k] = key_states[i][j][k];
-            }
-        }
-    }
-
-    apply_rotary_pos_emb(embed_q, embed_k, rotary_q, rotary_k, in_cos, in_sin);
+    // 將 rotary_q, rotary_k 進行 apply_rotary_pos_emb
+    float embed_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
+    float embed_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
+    apply_rotary_pos_emb(embed_q, embed_k, linear_q, linear_k, in_cos, in_sin);
 
     // 接回去
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        for (int j = 0; j < SLEN; j++) {
-            for (int k = 0; k < ROTARY_DIM; k++) {
-                query_states[i][j][k] = embed_q[i][j][k];
-                key_states[i][j][k] = embed_k[i][j][k];
-            }
+        for (int j = 0; j < ROTARY_DIM; j++) {
+            linear_q[i * ROTARY_DIM + j] = embed_q[i * ROTARY_DIM + j];
+            linear_k[i * ROTARY_DIM + j] = embed_k[i * ROTARY_DIM + j];
         }
     }
 
-    // TODO: kv_cache
-    bool past_key_value;
+    write_kv_cache(
+        layer_id,
+        position_idx,
+        linear_k, // 這裡的 linear_k 是 in_k
+        linear_v  // 這裡的 linear_v 是 in_v
+    );
 
     // attention 實作可選擇：eager_attention_forward, flash_attention_2, sdpa
 
     // 進 attention，拿出 attn_output, attn_weights
     float scaling = 1.0 / hls::sqrt(HEAD_DIM);
-    float attn_output[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM];
-    eager_attention_forward(attn_output, out_attn_weights, query_states, key_states, value_states, in_attention_mask, scaling);
+    float attn_output[NUM_ATTENTION_HEADS * HEAD_DIM];
+    eager_attention_forward_with_kv_cache(
+        attn_output,
+        linear_q,
+        k_cache[layer_id],
+        v_cache[layer_id],
+        scaling,
+        position_idx
+    );
 
-    // attn_output 進 Linear
-    float reshaped_attn_output[SLEN][NUM_ATTENTION_HEADS * HEAD_DIM];
-    memcpy(reshaped_attn_output, attn_output, sizeof(float) * SLEN * NUM_ATTENTION_HEADS * HEAD_DIM);
     // flag: load_weight
     // 要看 layer_id
-    float language_model_model_layers_0_self_attn_dense_weight[NUM_ATTENTION_HEADS * HEAD_DIM][NUM_ATTENTION_HEADS * HEAD_DIM];
-    float language_model_model_layers_0_self_attn_dense_bias[NUM_ATTENTION_HEADS * HEAD_DIM];
-    linear<NUM_ATTENTION_HEADS * HEAD_DIM, NUM_ATTENTION_HEADS * HEAD_DIM, SLEN, float>(out_attn_output, reshaped_attn_output, language_model_model_layers_0_self_attn_dense_weight, language_model_model_layers_0_self_attn_dense_bias);
+    float language_model_model_layers_0_self_attn_dense_weight[HIDDEN_SIZE * HIDDEN_SIZE];
+    float language_model_model_layers_0_self_attn_dense_bias[HIDDEN_SIZE];
+    phi_linear(
+        out_attn_output, // 1-dimension
+        attn_output, // 1-dimension
+        language_model_model_layers_0_self_attn_dense_weight,
+        language_model_model_layers_0_self_attn_dense_bias
+    );    
 }
 
 // TODO: 要優化
@@ -300,59 +287,107 @@ float new_gelu(float x) {
 }
 
 void PhiMLP_forward(
-    float out[SLEN][HIDDEN_SIZE],
-    float in[SLEN][HIDDEN_SIZE],
+    float out[HIDDEN_SIZE],
+    float in[HIDDEN_SIZE],
     int layer_id
 ) {
     // flag: load_weight
     // 要看 layer_id
-    float language_model_model_layers_0_mlp_fc1_weight[INTERMEDIATE_SIZE][HIDDEN_SIZE];
+    float language_model_model_layers_0_mlp_fc1_weight[INTERMEDIATE_SIZE * HIDDEN_SIZE];
     float language_model_model_layers_0_mlp_fc1_bias[INTERMEDIATE_SIZE];
-    float linear_out[SLEN][INTERMEDIATE_SIZE];
-    linear<HIDDEN_SIZE, INTERMEDIATE_SIZE, SLEN, float>(linear_out, in, language_model_model_layers_0_mlp_fc1_weight, language_model_model_layers_0_mlp_fc1_bias);
+    float linear_out[SLEN * INTERMEDIATE_SIZE];
+    // phi_mlp_linear_1
+    phi_mlp_linear_1(
+        linear_out,
+        in,
+        language_model_model_layers_0_mlp_fc1_weight,
+        language_model_model_layers_0_mlp_fc1_bias
+    );
     
     // TODO GeLU Function 先用 hls 的
-    float gelu_out[SLEN][INTERMEDIATE_SIZE];
-    for (int i = 0; i < SLEN; i++) {
-        for (int j = 0; j < INTERMEDIATE_SIZE; j++) {
-            gelu_out[i][j] = new_gelu(linear_out[i][j]);
-        }
+    float gelu_out[INTERMEDIATE_SIZE];
+    for (int i = 0; i < INTERMEDIATE_SIZE; i++) {
+        gelu_out[i] = new_gelu(linear_out[i]);
     }
 
     // flag: load_weight
     // 要看 layer_id
-    float language_model_model_layers_0_mlp_fc2_weight[HIDDEN_SIZE][INTERMEDIATE_SIZE];
+    float language_model_model_layers_0_mlp_fc2_weight[HIDDEN_SIZE * INTERMEDIATE_SIZE];
     float language_model_model_layers_0_mlp_fc2_bias[HIDDEN_SIZE];
-    linear<INTERMEDIATE_SIZE, HIDDEN_SIZE, SLEN, float>(out, gelu_out, language_model_model_layers_0_mlp_fc2_weight, language_model_model_layers_0_mlp_fc2_bias);
+    phi_mlp_linear_2(
+        out,
+        gelu_out,
+        language_model_model_layers_0_mlp_fc2_weight,
+        language_model_model_layers_0_mlp_fc2_bias
+    );
+}
+
+void phi_layernorm(
+    float out[HIDDEN_SIZE],
+    float in[HIDDEN_SIZE],
+    float weight[HIDDEN_SIZE],
+    float bias[HIDDEN_SIZE],
+    float eps
+) {
+    float mean = 0.0f;
+    float variance = 0.0f;
+
+    // 計算 mean
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        mean += in[i];
+    }
+    mean /= HIDDEN_SIZE;
+
+    // 計算 variance
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        variance += (in[i] - mean) * (in[i] - mean);
+    }
+    variance /= HIDDEN_SIZE;
+
+    // 計算標準差
+    float stddev = hls::sqrt(variance + eps);
+
+    // 正規化並應用權重和偏置
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        out[i] = weight[i] * ((in[i] - mean) / stddev) + bias[i];
+    }
 }
 
 void PhiDecoderLayer_forward(
-    float out[SLEN][HIDDEN_SIZE],
+    float out[HIDDEN_SIZE],
     int layer_id,
-    float in_hidden_states[SLEN][HIDDEN_SIZE],
-    float in_cos[SLEN][ROTARY_DIM],
-    float in_sin[SLEN][ROTARY_DIM],
-    float in_attention_mask[NUM_ATTENTION_HEADS][SLEN][SLEN]
+    int position_idx,
+    float in_hidden_state[HIDDEN_SIZE],
+    float in_cos[ROTARY_DIM],
+    float in_sin[ROTARY_DIM]
 ) {
-    float residual[SLEN][HIDDEN_SIZE];
-    memcpy(residual, in_hidden_states, sizeof(float) * SLEN * HIDDEN_SIZE);
+    float residual[HIDDEN_SIZE];
+    memcpy(residual, in_hidden_state, sizeof(float) * HIDDEN_SIZE);
 
     // flag: load_weight
     // 要看 layer_id
     float language_model_model_layers_0_input_layernorm_weight[HIDDEN_SIZE];
     float language_model_model_layers_0_input_layernorm_bias[HIDDEN_SIZE];
-    layer_norm<SLEN, HIDDEN_SIZE>(in_hidden_states, residual, LAYER_NORM_EPS, language_model_model_layers_0_input_layernorm_weight, language_model_model_layers_0_input_layernorm_bias);
+    phi_layernorm(
+        in_hidden_state,
+        residual,
+        language_model_model_layers_0_input_layernorm_weight,
+        language_model_model_layers_0_input_layernorm_bias,
+        LAYER_NORM_EPS
+    );
 
-    float attn_output[SLEN][NUM_ATTENTION_HEADS * HEAD_DIM];
-    float attn_weights[NUM_ATTENTION_HEADS][SLEN][SLEN];
-    PhiAttention_forward(attn_output, attn_weights, layer_id, in_hidden_states, in_cos, in_sin, in_attention_mask);
+    float attn_output[HIDDEN_SIZE];
+    PhiAttention_forward(attn_output, layer_id, position_idx, in_hidden_states, in_cos, in_sin);
 
-    float feed_forward_hidden_states[SLEN][HIDDEN_SIZE];
+    float feed_forward_hidden_states[HIDDEN_SIZE];
     PhiMLP_forward(feed_forward_hidden_states, attn_output, layer_id);
 
-    float tmp[SLEN][HIDDEN_SIZE];
-    matadd<SLEN, HIDDEN_SIZE, float>(tmp, attn_output, feed_forward_hidden_states);
-    matadd<SLEN, HIDDEN_SIZE, float>(out, tmp, residual);
+    // float tmp[SLEN][HIDDEN_SIZE];
+    // matadd<SLEN, HIDDEN_SIZE, float>(tmp, attn_output, feed_forward_hidden_states);
+    // matadd<SLEN, HIDDEN_SIZE, float>(out, tmp, residual);
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        out[i] = attn_output[i] + feed_forward_hidden_states[i] + residual[i];
+    }
 }
 
 void PhiRotaryEmbedding_forward(
@@ -409,35 +444,76 @@ void PhiRotaryEmbedding_forward(
 // default embedding_dim is HIDDEN_SIZE
 // default padding_idx is None
 // 只是查表 language_model_model_embed_tokens_weight
-void Embedding_forward(
-    float out[SLEN][HIDDEN_SIZE],
-    int input_ids[SLEN]
-) {
-    // 從 language_model_model_embed_tokens_weight 拿
-    float language_model_model_embed_tokens_weight[VOCAB_SIZE][HIDDEN_SIZE];
-    for (int i = 0; i < SLEN; ++i) {
-        int idx = input_ids[i];
+// void Embedding_forward(
+//     float out[SLEN][HIDDEN_SIZE],
+//     int input_ids[SLEN]
+// ) {
+//     // 從 language_model_model_embed_tokens_weight 拿
+//     float language_model_model_embed_tokens_weight[VOCAB_SIZE][HIDDEN_SIZE];
+//     for (int i = 0; i < SLEN; ++i) {
+//         int idx = input_ids[i];
 
-        // 直接查表，不檢查越界
-        for (int j = 0; j < HIDDEN_SIZE; ++j) {
-            out[i][j] = language_model_model_embed_tokens_weight[idx][j];
-        }
+//         // 直接查表，不檢查越界
+//         for (int j = 0; j < HIDDEN_SIZE; ++j) {
+//             out[i][j] = language_model_model_embed_tokens_weight[idx][j];
+//         }
+//     }
+// }
+
+void PhiModel_forward(
+    int* output_id,
+    int input_id,
+    bool should_predict,
+    int position_idx,
+    float in_cos[ROTARY_DIM],
+    float in_sin[ROTARY_DIM]
+) {
+
+    float input_embed[HIDDEN_SIZE];
+    float language_model_model_embed_tokens_weight[VOCAB_SIZE][HIDDEN_SIZE];
+    memcpy(input_embed, language_model_model_embed_tokens_weight[input_id], sizeof(float) * HIDDEN_SIZE);
+
+    // flag: on board
+    float hidden_state[HIDDEN_SIZE];
+    for (int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
+        memcpy(hidden_state, input_embed, sizeof(float) * HIDDEN_SIZE);
+        PhiDecoderLayer_forward(input_embed, i, position_idx, hidden_state, cos, sin);
+    }
+
+    if (should_predict) {
+        // flag: load_weight
+        float language_model_model_final_layernorm_weight[HIDDEN_SIZE];
+        float language_model_model_final_layernorm_bias[HIDDEN_SIZE];
+        phi_layernorm(
+            hidden_state,
+            input_embed,
+            language_model_model_final_layernorm_weight,
+            language_model_model_final_layernorm_bias,
+            LAYER_NORM_EPS
+        );
+        // flag: load_weight
+        float language_model_model_lm_head_weight[VOCAB_SIZE * HIDDEN_SIZE];
+        float language_model_model_lm_head_bias[VOCAB_SIZE];
+        phi_vocab_linear_argmax(
+            output_id,
+            hidden_state,
+            language_model_model_lm_head_weight,
+            language_model_model_lm_head_bias
+        );
+    } else {
+        *output_id = -1;
     }
 }
 
-void PhiModel_forward(
-    float out_last_hidden_state[SLEN][HIDDEN_SIZE],
-    float out_past_key_values[NUM_HIDDEN_LAYERS][NUM_ATTENTION_HEADS][SLEN][HEAD_DIM],
-    int in_input_ids[SLEN],
-    float in_past_key_values[NUM_HIDDEN_LAYERS][NUM_ATTENTION_HEADS][SLEN][HEAD_DIM] // cache
+void PhiForCausalLM_forward(
+    int output_ids[SLEN],
+    int input_ids[SLEN],
+    int input_len
 ) {
 
-    float inputs_embeds[SLEN][HIDDEN_SIZE];
-    Embedding_forward(inputs_embeds, in_input_ids);
-
-    // create mask
-    float attention_mask[NUM_ATTENTION_HEADS][SLEN][SLEN];
-    create_causal_mask(attention_mask);
+    for (int i = 0; i < SLEN; i++) {
+        output_ids[i] = END_OF_TEXT_ID; // 初始化為結束符號
+    }
 
     float cos[SLEN][ROTARY_DIM];
     float sin[SLEN][ROTARY_DIM];
@@ -447,47 +523,15 @@ void PhiModel_forward(
     }
     PhiRotaryEmbedding_forward(cos, sin, position_ids);
 
-    float hidden_states[SLEN][HIDDEN_SIZE];
-
-    for (int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
-        memcpy(hidden_states, inputs_embeds, sizeof(float) * SLEN * HIDDEN_SIZE);
-        PhiDecoderLayer_forward(inputs_embeds, i, hidden_states, cos, sin, attention_mask);
-    }
-
-    // flag: load_weight
-    float language_model_model_final_layernorm_weight[HIDDEN_SIZE];
-    float language_model_model_final_layernorm_bias[HIDDEN_SIZE];
-    layer_norm<SLEN, HIDDEN_SIZE>(hidden_states, inputs_embeds, LAYER_NORM_EPS, language_model_model_final_layernorm_weight, language_model_model_final_layernorm_bias);
-}
-
-void PhiForCausalLM_forward(
-    int output_ids[SLEN],
-    float out_past_key_values[NUM_HIDDEN_LAYERS][NUM_ATTENTION_HEADS][SLEN][HEAD_DIM],
-    int input_ids[SLEN],
-    float past_key_values[NUM_HIDDEN_LAYERS][NUM_ATTENTION_HEADS][SLEN][HEAD_DIM], // cache
-    int curr_len
-) {
-    // #pragma HLS INTERFACE port=return mode=s_axilite
-    // #pragma HLS INTERFACE port=output_ids mode=bram
-    // #pragma HLS INTERFACE port=out_past_key_values mode=bram
-    // #pragma HLS INTERFACE port=input_ids mode=bram
-    // #pragma HLS INTERFACE port=past_key_values mode=bram
-
-    while (curr_len < SLEN) {
-        float last_hidden_state[SLEN][HIDDEN_SIZE];
-        PhiModel_forward(last_hidden_state, out_past_key_values, input_ids, past_key_values);
-
-        // flag: load_weight
-        float language_model_lm_head_weight[VOCAB_SIZE][HIDDEN_SIZE];
-        float language_model_lm_head_bias[VOCAB_SIZE];
-        float logits[SLEN][VOCAB_SIZE];
-        linear<HIDDEN_SIZE, VOCAB_SIZE, SLEN, float>(logits, last_hidden_state, language_model_lm_head_weight, language_model_lm_head_bias);
-        for (int i = 0; i < SLEN; i++) {
-            argmax<VOCAB_SIZE>(&output_ids[i], logits[i]);
-        }
-        curr_len++;
-        if (curr_len < SLEN) {
-            memcpy(input_ids, output_ids, sizeof(int) * SLEN);
+    bool should_predict;
+    int output_id;
+    int output_len = 0;
+    for (int i = 0; i < SLEN; i++) {
+        should_predict = (i >= (input_len - 1));
+        PhiModel_forward(&output_id, input_ids[i], should_predict, i, cos[i], sin[i]);
+        if (output_id == END_OF_TEXT_ID) break;
+        if (should_predict) {
+            output_ids[output_len++] = input_ids[i] = output_id;
         }
     }
 }
@@ -507,17 +551,5 @@ void compute_default_rope_parameters(
         float exponent = (2.0f * i) / (float)dim;
         float power = hls::powf(ROPE_THETA, exponent); // base^(2i/dim)
         out_inv_freq[i] = 1.0f / power;
-    }
-}
-
-void create_causal_mask(
-    float out_causal_mask[NUM_ATTENTION_HEADS][SLEN][SLEN]
-) {
-    for (int i = 0; i < NUM_ATTENTION_HEADS; i++) {
-        for (int j = 0; j < SLEN; j++) {
-            for (int k = 0; k < SLEN; k++) {
-                out_causal_mask[i][j][k] = k <= j ? 0.0 : -1e9;
-            }
-        }
     }
 }
