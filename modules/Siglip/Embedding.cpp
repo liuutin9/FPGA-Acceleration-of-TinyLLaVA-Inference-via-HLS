@@ -38,7 +38,7 @@ void Pos_Embedding(
         for (int j = 0; j < NUM_PATCH; j++) {
             int patch_id = i * NUM_PATCH + j;
             for (int c = 0; c < HIDDEN_SIZE; c++) {
-                embedded_vector[patch_id][c] = (float)flatten_patched_pixel_values[c][patch_id]
+                embedded_vector[patch_id][c] = (float)flatten_patched_pixel_values[patch_id][c]
                                              + vision_tower_vision_tower_vision_model_embeddings_position_embedding_weight[patch_id][c];
             }
         }

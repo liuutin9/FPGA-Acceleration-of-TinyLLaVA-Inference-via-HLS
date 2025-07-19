@@ -163,7 +163,7 @@ void phi_vocab_linear_argmax(
     float weight[VOCAB_SIZE * HIDDEN_SIZE],
     float bias[VOCAB_SIZE]
 ) {
-    out = 0;
+    int out = 0;
     float max_value = bias[0];
     for (int j = 0; j < HIDDEN_SIZE; j++) {
         max_value += in[j] * weight[j];
@@ -377,7 +377,7 @@ void PhiDecoderLayer_forward(
     );
 
     float attn_output[HIDDEN_SIZE];
-    PhiAttention_forward(attn_output, layer_id, position_idx, in_hidden_states, in_cos, in_sin);
+    PhiAttention_forward(attn_output, layer_id, position_idx, in_hidden_state, in_cos, in_sin);
 
     float feed_forward_hidden_states[HIDDEN_SIZE];
     PhiMLP_forward(feed_forward_hidden_states, attn_output, layer_id);
