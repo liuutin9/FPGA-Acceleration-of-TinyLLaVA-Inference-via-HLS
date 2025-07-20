@@ -462,16 +462,16 @@ void PhiRotaryEmbedding_forward(
 
 void PhiModel_forward(
     int* output_id,
-    int input_id,
+    float input_embed[HIDDEN_SIZE],
     bool should_predict,
     int position_idx,
     float in_cos[ROTARY_DIM],
     float in_sin[ROTARY_DIM]
 ) {
 
-    float input_embed[HIDDEN_SIZE];
-    float language_model_model_embed_tokens_weight[VOCAB_SIZE][HIDDEN_SIZE];
-    memcpy(input_embed, language_model_model_embed_tokens_weight[input_id], sizeof(float) * HIDDEN_SIZE);
+    // float input_embed[HIDDEN_SIZE];
+    // float language_model_model_embed_tokens_weight[VOCAB_SIZE][HIDDEN_SIZE];
+    // memcpy(input_embed, language_model_model_embed_tokens_weight[input_id], sizeof(float) * HIDDEN_SIZE);
 
     // flag: on board
     float hidden_state[HIDDEN_SIZE];
@@ -507,7 +507,7 @@ void PhiModel_forward(
 
 void PhiForCausalLM_forward(
     int output_ids[SLEN],
-    int input_ids[SLEN],
+    float input_embeds[SLEN * HIDDEN_SIZE],
     int input_len
 ) {
 
@@ -526,9 +526,16 @@ void PhiForCausalLM_forward(
     bool should_predict;
     int output_id;
     int output_len = 0;
+    float input_embed[HIDDEN_SIZE];
     for (int i = 0; i < SLEN; i++) {
         should_predict = (i >= (input_len - 1));
-        PhiModel_forward(&output_id, input_ids[i], should_predict, i, cos[i], sin[i]);
+        if (i >= input_len) {
+            memcpy(input_embed, input_embeds + i * HIDDEN_SIZE, sizeof(float) * HIDDEN_SIZE);
+        } else {
+            float language_model_model_embed_tokens_weight[VOCAB_SIZE][HIDDEN_SIZE];
+            memcpy(input_embed, language_model_model_embed_tokens_weight[output_ids[output_len - 1]], sizeof(float) * HIDDEN_SIZE);
+        }
+        PhiModel_forward(&output_id, input_embed, should_predict, i, cos[i], sin[i]);
         if (output_id == END_OF_TEXT_ID) break;
         if (should_predict) {
             output_ids[output_len++] = input_ids[i] = output_id;
