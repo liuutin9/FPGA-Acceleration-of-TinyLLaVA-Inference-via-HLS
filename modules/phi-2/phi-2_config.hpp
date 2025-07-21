@@ -138,7 +138,7 @@ void PhiRotaryEmbedding_forward(
 
 void PhiModel_forward(
     int* output_id,
-    int input_id,
+    float input_embed[HIDDEN_SIZE],
     bool should_predict,
     int position_idx,
     float in_cos[ROTARY_DIM],
