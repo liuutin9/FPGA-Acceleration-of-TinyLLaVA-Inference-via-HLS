@@ -22,7 +22,7 @@
 #define TOKENIZER_PADDING_SIDE "right"
 #define TOKENIZER_MODEL_MAX_LENGTH 2048
 
-#define MAX_NUM 10
+#define MAX_NUM 16
 
 const float language_model_model_embed_tokens_weight[VOCAB_SIZE][HIDDEN_SIZE];
 
@@ -30,7 +30,7 @@ void TinyLlava();
 
 void chat(char prompt[MAX_LEN], std::string image_path);
 
-std::pair<int *, int> prepare_input_for_multimodel(
+std::pair<std::vector<std::vector<float>>, int> prepare_input_for_multimodel(
     std::vector<int> input_ids,
     float images[MAX_NUM][NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE],
     const int num_images

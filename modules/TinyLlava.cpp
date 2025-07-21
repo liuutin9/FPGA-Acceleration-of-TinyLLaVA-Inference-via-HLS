@@ -16,21 +16,22 @@
 using namespace tokenizers;
 
 void TinyLlava(){
-    char prompt[MAX_LEN]; 
+    std::string prompt; 
     std::string image_path = "D:/NTHU/大三下/專題/Project/test.jpg";
     std::vector<std::string> image_paths;
+    image_paths.push_back(image_path);
     chat(prompt, image_paths);
     auto tokenizer = init_tokenizer();
-    int * input_ids;
+    // int * input_ids;
     std::vector<int> input_ids_vector;
     float preprocessed_images[MAX_NUM][NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE];
     const int num_image = image_paths.size();
     int max_len;
-    int * output_ids;
+    float embedding[SLEN][HIDDEN_SIZE]; //MAX_LEN??
+    std::fill(&embedding[0][0], &embedding[0][0] + SLEN * HIDDEN_SIZE, 0.0f);
     if (num_image == 0){
-        input_ids_vector = tokenizer->Encode(prompt);
-        input_ids = input_ids_vector.data();
-        //return input_ids, position_ids, attention_mask, past_key_values, None, labels
+        input_ids_vector = tokenizer->Encode(prompt); //INT 32
+        // input_ids = input_ids_vector.data();
     }else{
         for(int i = 0; i < num_image; i++){
             cv::Mat image;
@@ -38,18 +39,24 @@ void TinyLlava(){
             float preprocessed_image[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE];
             preprocess(preprocessed_image, image);
             tokenizer_image_token(input_ids_vector, prompt, &tokenizer);
-            input_ids = input_ids_vector.data();
+            // input_ids = input_ids_vector.data();
               
             memcpy(preprocessed_images[i], preprocessed_image, NUM_CHANNELS * IMAGE_SIZE * IMAGE_SIZE * sizeof(float));
         }
-        std::pair<int *, int> pair_out = prepare_input_for_multimodel(input_ids_vector, preprocessed_images, num_image);
-        output_ids = pair_out.first;
+        
+        std::pair<std::vector<std::vector<float>>, int> pair_out = prepare_input_for_multimodel(input_ids_vector, preprocessed_images, num_image);
+        for(int i = 0; i < pair_out.first.size(); i++){
+            for(int j = 0; j < HIDDEN_SIZE; j++){
+                embedding[i][j] = pair_out.first[i][j];
+            }
+        }
+        
         max_len = pair_out.second;
     }
-
+    int output_ids[SLEN];
     PhiForCausalLM_forward(
         output_ids,
-        input_ids,
+        embedding,
         max_len
     );
     std::vector<int> phi_token(output_ids, output_ids+SLEN);
@@ -67,12 +74,12 @@ void encode_images(
     Connector_forward(output, connector_input);
 }
 
-std::pair<int *, int> prepare_input_for_multimodel(
+std::pair<std::vector<std::vector<float>>, int> prepare_input_for_multimodel(
     std::vector<int> input_ids,
     float images[MAX_NUM][NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE],
     const int num_images
 ){  
-    std::vector<int> output_embedding;
+    
     //std::vector<int> cur_input_ids(*input_ids);
     std::vector<std::vector<std::vector<float>>> input_embeds_split;
     float vision_tower_outputs[num_images][SLEN][HIDDEN_SIZE];
@@ -96,26 +103,24 @@ std::pair<int *, int> prepare_input_for_multimodel(
             input_embeds_split[i].push_back(std::vector<float>(HIDDEN_SIZE, 0.0f));
         }
     }
-
+    
+    std::vector<std::vector<float>> output_embedding;
     for(int i = 0; i < num_images + 1; i++){
         for(const auto& vec : input_embeds_split[i]){
-            output_embedding.insert(output_embedding.end(), vec.begin(), vec.end());
+           output_embedding.push_back(vec);
         }
         if(i != num_images){
-            for(int j = 0; j < SLEN; j++){
-                for(int k = 0; k < HIDDEN_SIZE; k++){
-                    output_embedding.push_back(vision_tower_outputs[i][j][k]);
-                }
+            for(int j = 0; j < SLEN; j++){ //SLEN? MAX?
+                std::vector<float> image_feature(vision_tower_outputs[i][j], vision_tower_outputs[i][j] + HIDDEN_SIZE);
+                output_embedding.push_back(image_feature);
             }
         }
     }
             
-    std::pair<int *, int> out = {output_embedding.data(), max_len};
+    std::pair<std::vector<std::vector<float>>, int> out = {output_embedding, max_len};
     //memcpy(output_embedding, input_ids, TOKENIZER_MODEL_MAX_LENGTH);
     return out;
 }
-
-// std::vector<int> cur_input_ids = {123, 456, IMAGE_TOKEN_INDEX, 789, 321, IMAGE_TOKEN_INDEX, 999, 888};
 
 // 輸出：不包含 image token 的文字段落，每段是一個 embedding 序列
 // std::vector<std::vector<std::vector<float>>> input_embeds_split;
@@ -144,17 +149,10 @@ std::vector<std::vector<std::vector<float>>> process_input_ids(const std::vector
         for (int j = start; j < end; ++j) {
             int token_id = cur_input_ids[j];
 
-            // // 安全檢查
-            // if (token_id < 0 || token_id >= VOCAB_SIZE) {
-            //     std::cerr << "Invalid token ID: " << token_id << std::endl;
-            //     continue;
+            std::vector<float> embedding(language_model_model_embed_tokens_weight[token_id], language_model_model_embed_tokens_weight[token_id] + HIDDEN_SIZE);
+            // for (int k = 0; k < HIDDEN_SIZE; ++k) {
+            //     embedding[k] = language_model_model_embed_tokens_weight[token_id][k];
             // }
-
-            // // lookup 嵌入向量
-            std::vector<float> embedding(HIDDEN_SIZE);
-            for (int k = 0; k < HIDDEN_SIZE; ++k) {
-                embedding[k] = language_model_model_embed_tokens_weight[token_id][k];
-            }
             segment_embed.push_back(embedding);
         }
 
@@ -165,7 +163,7 @@ std::vector<std::vector<std::vector<float>>> process_input_ids(const std::vector
 }
 
 int load_image(
-    cv::Mat img,
+    cv::Mat& img,
     std::string image_path
 ){
     // load image in BGR & HWC format => [Height, Width, Channels]
@@ -187,18 +185,29 @@ auto init_tokenizer(){
 
 void tokenizer_image_token(
     std::vector<int>& input_ids,
-    char prompt[MAX_LEN],
+    std::string prompt,
     auto tokenizer
 ){
     char prompt_chunks[MAX_LEN][TOKEN_LEN];
-    int * len;
-    prompt_split(prompt_chunks, len, prompt, "<image>");
+    int len = 0;
+    // prompt_split(prompt_chunks, &len, prompt, "<image>");
+    // std::vector<std::vector<int>> tokenize_prompt_chunks;
+    // for(int i = 0; i < MAX_LEN; i++) {
+    //     if (strlen(prompt_chunks[i]) == 0) {
+    //         break; // 停止處理空的 chunk
+    //     }
+    //     std::vector<int> chunk_ids = *tokenizer->Encode(prompt_chunks[i]);
+    //     tokenize_prompt_chunks.push_back(chunk_ids);
+    // }
+    //std::string prompt(prompt, prompt + MAX_LEN);
+    std::string separator = "<image>"; 
+    std::vector<std::string> chunks = split_prompt_by_separator(prompt, separator);
     std::vector<std::vector<int>> tokenize_prompt_chunks;
-    for(int i = 0; i < MAX_LEN; i++) {
-        if (strlen(prompt_chunks[i]) == 0) {
-            break; // 停止處理空的 chunk
+    for(int i = 0; i < chunks.size(); i++) {
+        if (chunks[i].empty()) {
+            continue; // 停止處理空的 chunk
         }
-        std::vector<int> chunk_ids = *tokenizer->Encode(prompt_chunks[i]);
+        std::vector<int> chunk_ids = *tokenizer->Encode(chunks[i]);
         tokenize_prompt_chunks.push_back(chunk_ids);
     }
     int offset = 0;
@@ -211,26 +220,41 @@ void tokenizer_image_token(
     // }
 
     std::vector<std::vector<int>> ids = insert_separator(tokenize_prompt_chunks, sep);
-    for(int i = 0; i < MAX_LEN; i++) {
-       input_ids.insert(input_ids.end(), ids.begin() + offset, ids.end());
+    for(int i = 0; i < ids.size(); i++) {
+       input_ids.insert(input_ids.end(), ids[i].begin() + offset, ids[i].end());
     }
 }
 
-void prompt_split(
-    char prompt_chunks[MAX_LEN][TOKEN_LEN],
-    int * len,
-    char prompt[MAX_LEN],
-    const char split[MAX_LEN]
-){
-    int idx = 0;
-    char* token = strtok(prompt, split);
-    while (token != nullptr && idx < MAX_LEN) {
-        strncpy(prompt_chunks[idx], token, MAX_LEN - 1);
-        prompt_chunks[idx][MAX_LEN - 1] = '\0'; // 確保字串結尾
-        idx++;
-        token = strtok(nullptr, split);
+// void prompt_split(
+//     char prompt_chunks[MAX_LEN][TOKEN_LEN],
+//     int * len,
+//     char prompt[MAX_LEN],
+//     const char split[MAX_LEN]
+// ){
+//     int idx = 0;
+//     char* token = strtok(prompt, split);
+//     while (token != nullptr && idx < MAX_LEN) {
+//         strncpy(prompt_chunks[idx], token, MAX_LEN - 1);
+//         prompt_chunks[idx][MAX_LEN - 1] = '\0'; // 確保字串結尾
+//         idx++;
+//         token = strtok(nullptr, split);
+//     }
+//     *len = idx;
+// }
+
+std::vector<std::string> split_prompt_by_separator(const std::string& prompt, const std::string& separator) {
+    std::vector<std::string> chunks;
+    size_t start = 0;
+    size_t end;
+
+    while ((end = prompt.find(separator, start)) != std::string::npos) {
+        chunks.push_back(prompt.substr(start, end - start));
+        start = end + separator.length();
     }
-    *len = idx;
+
+    // push the remaining part
+    chunks.push_back(prompt.substr(start));
+    return chunks;
 }
 
 std::vector<std::vector<int>> insert_separator(const std::vector<std::vector<int>>& X, const std::vector<int>& sep) {
@@ -249,13 +273,8 @@ std::vector<std::vector<int>> insert_separator(const std::vector<std::vector<int
     return result;
 }
 
-void chat(char prompt[MAX_LEN], std::vector<std::string> image_paths){
-    // char input[MAX_LEN];
-    // std :: cin >> input;
-    // strcpy(prompt, DEFAULT_IMAGE_TOKEN + '\n');
-    // strcpy(prompt + 8, input);
+void chat(std::string& prompt, std::vector<std::string> image_paths){
     std::string input;
     std::getline(std::cin, input);
-    strcpy(prompt, "<image>\n");
-    strcat(prompt, input.c_str());
+    prompt = "<image>" + input;
 }
