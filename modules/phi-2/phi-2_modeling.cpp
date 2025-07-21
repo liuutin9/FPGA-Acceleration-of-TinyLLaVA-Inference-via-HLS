@@ -256,11 +256,15 @@ void PhiAttention_forward(
     // 進 attention，拿出 attn_output, attn_weights
     float scaling = 1.0 / hls::sqrt(HEAD_DIM);
     float attn_output[NUM_ATTENTION_HEADS * HEAD_DIM];
+    float attn_k[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM];
+    float attn_v[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM];
+    memcpy(attn_k, k_cache[layer_id], sizeof(float) * NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM);
+    memcpy(attn_v, v_cache[layer_id], sizeof(float) * NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM);
     eager_attention_forward_with_kv_cache(
         attn_output,
         linear_q,
-        k_cache[layer_id],
-        v_cache[layer_id],
+        attn_k,
+        attn_v,
         scaling,
         position_idx
     );
@@ -477,7 +481,7 @@ void PhiModel_forward(
     float hidden_state[HIDDEN_SIZE];
     for (int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
         memcpy(hidden_state, input_embed, sizeof(float) * HIDDEN_SIZE);
-        PhiDecoderLayer_forward(input_embed, i, position_idx, hidden_state, cos, sin);
+        PhiDecoderLayer_forward(input_embed, i, position_idx, hidden_state, in_cos, in_sin);
     }
 
     if (should_predict) {
@@ -538,7 +542,7 @@ void PhiForCausalLM_forward(
         PhiModel_forward(&output_id, input_embed, should_predict, i, cos[i], sin[i]);
         if (output_id == END_OF_TEXT_ID) break;
         if (should_predict) {
-            output_ids[output_len++] = input_ids[i] = output_id;
+            output_ids[output_len++] = output_id;
         }
     }
 }

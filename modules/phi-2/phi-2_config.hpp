@@ -35,8 +35,8 @@
 
 #define END_OF_TEXT_ID 50256
 
-float k_cache[32][NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM];
-float v_cache[32][NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM];
+static float k_cache[32][NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM];
+static float v_cache[32][NUM_KEY_VALUE_HEADS][SLEN][HEAD_DIM];
 
 void rotate_half(
     float out[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
