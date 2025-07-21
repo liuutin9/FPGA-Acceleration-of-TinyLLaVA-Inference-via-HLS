@@ -147,7 +147,7 @@ void PhiModel_forward(
 
 void PhiForCausalLM_forward(
     int output_ids[SLEN],
-    int input_ids[SLEN],
+    float input_embeds[SLEN * HIDDEN_SIZE],
     int input_len
 );
 

@@ -27,8 +27,10 @@ void TinyLlava(){
     float preprocessed_images[MAX_NUM][NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE];
     const int num_image = image_paths.size();
     int max_len;
-    float embedding[SLEN][HIDDEN_SIZE]; //MAX_LEN??
-    std::fill(&embedding[0][0], &embedding[0][0] + SLEN * HIDDEN_SIZE, 0.0f);
+    // float embedding[SLEN][HIDDEN_SIZE]; //MAX_LEN??
+    // std::fill(&embedding[0][0], &embedding[0][0] + SLEN * HIDDEN_SIZE, 0.0f);
+    float embedding[SLEN*HIDDEN_SIZE]; //MAX_LEN??
+    std::fill(&embedding[0], &embedding[0] + SLEN * HIDDEN_SIZE, 0.0f);
     if (num_image == 0){
         input_ids_vector = tokenizer->Encode(prompt); //INT 32
         // input_ids = input_ids_vector.data();
@@ -47,7 +49,7 @@ void TinyLlava(){
         std::pair<std::vector<std::vector<float>>, int> pair_out = prepare_input_for_multimodel(input_ids_vector, preprocessed_images, num_image);
         for(int i = 0; i < pair_out.first.size(); i++){
             for(int j = 0; j < HIDDEN_SIZE; j++){
-                embedding[i][j] = pair_out.first[i][j];
+                embedding[i * HIDDEN_SIZE +  j] = pair_out.first[i][j];
             }
         }
         
