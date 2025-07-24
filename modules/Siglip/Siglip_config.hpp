@@ -13,7 +13,7 @@
 #define HIDDEN_ACT "gelu_pytorch_tanh"
 #define LAYER_NORM_EPS 1e-6
 #define ATTENTION_DROPOUT 0.0
-#define SLEN 2048 // TODO: 最大序列長度
+#define SLEN INPUT_DIM
 
 //SIGLIP
 #define INITIALIZER_FACTOR 1_0
