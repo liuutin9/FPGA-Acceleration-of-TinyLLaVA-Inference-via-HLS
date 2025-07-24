@@ -110,9 +110,9 @@ void SiglipAttention(
     float reshaped_q_proj[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM];
     float reshaped_k_proj[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM];
     float reshaped_v_proj[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM];
-    memcpy(reshaped_q_proj, q_proj, sizeof(float) * NUM_ATTENTION_HEADS * HEAD_DIM);
-    memcpy(reshaped_k_proj, k_proj, sizeof(float) * NUM_ATTENTION_HEADS * HEAD_DIM);
-    memcpy(reshaped_v_proj, v_proj, sizeof(float) * NUM_ATTENTION_HEADS * HEAD_DIM);
+    memcpy(reshaped_q_proj, q_proj, sizeof(float) * SLEN * NUM_ATTENTION_HEADS * HEAD_DIM);
+    memcpy(reshaped_k_proj, k_proj, sizeof(float) * SLEN * NUM_ATTENTION_HEADS * HEAD_DIM);
+    memcpy(reshaped_v_proj, v_proj, sizeof(float) * SLEN * NUM_ATTENTION_HEADS * HEAD_DIM);
 
     // Transpose to (num_heads, source_length, head_dim)
     float query[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
