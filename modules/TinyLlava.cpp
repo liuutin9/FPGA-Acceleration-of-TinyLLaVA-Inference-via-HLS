@@ -17,7 +17,7 @@ using namespace tokenizers;
 
 void TinyLlava(){
     std::string prompt; 
-    std::string image_path = "D:/NTHU/大三下/專題/Project/test.jpg";
+    std::string image_path = "../test.jpg";
     std::vector<std::string> image_paths;
     image_paths.push_back(image_path);
     chat(prompt, image_paths);
