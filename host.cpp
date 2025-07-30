@@ -46,6 +46,15 @@ using namespace std;
 
 #define ALL_MESSAGES
 
+#define OCL_CHECK(error, call)                                                                   	 \
+    do {                                                                                             \
+        call;                                                                                        \
+        if (error != CL_SUCCESS) {                                                                   \
+            printf("%s:%d Error calling " #call ", error code is: %d\n", __FILE__, __LINE__, error); \
+            exit(EXIT_FAILURE);                                                                      \
+        }                                                                                            \
+    } while (0)
+
 // ********************************************************************************** //
 // ---------------------------------------------------------------------------------- //
 //                          M A I N    F U N C T I O N                                //
