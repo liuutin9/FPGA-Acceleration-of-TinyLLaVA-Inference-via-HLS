@@ -254,7 +254,8 @@ void PhiAttention_forward(
     // attention 實作可選擇：eager_attention_forward, flash_attention_2, sdpa
 
     // 進 attention，拿出 attn_output, attn_weights
-    float scaling = 1.0 / hls::sqrt(HEAD_DIM);
+    // float scaling = 1.0 / hls::sqrt(HEAD_DIM);
+    float scaling = 0.1118033989f;
     float attn_output[NUM_ATTENTION_HEADS * HEAD_DIM];
     float attn_k[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM];
     float attn_v[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM];
