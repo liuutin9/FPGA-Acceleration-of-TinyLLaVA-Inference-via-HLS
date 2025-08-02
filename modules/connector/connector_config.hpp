@@ -3,7 +3,7 @@
 // connector config
 #define VISION_HIDDEN_SIZE 1152
 #define HIDDEN_SIZE 2560
-#define SLEN 2048 // TODO: 最大序列長度
+#define SLEN 729 // INPUT_DIM in Siglip_config.hpp
 
 void Connector_forward(
     float out[SLEN][HIDDEN_SIZE],

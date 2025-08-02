@@ -41,16 +41,33 @@ void SiglipMLP(
     );
 }
 
-void matmul_with_scale(
+// void matmul_with_scale(
+//     float out[SLEN][SLEN], 
+//     float in1[SLEN][HEAD_DIM], float in2[HEAD_DIM][SLEN], 
+//     float scaling
+// ) {
+//     for (int i = 0; i < SLEN; i++) {
+//         for (int j = 0; j < SLEN; j++) {
+//             float sum = 0;
+//             for (int k = 0; k < HEAD_DIM; k++) {
+//                 sum += in1[i][k] * in2[k][j];
+//             }
+//             out[i][j] = sum * scaling;
+//         }
+//     }
+// }
+
+void matmul_with_scale_no_transpose(
     float out[SLEN][SLEN], 
-    float in1[SLEN][HEAD_DIM], float in2[HEAD_DIM][SLEN], 
+    float in1[SLEN][HEAD_DIM],
+    float in2[HEAD_DIM][SLEN],
     float scaling
 ) {
     for (int i = 0; i < SLEN; i++) {
         for (int j = 0; j < SLEN; j++) {
             float sum = 0;
             for (int k = 0; k < HEAD_DIM; k++) {
-                sum += in1[i][k] * in2[k][j];
+                sum += in1[i][k] * in2[j][k];
             }
             out[i][j] = sum * scaling;
         }
@@ -63,18 +80,13 @@ void eager_attention_per_head(
     float key[SLEN][HEAD_DIM],
     float value[SLEN][HEAD_DIM],
     float scaling
-) {
-    // float attn_weights[SLEN][SLEN];
-    // matmul<SLEN, HEAD_DIM, SLEN, float>(attn_weights, query, transposed_key);
-    
-    // float scaled_attn_weights[SLEN][SLEN];
-    // elementwise_mul<SLEN, SLEN, float>(scaled_attn_weights, attn_weights, scaling);
-    
-    float transposed_key[HEAD_DIM][SLEN];
-    transpose<SLEN, HEAD_DIM, float>(transposed_key, key);
+) {   
+    // float transposed_key[HEAD_DIM][SLEN];
+    // transpose<SLEN, HEAD_DIM, float>(transposed_key, key);
 
     float scaled_attn_weights[SLEN][SLEN];
-    matmul_with_scale(scaled_attn_weights, query, transposed_key, scaling);
+    // matmul_with_scale(scaled_attn_weights, query, transposed_key, scaling);
+    matmul_with_scale_no_transpose(scaled_attn_weights, query, key, scaling);
     
     float softmax_attn_weights[SLEN][SLEN];
     softmax<SLEN, SLEN>(softmax_attn_weights, scaled_attn_weights);
@@ -110,9 +122,9 @@ void SiglipAttention(
     float reshaped_q_proj[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM];
     float reshaped_k_proj[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM];
     float reshaped_v_proj[SLEN][NUM_ATTENTION_HEADS][HEAD_DIM];
-    memcpy(reshaped_q_proj, q_proj, sizeof(float) * NUM_ATTENTION_HEADS * HEAD_DIM);
-    memcpy(reshaped_k_proj, k_proj, sizeof(float) * NUM_ATTENTION_HEADS * HEAD_DIM);
-    memcpy(reshaped_v_proj, v_proj, sizeof(float) * NUM_ATTENTION_HEADS * HEAD_DIM);
+    memcpy(reshaped_q_proj, q_proj, sizeof(float) * SLEN * NUM_ATTENTION_HEADS * HEAD_DIM);
+    memcpy(reshaped_k_proj, k_proj, sizeof(float) * SLEN * NUM_ATTENTION_HEADS * HEAD_DIM);
+    memcpy(reshaped_v_proj, v_proj, sizeof(float) * SLEN * NUM_ATTENTION_HEADS * HEAD_DIM);
 
     // Transpose to (num_heads, source_length, head_dim)
     float query[NUM_ATTENTION_HEADS][SLEN][HEAD_DIM];
