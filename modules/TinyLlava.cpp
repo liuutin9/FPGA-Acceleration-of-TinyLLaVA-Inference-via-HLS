@@ -40,12 +40,11 @@ void TinyLlava(){
             load_image(image, image_path);
             float preprocessed_image[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE];
             preprocess(preprocessed_image, image);
-            tokenizer_image_token(input_ids_vector, prompt, &tokenizer);
             // input_ids = input_ids_vector.data();
               
             memcpy(preprocessed_images[i], preprocessed_image, NUM_CHANNELS * IMAGE_SIZE * IMAGE_SIZE * sizeof(float));
         }
-        
+        tokenizer_image_token(input_ids_vector, prompt, &tokenizer);
         std::pair<std::vector<std::vector<float>>, int> pair_out = prepare_input_for_multimodel(input_ids_vector, preprocessed_images, num_image);
         for(int i = 0; i < pair_out.first.size(); i++){
             for(int j = 0; j < HIDDEN_SIZE; j++){
