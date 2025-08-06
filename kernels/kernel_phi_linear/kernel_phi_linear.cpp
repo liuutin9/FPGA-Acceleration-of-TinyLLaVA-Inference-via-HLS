@@ -1,4 +1,4 @@
-#define HIDDEN_SIZE 2560
+#define HIDDEN_SIZE 256
 #define NUM_BLOCKS 8
 #define BLOCK_SIZE (HIDDEN_SIZE / NUM_BLOCKS)
 
@@ -13,10 +13,10 @@ extern "C" {
         float* weight,
         float* bias
     ) {
-        #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=weight offset=slave bundle=gmem2 depth=6553600 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=bias offset=slave bundle=gmem3 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=256 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=256 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight offset=slave bundle=gmem2 depth=65536 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias offset=slave bundle=gmem3 depth=256 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out bundle=control
         #pragma HLS INTERFACE s_axilite port=in bundle=control
