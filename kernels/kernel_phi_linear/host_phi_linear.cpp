@@ -38,6 +38,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iomanip>
 #include <CL/cl.h>
 #include <cmath>
+#include <ap_fixed.h>
+
+typedef ap_fixed<16,10> fixed16_10;
 
 using namespace std;
 
@@ -560,7 +563,7 @@ int main(int argc, char* argv[])
 	//   o) Allocate Memory to store the results: RES array
 	//   o) Create Buffers in Global Memory to store data
 	// ================================================================
-	float *IN, *WEIGHT, *BIAS, *OUT;
+	fixed16_10 *IN, *WEIGHT, *BIAS, *OUT;
 
 	#ifdef ALL_MESSAGES
 	cout << endl;
@@ -579,47 +582,47 @@ int main(int argc, char* argv[])
 	void *ptr=nullptr;
 
 	cout << "HOST-Info: Allocating memory for IN ... ";
-	if (posix_memalign(&ptr,4096,SIZE_IN*sizeof(float))) {
+	if (posix_memalign(&ptr,4096,SIZE_IN*sizeof(fixed16_10))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for IN array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	IN = reinterpret_cast<float*>(ptr);
-	// use for loop to generate random float values
+	IN = reinterpret_cast<fixed16_10*>(ptr);
+	// use for loop to generate random fixed16_10 values
 	for (int i = 0; i < SIZE_IN; i++) {
-		IN[i] = i / 1000.0f; // Example: generating float values from 0.0 to 255.9
+		IN[i] = i / 1000.0f; // Example: generating fixed16_10 values from 0.0 to 255.9
 	}
 	cout << "Generated " << SIZE_IN << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for WEIGHT ... ";
-	if (posix_memalign(&ptr,4096,SIZE_WEIGHT*sizeof(float))) {
+	if (posix_memalign(&ptr,4096,SIZE_WEIGHT*sizeof(fixed16_10))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for WEIGHT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	WEIGHT = reinterpret_cast<float*>(ptr);
-	// use for loop to generate random float values
+	WEIGHT = reinterpret_cast<fixed16_10*>(ptr);
+	// use for loop to generate random fixed16_10 values
 	for (int i = 0; i < SIZE_WEIGHT; i++) {
-		WEIGHT[i] = i / 1000.0f; // Example: generating float values from 0.0 to 255.9
+		WEIGHT[i] = i / 1000.0f; // Example: generating fixed16_10 values from 0.0 to 255.9
 	}
 	cout << "Generated " << SIZE_WEIGHT << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for BIAS ... ";
-	if (posix_memalign(&ptr,4096,SIZE_BIAS*sizeof(float))) {
+	if (posix_memalign(&ptr,4096,SIZE_BIAS*sizeof(fixed16_10))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for BIAS array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	BIAS = reinterpret_cast<float*>(ptr);
-	// use for loop to generate random float values
+	BIAS = reinterpret_cast<fixed16_10*>(ptr);
+	// use for loop to generate random fixed16_10 values
 	for (int i = 0; i < SIZE_BIAS; i++) {
-		BIAS[i] = i / 1000.0f; // Example: generating float values from 0.0 to 255.9
+		BIAS[i] = i / 1000.0f; // Example: generating fixed16_10 values from 0.0 to 255.9
 	}
 	cout << "Generated " << SIZE_BIAS << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for OUT ... ";
-	if (posix_memalign(&ptr,4096,SIZE_OUT*sizeof(float))) {
+	if (posix_memalign(&ptr,4096,SIZE_OUT*sizeof(fixed16_10))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for OUT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	OUT = reinterpret_cast<float*>(ptr);
+	OUT = reinterpret_cast<fixed16_10*>(ptr);
 	cout << "Allocated" << endl;
 
 	cout << endl;
@@ -744,7 +747,7 @@ int main(int argc, char* argv[])
 	// ------------------------------------------------------
 	// Step 6: Check Output Results
 	// ------------------------------------------------------
-	float golden_out[HIDDEN_SIZE];
+	fixed16_10 golden_out[HIDDEN_SIZE];
 	for (int i = 0; i < HIDDEN_SIZE; i++) {
 		golden_out[i] = BIAS[i];
 		for (int j = 0; j < HIDDEN_SIZE; j++) {
