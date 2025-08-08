@@ -23,10 +23,15 @@ using namespace std;
 #define ALL_MESSAGES
 
 #define HIDDEN_SIZE 2560
+#define NUM_KEY_VALUE_HEADS 32
+#define HEAD_DIM 80
+#define ROTARY_DIM 32
+#define HALF_ROTARY_DIM 16
+
 #define SIZE_OUT HIDDEN_SIZE
 #define SIZE_IN HIDDEN_SIZE
-#define SIZE_WEIGHT (HIDDEN_SIZE * HIDDEN_SIZE)
-#define SIZE_BIAS HIDDEN_SIZE
+#define SIZE_COSINE ROTARY_DIM
+#define SIZE_SINE ROTARY_DIM
 
 #define OCL_CHECK(error, call)                                                                   	 \
     do {                                                                                             \
@@ -82,7 +87,7 @@ void run_custom_profiling (int Nb_Of_Kernels, int Nb_Of_Memory_Tranfers, cl_even
 
 	PROFILE = new profile_t[Nb_Of_Kernels + Nb_Of_Memory_Tranfers];
 
-	PROFILE[0].action_type="kernel";  PROFILE[0].name="kernel_phi_linear";  PROFILE[0].event = K_exe_event[0];
+	PROFILE[0].action_type="kernel";  PROFILE[0].name="kernel_phi_rotary_embed";  PROFILE[0].event = K_exe_event[0];
 
 	for (int i=0; i<Nb_Of_Memory_Tranfers; i++) {
 		PROFILE[Nb_Of_Kernels+i].action_type="mem (H<->G)";
@@ -522,12 +527,12 @@ int main(int argc, char* argv[])
 	// -------------------------------------------------------------
 	// Step 3.4: Create a Kernels
 	// -------------------------------------------------------------
-	cl_kernel kernel_phi_linear;
+	cl_kernel kernel_phi_rotary_embed;
 
 	#ifdef ALL_MESSAGES
 	cout << "HOST-Info: Creating Kernels ..." << endl;
 	#endif
-	OCL_CHECK(errCode, kernel_phi_linear = clCreateKernel(Program, "kernel_phi_linear", &errCode));
+	OCL_CHECK(errCode, kernel_phi_rotary_embed = clCreateKernel(Program, "kernel_phi_rotary_embed", &errCode));
 
 	// TODO
 	// ================================================================
@@ -539,7 +544,7 @@ int main(int argc, char* argv[])
 	//   o) Allocate Memory to store the results: RES array
 	//   o) Create Buffers in Global Memory to store data
 	// ================================================================
-	fixed16_10 *IN, *WEIGHT, *BIAS, *OUT;
+	fixed16_10 *OUT, *IN, *COSINE, *SINE;
 
 	#ifdef ALL_MESSAGES
 	cout << endl;
@@ -558,7 +563,7 @@ int main(int argc, char* argv[])
 	void *ptr=nullptr;
 
 	cout << "HOST-Info: Allocating memory for IN ... ";
-	if (posix_memalign(&ptr,4096,SIZE_IN*sizeof(fixed16_10))) {
+	if (posix_memalign(&ptr, 4096, SIZE_IN * sizeof(fixed16_10))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for IN array" << endl << endl;
 		return EXIT_FAILURE;
 	}
@@ -569,32 +574,32 @@ int main(int argc, char* argv[])
 	}
 	cout << "Generated " << SIZE_IN << " values" << endl;
 
-	cout << "HOST-Info: Allocating memory for WEIGHT ... ";
-	if (posix_memalign(&ptr,4096,SIZE_WEIGHT*sizeof(fixed16_10))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for WEIGHT array" << endl << endl;
+	cout << "HOST-Info: Allocating memory for COSINE ... ";
+	if (posix_memalign(&ptr, 4096, SIZE_COSINE * sizeof(fixed16_10))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for COSINE array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	WEIGHT = reinterpret_cast<fixed16_10*>(ptr);
+	COSINE = reinterpret_cast<fixed16_10*>(ptr);
 	// use for loop to generate random fixed16_10 values
-	for (int i = 0; i < SIZE_WEIGHT; i++) {
-		WEIGHT[i] = fixed16_10(i / 1000.0f); // Example: generating fixed16_10 values from 0.0 to 255.9
+	for (int i = 0; i < SIZE_COSINE; i++) {
+		COSINE[i] = fixed16_10(i / 1000.0f); // Example: generating fixed16_10 values from 0.0 to 255.9
 	}
-	cout << "Generated " << SIZE_WEIGHT << " values" << endl;
+	cout << "Generated " << SIZE_COSINE << " values" << endl;
 
-	cout << "HOST-Info: Allocating memory for BIAS ... ";
-	if (posix_memalign(&ptr,4096,SIZE_BIAS*sizeof(fixed16_10))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for BIAS array" << endl << endl;
+	cout << "HOST-Info: Allocating memory for SINE ... ";
+	if (posix_memalign(&ptr, 4096, SIZE_SINE * sizeof(fixed16_10))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for SINE array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	BIAS = reinterpret_cast<fixed16_10*>(ptr);
+	SINE = reinterpret_cast<fixed16_10*>(ptr);
 	// use for loop to generate random fixed16_10 values
-	for (int i = 0; i < SIZE_BIAS; i++) {
-		BIAS[i] = fixed16_10(i / 1000.0f); // Example: generating fixed16_10 values from 0.0 to 255.9
+	for (int i = 0; i < SIZE_SINE; i++) {
+		SINE[i] = fixed16_10(i / 1000.0f); // Example: generating fixed16_10 values from 0.0 to 255.9
 	}
-	cout << "Generated " << SIZE_BIAS << " values" << endl;
+	cout << "Generated " << SIZE_SINE << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for OUT ... ";
-	if (posix_memalign(&ptr,4096,SIZE_OUT*sizeof(fixed16_10))) {
+	if (posix_memalign(&ptr, 4096, SIZE_OUT * sizeof(fixed16_10))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for OUT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
@@ -605,33 +610,33 @@ int main(int argc, char* argv[])
 
 	// ------------------------------------------------------------------
 	// Step 4.2: Create Buffers in Global Memory to store data
-	//             o) buffer_phi_linear_out
-    //             o) buffer_phi_linear_in
-    //             o) buffer_phi_linear_weight
-    //             o) buffer_phi_linear_bias
+	//             o) buffer_phi_rotary_embed_out
+    //             o) buffer_phi_rotary_embed_in
+    //             o) buffer_phi_rotary_embed_cosine
+    //             o) buffer_phi_rotary_embed_sine
 	// ------------------------------------------------------------------
 	#ifdef ALL_MESSAGES
 	cout << "HOST-Info: Allocating buffers ..." << endl;
 	#endif
-	cl_mem buffer_phi_linear_out, buffer_phi_linear_in, buffer_phi_linear_weight, buffer_phi_linear_bias;
+	cl_mem buffer_phi_rotary_embed_out, buffer_phi_rotary_embed_in, buffer_phi_rotary_embed_cosine, buffer_phi_rotary_embed_sine;
 
 	// size 和 read / write 權限要再修正
-	OCL_CHECK(errCode, buffer_phi_linear_out = clCreateBuffer(Context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, SIZE_OUT * sizeof(fixed16_10), OUT, &errCode));
-	OCL_CHECK(errCode, buffer_phi_linear_in = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_IN * sizeof(fixed16_10), IN, &errCode));
-	OCL_CHECK(errCode, buffer_phi_linear_weight = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_WEIGHT * sizeof(fixed16_10), WEIGHT, &errCode));
-	OCL_CHECK(errCode, buffer_phi_linear_bias = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_BIAS * sizeof(fixed16_10), BIAS, &errCode));
+	OCL_CHECK(errCode, buffer_phi_rotary_embed_out = clCreateBuffer(Context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, SIZE_OUT * sizeof(fixed16_10), OUT, &errCode));
+	OCL_CHECK(errCode, buffer_phi_rotary_embed_in = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_IN * sizeof(fixed16_10), IN, &errCode));
+	OCL_CHECK(errCode, buffer_phi_rotary_embed_cosine = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_COSINE * sizeof(fixed16_10), COSINE, &errCode));
+	OCL_CHECK(errCode, buffer_phi_rotary_embed_sine = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_SINE * sizeof(fixed16_10), SINE, &errCode));
 
 	// ============================================================================
 	// Step 5: Set Kernel Arguments and Run the Application
 	//         o) Set Kernel Arguments
-	// 				------------------------------------------------------------
-	// 				 Kernel	  		    Argument Nb		Description
-	// 				------------------------------------------------------------
-	//  			 kernel_phi_linear	0				buffer_phi_linear_out
-    //  			 kernel_phi_linear	1				buffer_phi_linear_in
-    //  			 kernel_phi_linear	2				buffer_phi_linear_weight
-    //  			 kernel_phi_linear	3				buffer_phi_linear_bias
-	// 				------------------------------------------------------------
+	// 				---------------------------------------------------------------------------
+	// 				 Kernel	  		            Argument Nb		Description
+	// 				---------------------------------------------------------------------------
+	//  			 kernel_phi_rotary_embed	0				buffer_phi_rotary_embed_out
+    //  			 kernel_phi_rotary_embed	1				buffer_phi_rotary_embed_in
+    //  			 kernel_phi_rotary_embed	2				buffer_phi_rotary_embed_cosine
+    //  			 kernel_phi_rotary_embed	3				buffer_phi_rotary_embed_sine
+	// 				---------------------------------------------------------------------------
 	//         o) Copy Input Data from Host to Global Memory
 	//         o) Submit Kernels for Execution
 	//         o) Copy Results from Global Memory to Host
@@ -660,10 +665,10 @@ int main(int argc, char* argv[])
 	cout << "HOST-Info: Setting Kernel arguments ..." << endl;
 	#endif
 
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear, 0, sizeof(cl_mem), &buffer_phi_linear_out));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear, 1, sizeof(cl_mem), &buffer_phi_linear_in));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear, 2, sizeof(cl_mem), &buffer_phi_linear_weight));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear, 3, sizeof(cl_mem), &buffer_phi_linear_bias));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 0, sizeof(cl_mem), &buffer_phi_rotary_embed_out));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 1, sizeof(cl_mem), &buffer_phi_rotary_embed_in));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 2, sizeof(cl_mem), &buffer_phi_rotary_embed_cosine));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 3, sizeof(cl_mem), &buffer_phi_rotary_embed_sine));
 
 
 	// ------------------------------------------------------
@@ -675,13 +680,13 @@ int main(int argc, char* argv[])
 
 	// clEnqueueMigrateMemObjects(cl_command_queue, number of cl_uint, cl_mem*, cl_mem_migration_flags, number of pending events, pending cl_event*, generate cl_event*)
 
-	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_linear_in, 0, 0, NULL, &Mem_op_event[0]));
-	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_linear_weight, 0, 0, NULL, &Mem_op_event[1]));
-	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_linear_bias, 0, 0, NULL, &Mem_op_event[2]));
+	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_in, 0, 0, NULL, &Mem_op_event[0]));
+	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_cosine, 0, 0, NULL, &Mem_op_event[1]));
+	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_sine, 0, 0, NULL, &Mem_op_event[2]));
 
 	// --------------------------------------------------------
 
-	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_linear_out, CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED, 0, NULL, &Mem_op_event[3]));
+	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_out, CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED, 0, NULL, &Mem_op_event[3]));
 
 	// --------------------------------------------------------
 
@@ -691,9 +696,9 @@ int main(int argc, char* argv[])
 	// Step 5.3: Submit Kernels for Execution
 	// ----------------------------------------
 
-	cout << "HOST-Info: Submitting Kernel kernel_phi_linear for Execution ..." << endl;
+	cout << "HOST-Info: Submitting Kernel phi_rotary_embed for Execution ..." << endl;
 
-	OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_linear, 0, NULL, &K_exe_event[0]));
+	OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_rotary_embed, 0, NULL, &K_exe_event[0]));
 
 	// ---------------------------------------------------------
 	// Step 5.4: Submit Copy Results from Global Memory to Host
@@ -702,7 +707,7 @@ int main(int argc, char* argv[])
 	cout << "HOST_Info: Submitting Copy Results data from Global Memory to Host ..." << endl;
 	#endif
 
-	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_linear_out, CL_MIGRATE_MEM_OBJECT_HOST, 1, &K_exe_event[0], &Mem_op_event[4]));
+	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_out, CL_MIGRATE_MEM_OBJECT_HOST, 1, &K_exe_event[0], &Mem_op_event[4]));
 
 	cout << endl << "HOST_Info: Waiting for application to be completed ..." << endl;
 	clFinish(Command_Queue);
@@ -724,10 +729,14 @@ int main(int argc, char* argv[])
 	// Step 6: Check Output Results
 	// ------------------------------------------------------
 	fixed16_10 golden_out[HIDDEN_SIZE];
-	for (int i = 0; i < HIDDEN_SIZE; i++) {
-		golden_out[i] = BIAS[i];
-		for (int j = 0; j < HIDDEN_SIZE; j++) {
-			golden_out[i] += IN[j] * WEIGHT[i * HIDDEN_SIZE + j];
+	for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
+		for (int j = 0; j < HALF_ROTARY_DIM; j++) {
+			int idx1 = i * ROTARY_DIM + j;
+			int idx2 = idx1 + HALF_ROTARY_DIM;
+			fixed16_10 r1 = IN[idx2];
+			fixed16_10 r2 = IN[idx1];
+			golden_out[idx1] = IN[idx1] * COSINE[j] - r1 * SINE[j];
+			golden_out[idx2] = IN[idx2] * COSINE[j + HALF_ROTARY_DIM] - r2 * SINE[j + HALF_ROTARY_DIM];
 		}
 	}
 
@@ -762,7 +771,7 @@ int main(int argc, char* argv[])
 	int Nb_Of_Kernels = Nb_Of_Exe_Events;
 	int Nb_Of_Memory_Tranfers = Nb_Of_Mem_Events;
 
-	string list_of_kernel_names[Nb_Of_Kernels]={"kernel_phi_linear"};
+	string list_of_kernel_names[Nb_Of_Kernels]={"kernel_phi_rotary_embed"};
 	run_custom_profiling (Nb_Of_Kernels, Nb_Of_Memory_Tranfers, K_exe_event, Mem_op_event, list_of_kernel_names);
 
 	// ============================================================================
@@ -773,12 +782,12 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < Nb_Of_Mem_Events; i++) clReleaseEvent(Mem_op_event[i]);
 	for (int i = 0; i < Nb_Of_Exe_Events; i++) clReleaseEvent(K_exe_event[i]);
 
-	clReleaseMemObject(buffer_phi_linear_out);
-	clReleaseMemObject(buffer_phi_linear_in);
-	clReleaseMemObject(buffer_phi_linear_weight);
-	clReleaseMemObject(buffer_phi_linear_bias);
+	clReleaseMemObject(buffer_phi_rotary_embed_out);
+	clReleaseMemObject(buffer_phi_rotary_embed_in);
+	clReleaseMemObject(buffer_phi_rotary_embed_cosine);
+	clReleaseMemObject(buffer_phi_rotary_embed_sine);
 
-	clReleaseKernel(kernel_phi_linear);
+	clReleaseKernel(kernel_phi_rotary_embed);
 
 	clReleaseProgram(Program);
 	clReleaseCommandQueue(Command_Queue);
@@ -787,10 +796,10 @@ int main(int argc, char* argv[])
 	free(Platform_IDs);
 	free(Device_IDs);
 
-	free(IN);
-	free(WEIGHT);
-	free(BIAS);
 	free(OUT);
+	free(IN);
+	free(COSINE);
+	free(SINE);
 
 	cout << endl << "HOST-Info: DONE" << endl << endl;
 

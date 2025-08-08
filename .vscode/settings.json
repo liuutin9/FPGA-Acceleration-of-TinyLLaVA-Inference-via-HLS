@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.v": "verilog",
         "xutility": "cpp",
         "algorithm": "cpp",
         "format": "cpp",
@@ -59,6 +60,10 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "thread": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "compare": "cpp",
+        "xmemory": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp"
     }
 }
