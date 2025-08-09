@@ -1,12 +1,10 @@
-// #include "../utils/transformer.hpp"
-
-// vision config
+//vision config
 #define VOCAB_SIZE 32000
 #define HIDDEN_SIZE 1152
 #define INTERMEDIATE_SIZE 4304
 #define NUM_HIDDEN_LAYERS 27
 #define NUM_ATTENTION_HEADS 16
-#define HEAD_DIM 72 // 1152/16
+#define HEAD_DIM 72 // 1152 / 16 = 72
 #define NUM_CHANNELS 3
 #define IMAGE_SIZE 384
 #define PATHC_SIZE 14
