@@ -1,4 +1,5 @@
 #include <ap_fixed.h>
+#include <hls_math.h>
 
 #define HIDDEN_SIZE 2560
 #define NUM_BLOCKS 8
