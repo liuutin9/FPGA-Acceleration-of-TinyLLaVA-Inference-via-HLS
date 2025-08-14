@@ -9,7 +9,7 @@
 #define HEAD_DIM 72 // 1152/16
 #define NUM_CHANNELS 3
 #define IMAGE_SIZE 384
-#define PATHC_SIZE 14
+#define PATCH_SIZE 14
 #define HIDDEN_ACT "gelu_pytorch_tanh"
 #define LAYER_NORM_EPS 1e-6
 #define ATTENTION_DROPOUT 0.0
@@ -18,7 +18,7 @@
 //SIGLIP
 #define INITIALIZER_FACTOR 1_0
 
-#define NUM_PATCH ((IMAGE_SIZE - PATHC_SIZE + 1) / PATHC_SIZE + 1)
+#define NUM_PATCH ((IMAGE_SIZE - PATCH_SIZE + 1) / PATCH_SIZE + 1)
 #define INPUT_DIM NUM_PATCH * NUM_PATCH
 #define num_patch_x 27
 #define num_patch_y 27
@@ -55,7 +55,7 @@ void Conv2D(
 
 float mult_with_kernel(
     float input[NUM_CHANNELS*IMAGE_SIZE*IMAGE_SIZE], 
-    float kernel[NUM_CHANNELS*PATHC_SIZE*PATHC_SIZE], 
+    float kernel[NUM_CHANNELS*PATCH_SIZE*PATCH_SIZE], 
     int kernel_x, 
     int kernel_y
 );
