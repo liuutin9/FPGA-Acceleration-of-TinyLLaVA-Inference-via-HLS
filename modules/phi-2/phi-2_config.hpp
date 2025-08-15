@@ -49,8 +49,7 @@ void apply_rotary_pos_emb(
     float out_k_embed[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM] // for given position_idx
+    int position_idx
 );
 
 void qkv_with_cache(
@@ -104,8 +103,7 @@ void PhiAttention_forward(
     int layer_id,
     int position_idx,
     float in_hidden_state[HIDDEN_SIZE],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    int position_idx
 );
 
 void PhiMLP_forward(
@@ -127,23 +125,20 @@ void PhiDecoderLayer_forward(
     int layer_id,
     int position_idx,
     float in_hidden_state[HIDDEN_SIZE],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    int position_idx
 );
 
-void PhiRotaryEmbedding_forward(
-    float out_cos[SLEN][ROTARY_DIM],
-    float out_sin[SLEN][ROTARY_DIM],
-    int position_ids[SLEN]
-);
+// void PhiRotaryEmbedding_forward(
+//     float out_cos[SLEN][ROTARY_DIM],
+//     float out_sin[SLEN][ROTARY_DIM],
+//     int position_ids[SLEN]
+// );
 
 void PhiModel_forward(
     int* output_id,
     float input_embed[HIDDEN_SIZE],
     bool should_predict,
-    int position_idx,
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    int position_idx
 );
 
 void PhiForCausalLM_forward(
@@ -152,6 +147,6 @@ void PhiForCausalLM_forward(
     int input_len
 );
 
-void compute_default_rope_parameters(
-    float out_inv_freq[ROTARY_DIM / 2]
-);
+// void compute_default_rope_parameters(
+//     float out_inv_freq[ROTARY_DIM / 2]
+// );

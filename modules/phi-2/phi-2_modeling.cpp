@@ -400,31 +400,31 @@ void PhiDecoderLayer_forward(
     }
 }
 
-void PhiRotaryEmbedding_forward(
-    float out_cos[SLEN][ROTARY_DIM],
-    float out_sin[SLEN][ROTARY_DIM],
-    int position_ids[SLEN]
-) {
-    // rope type = "default"
-    // attention_scaling default is 1
-    // float attention_scaling = 1.0;
+// void PhiRotaryEmbedding_forward(
+//     float out_cos[SLEN][ROTARY_DIM],
+//     float out_sin[SLEN][ROTARY_DIM],
+//     int position_ids[SLEN]
+// ) {
+//     // rope type = "default"
+//     // attention_scaling default is 1
+//     // float attention_scaling = 1.0;
 
-    float inv_freq[ROTARY_DIM / 2] = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
-    float emb[SLEN][ROTARY_DIM];
-    for (int i = 0; i < SLEN; i++) {
-        for (int j = 0; j < ROTARY_DIM / 2; j++) {
-            emb[i][j] = i * inv_freq[j];
-            emb[i][j + ROTARY_DIM / 2] = i * inv_freq[j];
-        }
-    }
-    for (int i = 0; i < SLEN; i++) {
-        for (int j = 0; j < ROTARY_DIM; j++) {
-            // attention_scaling is 1
-            out_cos[i][j] = hls::cosf(emb[i][j]);
-            out_sin[i][j] = hls::sinf(emb[i][j]);
-        }
-    }
-}
+//     float inv_freq[ROTARY_DIM / 2] = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
+//     float emb[SLEN][ROTARY_DIM];
+//     for (int i = 0; i < SLEN; i++) {
+//         for (int j = 0; j < ROTARY_DIM / 2; j++) {
+//             emb[i][j] = i * inv_freq[j];
+//             emb[i][j + ROTARY_DIM / 2] = i * inv_freq[j];
+//         }
+//     }
+//     for (int i = 0; i < SLEN; i++) {
+//         for (int j = 0; j < ROTARY_DIM; j++) {
+//             // attention_scaling is 1
+//             out_cos[i][j] = hls::cosf(emb[i][j]);
+//             out_sin[i][j] = hls::sinf(emb[i][j]);
+//         }
+//     }
+// }
 
 // void PhiPreTrainedModel_init_weights() {
     // 用來定義 linear, embedding, layernorm 訓練初始參數
@@ -457,9 +457,7 @@ void PhiModel_forward(
     int* output_id,
     float input_embed[HIDDEN_SIZE],
     bool should_predict,
-    int position_idx,
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    int position_idx
 ) {
 
     // float input_embed[HIDDEN_SIZE];
@@ -514,7 +512,7 @@ void PhiForCausalLM_forward(
     for (int i = 0; i < SLEN; i++) {
         position_ids[i] = i;
     }
-    PhiRotaryEmbedding_forward(cos, sin, position_ids);
+    // PhiRotaryEmbedding_forward(cos, sin, position_ids);
 
     bool should_predict;
     int output_id;
@@ -528,7 +526,7 @@ void PhiForCausalLM_forward(
             float language_model_model_embed_tokens_weight[VOCAB_SIZE][HIDDEN_SIZE];
             memcpy(input_embed, language_model_model_embed_tokens_weight[output_ids[output_len - 1]], sizeof(float) * HIDDEN_SIZE);
         }
-        PhiModel_forward(&output_id, input_embed, should_predict, i, cos[i], sin[i]);
+        PhiModel_forward(&output_id, input_embed, should_predict, i);
         if (output_id == END_OF_TEXT_ID) break;
         if (should_predict) {
             output_ids[output_len++] = output_id;
@@ -543,14 +541,14 @@ void PhiForCausalLM_forward(
 // [7, 8, 9]
 
 // 算完之後的值應該就固定了，可能可以寫死
-void compute_default_rope_parameters(
-    // out_inv_freq = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
-    float out_inv_freq[ROTARY_DIM / 2]
-) {
-    int dim = ROTARY_DIM;
-    for (int i = 0; i < dim / 2; i++) {
-        float exponent = (2.0f * i) / (float)dim;
-        float power = hls::powf(ROPE_THETA, exponent); // base^(2i/dim)
-        out_inv_freq[i] = 1.0f / power;
-    }
-}
+// void compute_default_rope_parameters(
+//     // out_inv_freq = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
+//     float out_inv_freq[ROTARY_DIM / 2]
+// ) {
+//     int dim = ROTARY_DIM;
+//     for (int i = 0; i < dim / 2; i++) {
+//         float exponent = (2.0f * i) / (float)dim;
+//         float power = hls::powf(ROPE_THETA, exponent); // base^(2i/dim)
+//         out_inv_freq[i] = 1.0f / power;
+//     }
+// }
