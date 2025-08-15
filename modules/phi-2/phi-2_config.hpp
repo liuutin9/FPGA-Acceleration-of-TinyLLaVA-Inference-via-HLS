@@ -27,7 +27,7 @@
 #define ROTARY_DIM 32 // HEAD_DIM * PARTIAL_ROTARY_FACTOR
 #define HALF_ROTARY_DIM 16
 // #define SLEN 2048 // 最大序列長度
-#define SLEN 3072
+#define SLEN 128 //3072
 #define TIE_WORD_EMBEDDINGS false
 #define TORCH_DTYPE_FLOAT16 // 使用特殊處理
 #define TRANSFORMERS_VERSION_4_37_0 // 使用特殊處理
