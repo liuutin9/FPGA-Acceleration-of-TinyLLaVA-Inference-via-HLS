@@ -8,11 +8,10 @@ void rotate_half(
     float out[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in[NUM_KEY_VALUE_HEADS * ROTARY_DIM]
 ) {
-    int half_dim = ROTARY_DIM / 2;
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        for (int j = 0; j < half_dim; j++) {
-            out[i * ROTARY_DIM + j] = -in[i * ROTARY_DIM + j + half_dim];
-            out[i * ROTARY_DIM + j + half_dim] = in[i * ROTARY_DIM + j];
+        for (int j = 0; j < HALF_ROTARY_DIM; j++) {
+            out[i * ROTARY_DIM + j] = -in[i * ROTARY_DIM + j + HALF_ROTARY_DIM];
+            out[i * ROTARY_DIM + j + HALF_ROTARY_DIM] = in[i * ROTARY_DIM + j];
         }
     }
 }
@@ -22,19 +21,27 @@ void apply_rotary_pos_emb(
     float out_k_embed[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM] // for given position_idx
+    int position_idx
 ) {
     float rotate_half_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
     float rotate_half_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
+    float rotate_cos[ROTARY_DIM];
+    float rotate_sin[ROTARY_DIM];
+    float freq[HALF_ROTARY_DIM] = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
+    for (int i = 0; i < HALF_ROTARY_DIM; i++) {
+        rotate_cos[i] = hls::cos(position_idx * freq[i]);
+        rotate_sin[i] = hls::sin(position_idx * freq[i]);
+    }
+    for (int i = HALF_ROTARY_DIM; i < ROTARY_DIM; i++) {
+        rotate_cos[i] = rotate_cos[i - HALF_ROTARY_DIM];
+        rotate_sin[i] = rotate_sin[i - HALF_ROTARY_DIM];
+    }
     rotate_half(rotate_half_q, in_q);
     rotate_half(rotate_half_k, in_k);
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
         for (int j = 0; j < ROTARY_DIM; j++) {
-            out_q_embed[i * ROTARY_DIM + j] = in_q[i * ROTARY_DIM + j] * in_cos[j];
-            out_k_embed[i * ROTARY_DIM + j] = in_k[i * ROTARY_DIM + j] * in_cos[j];
-            out_q_embed[i * ROTARY_DIM + j] += rotate_half_q[i * ROTARY_DIM + j] * in_sin[j];
-            out_k_embed[i * ROTARY_DIM + j] += rotate_half_k[i * ROTARY_DIM + j] * in_sin[j];
+            out_q_embed[i * ROTARY_DIM + j] = in_q[i * ROTARY_DIM + j] * rotate_cos[j] + rotate_half_q[i * ROTARY_DIM + j] * rotate_sin[j];
+            out_k_embed[i * ROTARY_DIM + j] = in_k[i * ROTARY_DIM + j] * rotate_cos[j] + rotate_half_k[i * ROTARY_DIM + j] * rotate_sin[j];
         }
     }
 }
@@ -187,8 +194,7 @@ void PhiAttention_forward(
     int layer_id,
     int position_idx,
     float in_hidden_state[HIDDEN_SIZE],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    int position_idx
 ) {
     float linear_q[NUM_KEY_VALUE_HEADS * HEAD_DIM];
     float linear_k[NUM_KEY_VALUE_HEADS * HEAD_DIM];
@@ -234,7 +240,7 @@ void PhiAttention_forward(
     // 將 rotary_q, rotary_k 進行 apply_rotary_pos_emb
     float embed_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
     float embed_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
-    apply_rotary_pos_emb(embed_q, embed_k, linear_q, linear_k, in_cos, in_sin);
+    apply_rotary_pos_emb(embed_q, embed_k, linear_q, linear_k, position_idx);
 
     // 接回去
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
@@ -363,8 +369,7 @@ void PhiDecoderLayer_forward(
     int layer_id,
     int position_idx,
     float in_hidden_state[HIDDEN_SIZE],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    int position_idx
 ) {
     float residual[HIDDEN_SIZE];
     memcpy(residual, in_hidden_state, sizeof(float) * HIDDEN_SIZE);
@@ -382,7 +387,7 @@ void PhiDecoderLayer_forward(
     );
 
     float attn_output[HIDDEN_SIZE];
-    PhiAttention_forward(attn_output, layer_id, position_idx, in_hidden_state, in_cos, in_sin);
+    PhiAttention_forward(attn_output, layer_id, position_idx, in_hidden_state, position_idx);
 
     float feed_forward_hidden_states[HIDDEN_SIZE];
     PhiMLP_forward(feed_forward_hidden_states, attn_output, layer_id);
@@ -404,33 +409,16 @@ void PhiRotaryEmbedding_forward(
     // attention_scaling default is 1
     // float attention_scaling = 1.0;
 
-    float inv_freq[ROTARY_DIM / 2];
-    compute_default_rope_parameters(inv_freq);
-    float inv_freq_expanded[ROTARY_DIM / 2][1];
-    memcpy(inv_freq_expanded, inv_freq, sizeof(float) * ROTARY_DIM / 2);
-    float position_ids_expanded[1][SLEN];
-    for (int i = 0; i < 1; i++) {
-        for (int j = 0; j < SLEN; j++) {
-            position_ids_expanded[i][j] = (float) position_ids[j];
-        }
-    }
-    float freqs_transposed[ROTARY_DIM / 2][SLEN];
-    matmul<ROTARY_DIM / 2, 1, SLEN>(freqs_transposed, inv_freq_expanded, position_ids_expanded);
-    float freqs[SLEN][ROTARY_DIM / 2];
-    transpose<ROTARY_DIM / 2, SLEN>(freqs, freqs_transposed);
+    float inv_freq[ROTARY_DIM / 2] = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
     float emb[SLEN][ROTARY_DIM];
     for (int i = 0; i < SLEN; i++) {
         for (int j = 0; j < ROTARY_DIM / 2; j++) {
-            emb[i][j] = freqs[i][j];
-            emb[i][j + ROTARY_DIM / 2] = freqs[i][j];
+            emb[i][j] = i * inv_freq[j];
+            emb[i][j + ROTARY_DIM / 2] = i * inv_freq[j];
         }
     }
     for (int i = 0; i < SLEN; i++) {
         for (int j = 0; j < ROTARY_DIM; j++) {
-            // cosf -> f means float not double
-            // out_cos = cosf(emb[i][j]) * attention_scaling;
-            // out_sin = sinf(emb[i][j]) * attention_scaling;
-
             // attention_scaling is 1
             out_cos[i][j] = hls::cosf(emb[i][j]);
             out_sin[i][j] = hls::sinf(emb[i][j]);
@@ -482,7 +470,7 @@ void PhiModel_forward(
     float hidden_state[HIDDEN_SIZE];
     for (int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
         memcpy(hidden_state, input_embed, sizeof(float) * HIDDEN_SIZE);
-        PhiDecoderLayer_forward(input_embed, i, position_idx, hidden_state, in_cos, in_sin);
+        PhiDecoderLayer_forward(input_embed, i, position_idx, hidden_state, position_idx);
     }
 
     if (should_predict) {
@@ -556,6 +544,7 @@ void PhiForCausalLM_forward(
 
 // 算完之後的值應該就固定了，可能可以寫死
 void compute_default_rope_parameters(
+    // out_inv_freq = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
     float out_inv_freq[ROTARY_DIM / 2]
 ) {
     int dim = ROTARY_DIM;

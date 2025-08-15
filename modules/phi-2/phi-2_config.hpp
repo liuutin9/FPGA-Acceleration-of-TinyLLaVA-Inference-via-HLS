@@ -25,6 +25,7 @@
 #define ROPE_SCALING null
 #define ROPE_THETA 10000.0
 #define ROTARY_DIM 32 // HEAD_DIM * PARTIAL_ROTARY_FACTOR
+#define HALF_ROTARY_DIM 16
 // #define SLEN 2048 // 最大序列長度
 #define SLEN 3072
 #define TIE_WORD_EMBEDDINGS false
