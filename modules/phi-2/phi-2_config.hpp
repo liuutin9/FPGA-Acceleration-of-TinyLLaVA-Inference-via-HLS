@@ -1,5 +1,3 @@
-#include "../utils/transformer.hpp"
-
 // phi-2 config
 
 #define ATTENTION_DROPOUT 0.0
