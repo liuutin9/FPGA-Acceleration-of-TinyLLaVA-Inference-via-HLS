@@ -1,4 +1,4 @@
-// #include "../utils/transformer.hpp"
+// #include "../../utils/transformer.hpp"
 
 // phi-2 config
 
@@ -25,8 +25,9 @@
 #define ROPE_SCALING null
 #define ROPE_THETA 10000.0
 #define ROTARY_DIM 32 // HEAD_DIM * PARTIAL_ROTARY_FACTOR
+#define HALF_ROTARY_DIM 16
 // #define SLEN 2048 // 最大序列長度
-#define SLEN 128//3072
+#define SLEN 128 //3072
 #define TIE_WORD_EMBEDDINGS false
 #define TORCH_DTYPE_FLOAT16 // 使用特殊處理
 #define TRANSFORMERS_VERSION_4_37_0 // 使用特殊處理
@@ -48,8 +49,7 @@ void apply_rotary_pos_emb(
     float out_k_embed[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM] // for given position_idx
+    int position_idx
 );
 
 void qkv_with_cache(
@@ -102,9 +102,7 @@ void PhiAttention_forward(
     float out_attn_output[NUM_ATTENTION_HEADS * HEAD_DIM],
     int layer_id,
     int position_idx,
-    float in_hidden_state[HIDDEN_SIZE],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    float in_hidden_state[HIDDEN_SIZE]
 );
 
 void PhiMLP_forward(
@@ -125,24 +123,20 @@ void PhiDecoderLayer_forward(
     float out[HIDDEN_SIZE],
     int layer_id,
     int position_idx,
-    float in_hidden_state[HIDDEN_SIZE],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    float in_hidden_state[HIDDEN_SIZE]
 );
 
-void PhiRotaryEmbedding_forward(
-    float out_cos[SLEN*ROTARY_DIM],
-    float out_sin[SLEN*ROTARY_DIM],
-    int position_ids[SLEN]
-);
+// void PhiRotaryEmbedding_forward(
+//     float out_cos[SLEN][ROTARY_DIM],
+//     float out_sin[SLEN][ROTARY_DIM],
+//     int position_ids[SLEN]
+// );
 
 void PhiModel_forward(
     int* output_id,
     float input_embed[HIDDEN_SIZE],
     bool should_predict,
-    int position_idx,
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    int position_idx
 );
 
 void PhiForCausalLM_forward(
@@ -151,6 +145,6 @@ void PhiForCausalLM_forward(
     int input_len
 );
 
-void compute_default_rope_parameters(
-    float out_inv_freq[ROTARY_DIM / 2]
-);
+// void compute_default_rope_parameters(
+//     float out_inv_freq[ROTARY_DIM / 2]
+// );

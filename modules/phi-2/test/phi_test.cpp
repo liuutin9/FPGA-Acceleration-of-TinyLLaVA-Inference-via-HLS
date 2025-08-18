@@ -169,11 +169,10 @@ void rotate_half(
     float out[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in[NUM_KEY_VALUE_HEADS * ROTARY_DIM]
 ) {
-    int half_dim = ROTARY_DIM / 2;
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
-        for (int j = 0; j < half_dim; j++) {
-            out[i * ROTARY_DIM + j] = -in[i * ROTARY_DIM + j + half_dim];
-            out[i * ROTARY_DIM + j + half_dim] = in[i * ROTARY_DIM + j];
+        for (int j = 0; j < HALF_ROTARY_DIM; j++) {
+            out[i * ROTARY_DIM + j] = -in[i * ROTARY_DIM + j + HALF_ROTARY_DIM];
+            out[i * ROTARY_DIM + j + HALF_ROTARY_DIM] = in[i * ROTARY_DIM + j];
         }
     }
 }
@@ -183,19 +182,28 @@ void apply_rotary_pos_emb(
     float out_k_embed[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
     float in_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM] // for given position_idx
+    int position_idx // for given position_idx
 ) {
     // float rotate_half_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
     // float rotate_half_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
+    float rotate_cos[ROTARY_DIM];
+    float rotate_sin[ROTARY_DIM];
+    float freq[HALF_ROTARY_DIM] = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
+    for (int i = 0; i < HALF_ROTARY_DIM; i++) {
+        rotate_cos[i] = cos(position_idx * freq[i]);
+        rotate_sin[i] = sin(position_idx * freq[i]);
+    }
+    for (int i = HALF_ROTARY_DIM; i < ROTARY_DIM; i++) {
+        rotate_cos[i] = rotate_cos[i - HALF_ROTARY_DIM];
+        rotate_sin[i] = rotate_sin[i - HALF_ROTARY_DIM];
+    }
+    
     rotate_half(rotate_half_q, in_q);
     rotate_half(rotate_half_k, in_k);
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
         for (int j = 0; j < ROTARY_DIM; j++) {
-            out_q_embed[i * ROTARY_DIM + j] = in_q[i * ROTARY_DIM + j] * in_cos[j];
-            out_k_embed[i * ROTARY_DIM + j] = in_k[i * ROTARY_DIM + j] * in_cos[j];
-            out_q_embed[i * ROTARY_DIM + j] += rotate_half_q[i * ROTARY_DIM + j] * in_sin[j];
-            out_k_embed[i * ROTARY_DIM + j] += rotate_half_k[i * ROTARY_DIM + j] * in_sin[j];
+            out_q_embed[i * ROTARY_DIM + j] = in_q[i * ROTARY_DIM + j] * rotate_cos[j] + rotate_half_q[i * ROTARY_DIM + j] * rotate_sin[j];
+            out_k_embed[i * ROTARY_DIM + j] = in_k[i * ROTARY_DIM + j] * rotate_cos[j] + rotate_half_k[i * ROTARY_DIM + j] * rotate_sin[j];
         }
     }
 }
@@ -347,9 +355,7 @@ void PhiAttention_forward(
     float out_attn_output[NUM_ATTENTION_HEADS * HEAD_DIM],
     int layer_id,
     int position_idx,
-    float in_hidden_state[HIDDEN_SIZE],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    float in_hidden_state[HIDDEN_SIZE]
 ) {
     // float linear_q[NUM_KEY_VALUE_HEADS * HEAD_DIM];
     // float linear_k[NUM_KEY_VALUE_HEADS * HEAD_DIM];
@@ -395,7 +401,7 @@ void PhiAttention_forward(
     // 將 rotary_q, rotary_k 進行 apply_rotary_pos_emb
     // float embed_q[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
     // float embed_k[NUM_KEY_VALUE_HEADS * ROTARY_DIM];
-    apply_rotary_pos_emb(embed_q, embed_k, linear_q, linear_k, in_cos, in_sin);
+    apply_rotary_pos_emb(embed_q, embed_k, linear_q, linear_k, position_idx);
 
     // 接回去
     for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
@@ -523,9 +529,7 @@ void PhiDecoderLayer_forward(
     float out[HIDDEN_SIZE],
     int layer_id,
     int position_idx,
-    float in_hidden_state[HIDDEN_SIZE],
-    float in_cos[ROTARY_DIM],
-    float in_sin[ROTARY_DIM]
+    float in_hidden_state[HIDDEN_SIZE]
 ) {
     // float residual[HIDDEN_SIZE];
     memcpy(residual, in_hidden_state, sizeof(float) * HIDDEN_SIZE);
@@ -543,7 +547,7 @@ void PhiDecoderLayer_forward(
     );
 
     float attn_output[HIDDEN_SIZE];
-    PhiAttention_forward(attn_output, layer_id, position_idx, in_hidden_state, in_cos, in_sin);
+    PhiAttention_forward(attn_output, layer_id, position_idx, in_hidden_state);
 
     float feed_forward_hidden_states[HIDDEN_SIZE];
     PhiMLP_forward(feed_forward_hidden_states, attn_output, layer_id);
@@ -586,48 +590,51 @@ void transpose(T* out,const T* in) {
 
 
 //might have bug!!!!!
-void PhiRotaryEmbedding_forward(
-    float out_cos[SLEN * ROTARY_DIM],
-    float out_sin[SLEN * ROTARY_DIM],
-    int position_ids[SLEN]
-) {
-    // rope type = "default"
-    // attention_scaling default is 1
-    // float attention_scaling = 1.0;
+// void PhiRotaryEmbedding_forward(
+//     float out_cos[SLEN * ROTARY_DIM],
+//     float out_sin[SLEN * ROTARY_DIM],
+//     int position_ids[SLEN]
+// ) {
+//     // rope type = "default"
+//     // attention_scaling default is 1
+//     // float attention_scaling = 1.0;
 
-    float inv_freq[ROTARY_DIM / 2];
-    compute_default_rope_parameters(inv_freq);
-    //float inv_freq_expanded[ROTARY_DIM / 2][1];
-    memcpy(inv_freq_expanded, inv_freq, sizeof(float) * ROTARY_DIM / 2);
-    // float position_ids_expanded[1][SLEN];
-    for (int i = 0; i < 1; i++) {
-        for (int j = 0; j < SLEN; j++) {
-            position_ids_expanded[i * SLEN + j] = (float) position_ids[j];
-        }
-    }
-    // float freqs_transposed[ROTARY_DIM / 2][SLEN];
-    matmul<ROTARY_DIM / 2, 1, SLEN>(freqs_transposed, inv_freq_expanded, position_ids_expanded);
-    // float freqs[SLEN][ROTARY_DIM / 2];
-    transpose<ROTARY_DIM / 2, SLEN>(freqs, freqs_transposed);
-    //float emb[SLEN][ROTARY_DIM];
-    for (int i = 0; i < SLEN; i++) {
-        for (int j = 0; j < ROTARY_DIM / 2; j++) {
-            emb[i * ROTARY_DIM + j] = freqs[i * (ROTARY_DIM / 2) + j];
-            emb[i * ROTARY_DIM + j + ROTARY_DIM / 2] = freqs[i * (ROTARY_DIM / 2) + j];
-        }
-    }
-    for (int i = 0; i < SLEN; i++) {
-        for (int j = 0; j < ROTARY_DIM; j++) {
-            // cosf -> f means float not double
-            // out_cos = cosf(emb[i][j]) * attention_scaling;
-            // out_sin = sinf(emb[i][j]) * attention_scaling;
+//     // float inv_freq[ROTARY_DIM / 2];
+//     // compute_default_rope_parameters(inv_freq);
+//     // //float inv_freq_expanded[ROTARY_DIM / 2][1];
+//     // memcpy(inv_freq_expanded, inv_freq, sizeof(float) * ROTARY_DIM / 2);
+//     // // float position_ids_expanded[1][SLEN];
+//     // for (int i = 0; i < 1; i++) {
+//     //     for (int j = 0; j < SLEN; j++) {
+//     //         position_ids_expanded[i * SLEN + j] = (float) position_ids[j];
+//     //     }
+//     // }
+//     // // float freqs_transposed[ROTARY_DIM / 2][SLEN];
+//     // matmul<ROTARY_DIM / 2, 1, SLEN>(freqs_transposed, inv_freq_expanded, position_ids_expanded);
+//     // // float freqs[SLEN][ROTARY_DIM / 2];
+//     // transpose<ROTARY_DIM / 2, SLEN>(freqs, freqs_transposed);
 
-            // attention_scaling is 1
-            out_cos[i * ROTARY_DIM + j] = cosf(emb[i * ROTARY_DIM + j]);//hls
-            out_sin[i * ROTARY_DIM + j] = sinf(emb[i * ROTARY_DIM + j]);//hls
-        }
-    }
-}
+//     float inv_freq[ROTARY_DIM / 2] = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
+
+//     //float emb[SLEN][ROTARY_DIM];
+//     for (int i = 0; i < SLEN; i++) {
+//         for (int j = 0; j < ROTARY_DIM / 2; j++) {
+//             emb[i * ROTARY_DIM + j] = i * inv_freq[j];
+//             emb[i * ROTARY_DIM + j + ROTARY_DIM / 2] = i * inv_freq[j];
+//         }
+//     }
+//     for (int i = 0; i < SLEN; i++) {
+//         for (int j = 0; j < ROTARY_DIM; j++) {
+//             // cosf -> f means float not double
+//             // out_cos = cosf(emb[i][j]) * attention_scaling;
+//             // out_sin = sinf(emb[i][j]) * attention_scaling;
+
+//             // attention_scaling is 1
+//             out_cos[i * ROTARY_DIM + j] = cosf(emb[i * ROTARY_DIM + j]);//hls
+//             out_sin[i * ROTARY_DIM + j] = sinf(emb[i * ROTARY_DIM + j]);//hls
+//         }
+//     }
+// }
 
 // void PhiPreTrainedModel_init_weights() {
     // 用來定義 linear, embedding, layernorm 訓練初始參數
@@ -705,7 +712,7 @@ void PhiModel_forward(
     for (int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
         memcpy(hidden_state, input_embed, sizeof(float) * HIDDEN_SIZE);
         load_phi_encoder_weight(i);
-        PhiDecoderLayer_forward(input_embed, i, position_idx, hidden_state, in_cos, in_sin);
+        PhiDecoderLayer_forward(input_embed, i, position_idx, hidden_state);
     }
 
     if (should_predict) {
@@ -749,7 +756,8 @@ void PhiForCausalLM_forward(
     for (int i = 0; i < SLEN; i++) {
         position_ids[i] = i;
     }
-    PhiRotaryEmbedding_forward(cos_arr, sin_arr, position_ids);
+
+    //PhiRotaryEmbedding_forward(cos_arr, sin_arr, position_ids);
 
     bool should_predict;
     int output_id;
@@ -763,7 +771,7 @@ void PhiForCausalLM_forward(
             // float language_model_model_embed_tokens_weight[VOCAB_SIZE][HIDDEN_SIZE];
             memcpy(input_embed, language_model_model_embed_tokens_weight + output_ids[output_len - 1] * HIDDEN_SIZE, sizeof(float) * HIDDEN_SIZE);
         }
-        PhiModel_forward(&output_id, input_embed, should_predict, i, cos_arr + i * ROTARY_DIM, sin_arr + i * ROTARY_DIM);
+        PhiModel_forward(&output_id, input_embed, should_predict, i/*, cos_arr + i * ROTARY_DIM, sin_arr + i * ROTARY_DIM*/);
         if (output_id == END_OF_TEXT_ID) break;
         if (should_predict) {
             output_ids[output_len++] = output_id;
@@ -778,16 +786,17 @@ void PhiForCausalLM_forward(
 // [7, 8, 9]
 
 // 算完之後的值應該就固定了，可能可以寫死
-void compute_default_rope_parameters(
-    float out_inv_freq[ROTARY_DIM / 2]
-) {
-    int dim = ROTARY_DIM;
-    for (int i = 0; i < dim / 2; i++) {
-        float exponent = (2.0f * i) / (float)dim;
-        float power = powf(ROPE_THETA, exponent); // base^(2i/dim) //hls
-        out_inv_freq[i] = 1.0f / power;
-    }
-}
+// void compute_default_rope_parameters(
+//     // out_inv_freq = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
+//     float out_inv_freq[ROTARY_DIM / 2]
+// ) {
+//     int dim = ROTARY_DIM;
+//     for (int i = 0; i < dim / 2; i++) {
+//         float exponent = (2.0f * i) / (float)dim;
+//         float power = powf(ROPE_THETA, exponent); // base^(2i/dim) //hls
+//         out_inv_freq[i] = 1.0f / power;
+//     }
+// }
 
 // void load_phi_embedding_weight(){
 //     load_weight("language_model.lm_head.bias", language_model_model_lm_head_bias, VOCAB_SIZE);

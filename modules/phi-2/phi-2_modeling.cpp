@@ -385,7 +385,7 @@ void PhiDecoderLayer_forward(
     );
 
     float attn_output[HIDDEN_SIZE];
-    PhiAttention_forward(attn_output, layer_id, position_idx, in_hidden_state, position_idx);
+    PhiAttention_forward(attn_output, layer_id, position_idx, in_hidden_state);
 
     float feed_forward_hidden_states[HIDDEN_SIZE];
     PhiMLP_forward(feed_forward_hidden_states, attn_output, layer_id);
