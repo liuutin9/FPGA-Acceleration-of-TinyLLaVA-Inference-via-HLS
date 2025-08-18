@@ -102,8 +102,7 @@ void PhiAttention_forward(
     float out_attn_output[NUM_ATTENTION_HEADS * HEAD_DIM],
     int layer_id,
     int position_idx,
-    float in_hidden_state[HIDDEN_SIZE],
-    int position_idx
+    float in_hidden_state[HIDDEN_SIZE]
 );
 
 void PhiMLP_forward(
@@ -124,8 +123,7 @@ void PhiDecoderLayer_forward(
     float out[HIDDEN_SIZE],
     int layer_id,
     int position_idx,
-    float in_hidden_state[HIDDEN_SIZE],
-    int position_idx
+    float in_hidden_state[HIDDEN_SIZE]
 );
 
 // void PhiRotaryEmbedding_forward(

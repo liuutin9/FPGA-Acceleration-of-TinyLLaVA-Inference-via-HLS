@@ -193,8 +193,7 @@ void PhiAttention_forward(
     float out_attn_output[NUM_ATTENTION_HEADS * HEAD_DIM],
     int layer_id,
     int position_idx,
-    float in_hidden_state[HIDDEN_SIZE],
-    int position_idx
+    float in_hidden_state[HIDDEN_SIZE]
 ) {
     float linear_q[NUM_KEY_VALUE_HEADS * HEAD_DIM];
     float linear_k[NUM_KEY_VALUE_HEADS * HEAD_DIM];
@@ -368,8 +367,7 @@ void PhiDecoderLayer_forward(
     float out[HIDDEN_SIZE],
     int layer_id,
     int position_idx,
-    float in_hidden_state[HIDDEN_SIZE],
-    int position_idx
+    float in_hidden_state[HIDDEN_SIZE]
 ) {
     float residual[HIDDEN_SIZE];
     memcpy(residual, in_hidden_state, sizeof(float) * HIDDEN_SIZE);
@@ -468,7 +466,7 @@ void PhiModel_forward(
     float hidden_state[HIDDEN_SIZE];
     for (int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
         memcpy(hidden_state, input_embed, sizeof(float) * HIDDEN_SIZE);
-        PhiDecoderLayer_forward(input_embed, i, position_idx, hidden_state, position_idx);
+        PhiDecoderLayer_forward(input_embed, i, position_idx, hidden_state);
     }
 
     if (should_predict) {
