@@ -15,6 +15,7 @@
 #include <CL/cl.h>
 #include <cmath>
 #include <ap_fixed.h>
+#include <cmath>
 
 typedef ap_fixed<16,10> fixed16_10;
 
@@ -544,7 +545,7 @@ int main(int argc, char* argv[])
 	//   o) Allocate Memory to store the results: RES array
 	//   o) Create Buffers in Global Memory to store data
 	// ================================================================
-	fixed16_10 *OUT, *IN, *COSINE, *SINE;
+	fixed16_10 *OUT, *IN, *POSITION_IDX;
 
 	#ifdef ALL_MESSAGES
 	cout << endl;
@@ -574,29 +575,15 @@ int main(int argc, char* argv[])
 	}
 	cout << "Generated " << SIZE_IN << " values" << endl;
 
-	cout << "HOST-Info: Allocating memory for COSINE ... ";
-	if (posix_memalign(&ptr, 4096, SIZE_COSINE * sizeof(fixed16_10))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for COSINE array" << endl << endl;
+	cout << "HOST-Info: Allocating memory for POSITION_IDX ... ";
+	if (posix_memalign(&ptr, 4096, sizeof(fixed16_10))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for POSITION_IDX array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	COSINE = reinterpret_cast<fixed16_10*>(ptr);
+	POSITION_IDX = reinterpret_cast<fixed16_10*>(ptr);
 	// use for loop to generate random fixed16_10 values
-	for (int i = 0; i < SIZE_COSINE; i++) {
-		COSINE[i] = fixed16_10(i / 1000.0f); // Example: generating fixed16_10 values from 0.0 to 255.9
-	}
-	cout << "Generated " << SIZE_COSINE << " values" << endl;
-
-	cout << "HOST-Info: Allocating memory for SINE ... ";
-	if (posix_memalign(&ptr, 4096, SIZE_SINE * sizeof(fixed16_10))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for SINE array" << endl << endl;
-		return EXIT_FAILURE;
-	}
-	SINE = reinterpret_cast<fixed16_10*>(ptr);
-	// use for loop to generate random fixed16_10 values
-	for (int i = 0; i < SIZE_SINE; i++) {
-		SINE[i] = fixed16_10(i / 1000.0f); // Example: generating fixed16_10 values from 0.0 to 255.9
-	}
-	cout << "Generated " << SIZE_SINE << " values" << endl;
+	POSITION_IDX[0] = fixed16_10(31);
+	cout << "Generated " << 1 << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for OUT ... ";
 	if (posix_memalign(&ptr, 4096, SIZE_OUT * sizeof(fixed16_10))) {
@@ -623,8 +610,7 @@ int main(int argc, char* argv[])
 	// size 和 read / write 權限要再修正
 	OCL_CHECK(errCode, buffer_phi_rotary_embed_out = clCreateBuffer(Context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, SIZE_OUT * sizeof(fixed16_10), OUT, &errCode));
 	OCL_CHECK(errCode, buffer_phi_rotary_embed_in = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_IN * sizeof(fixed16_10), IN, &errCode));
-	OCL_CHECK(errCode, buffer_phi_rotary_embed_cosine = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_COSINE * sizeof(fixed16_10), COSINE, &errCode));
-	OCL_CHECK(errCode, buffer_phi_rotary_embed_sine = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_SINE * sizeof(fixed16_10), SINE, &errCode));
+	OCL_CHECK(errCode, buffer_phi_rotary_embed_position_idx = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(fixed16_10), POSITION_IDX, &errCode));
 
 	// ============================================================================
 	// Step 5: Set Kernel Arguments and Run the Application
@@ -642,7 +628,7 @@ int main(int argc, char* argv[])
 	//         o) Copy Results from Global Memory to Host
 	// ============================================================================
 	// TODO 這裡要改
-	int Nb_Of_Mem_Events = 5,
+	int Nb_Of_Mem_Events = 4,
 		Nb_Of_Exe_Events = 1;
 
 	cl_event Mem_op_event[Nb_Of_Mem_Events],
@@ -667,8 +653,7 @@ int main(int argc, char* argv[])
 
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 0, sizeof(cl_mem), &buffer_phi_rotary_embed_out));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 1, sizeof(cl_mem), &buffer_phi_rotary_embed_in));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 2, sizeof(cl_mem), &buffer_phi_rotary_embed_cosine));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 3, sizeof(cl_mem), &buffer_phi_rotary_embed_sine));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 2, sizeof(cl_mem), &buffer_phi_rotary_embed_position_idx));
 
 
 	// ------------------------------------------------------
@@ -681,12 +666,11 @@ int main(int argc, char* argv[])
 	// clEnqueueMigrateMemObjects(cl_command_queue, number of cl_uint, cl_mem*, cl_mem_migration_flags, number of pending events, pending cl_event*, generate cl_event*)
 
 	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_in, 0, 0, NULL, &Mem_op_event[0]));
-	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_cosine, 0, 0, NULL, &Mem_op_event[1]));
-	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_sine, 0, 0, NULL, &Mem_op_event[2]));
+	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_position_idx, 0, 0, NULL, &Mem_op_event[1]));
 
 	// --------------------------------------------------------
 
-	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_out, CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED, 0, NULL, &Mem_op_event[3]));
+	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_out, CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED, 0, NULL, &Mem_op_event[2]));
 
 	// --------------------------------------------------------
 
@@ -707,7 +691,7 @@ int main(int argc, char* argv[])
 	cout << "HOST_Info: Submitting Copy Results data from Global Memory to Host ..." << endl;
 	#endif
 
-	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_out, CL_MIGRATE_MEM_OBJECT_HOST, 1, &K_exe_event[0], &Mem_op_event[4]));
+	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_rotary_embed_out, CL_MIGRATE_MEM_OBJECT_HOST, 1, &K_exe_event[0], &Mem_op_event[2]));
 
 	cout << endl << "HOST_Info: Waiting for application to be completed ..." << endl;
 	clFinish(Command_Queue);
@@ -728,15 +712,16 @@ int main(int argc, char* argv[])
 	// ------------------------------------------------------
 	// Step 6: Check Output Results
 	// ------------------------------------------------------
-	fixed16_10 golden_out[HIDDEN_SIZE];
+	float golden_out[HIDDEN_SIZE];
+	float base[HALF_ROTARY_DIM] = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
 	for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
 		for (int j = 0; j < HALF_ROTARY_DIM; j++) {
 			int idx1 = i * ROTARY_DIM + j;
 			int idx2 = idx1 + HALF_ROTARY_DIM;
-			fixed16_10 r1 = IN[idx2];
-			fixed16_10 r2 = IN[idx1];
-			golden_out[idx1] = IN[idx1] * COSINE[j] - r1 * SINE[j];
-			golden_out[idx2] = IN[idx2] * COSINE[j + HALF_ROTARY_DIM] - r2 * SINE[j + HALF_ROTARY_DIM];
+			float r1 = float(IN[idx2]);
+			float r2 = float(IN[idx1]);
+			golden_out[idx1] = float(IN[idx1]) * std::cosf(float(POSITION_IDX[0]) * base[j]) - r1 * std::sinf(float(POSITION_IDX[0]) * base[j]);
+			golden_out[idx2] = float(IN[idx2]) * std::cosf(float(POSITION_IDX[0]) * base[j]) - r2 * std::sinf(float(POSITION_IDX[0]) * base[j]);
 		}
 	}
 
@@ -784,8 +769,7 @@ int main(int argc, char* argv[])
 
 	clReleaseMemObject(buffer_phi_rotary_embed_out);
 	clReleaseMemObject(buffer_phi_rotary_embed_in);
-	clReleaseMemObject(buffer_phi_rotary_embed_cosine);
-	clReleaseMemObject(buffer_phi_rotary_embed_sine);
+	clReleaseMemObject(buffer_phi_rotary_embed_position_idx);
 
 	clReleaseKernel(kernel_phi_rotary_embed);
 
@@ -798,8 +782,7 @@ int main(int argc, char* argv[])
 
 	free(OUT);
 	free(IN);
-	free(COSINE);
-	free(SINE);
+	free(POSITION_IDX);
 
 	cout << endl << "HOST-Info: DONE" << endl << endl;
 
