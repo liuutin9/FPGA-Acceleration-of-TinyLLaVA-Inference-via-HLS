@@ -1,7 +1,5 @@
 #include <string.h>
 #include <hls_math.h>
-#include <ap_fixed.h>
-#include <ap_int.h>
 #include "./phi-2_config.hpp"
 
 void rotate_half(
@@ -76,7 +74,7 @@ void qkv_with_cache(
         for (int j = 0; j < HEAD_DIM; j++) {
             sum += in_q[j] * in_k[i * HEAD_DIM + j];
         }
-        qkt[i] = sum / scale;
+        qkt[i] = sum * scale;
     }
 
     float maxval = qkt[0];
