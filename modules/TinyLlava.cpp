@@ -2,7 +2,7 @@
 #include "./Siglip/Siglip_config.hpp"
 #include "./phi-2/phi-2_config.hpp"
 #include "./connector/connector_config.hpp"
-#include "./utils/transformer.hpp"
+//#include "./utils/transformer.hpp"
 #include "./image_preprocess/image_processor.hpp"
 #include "TinyLlava_config.hpp"
 #include "./tokenizer/include/tokenizers_cpp.h"
@@ -65,25 +65,25 @@ void TinyLlava(){
 }
 
 void encode_images(
-    float output[SLEN][HIDDEN_SIZE],
-    float input[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE]
+    float output[SLEN*HIDDEN_SIZE],
+    float input[NUM_CHANNELS*IMAGE_SIZE*IMAGE_SIZE]
 ){  
-    float siglip_output[INPUT_DIM][VISION_HIDDEN_SIZE] = {0};
+    float siglip_output[INPUT_DIM*VISION_HIDDEN_SIZE] = {0};
     Siglip_Transformer_forward(siglip_output, input);
-    float connector_input[SLEN][VISION_HIDDEN_SIZE] = {0};
+    float connector_input[SLEN*VISION_HIDDEN_SIZE] = {0};
     memcpy(connector_input, siglip_output, sizeof(float) * INPUT_DIM * VISION_HIDDEN_SIZE);
     Connector_forward(output, connector_input);
 }
 
 std::pair<std::vector<std::vector<float>>, int> prepare_input_for_multimodel(
     std::vector<int> input_ids,
-    float images[MAX_NUM][NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE],
+    float images[MAX_NUM][NUM_CHANNELS*IMAGE_SIZE*IMAGE_SIZE],
     const int num_images
 ){  
     
     //std::vector<int> cur_input_ids(*input_ids);
     std::vector<std::vector<std::vector<float>>> input_embeds_split;
-    float vision_tower_outputs[num_images][SLEN][HIDDEN_SIZE];
+    float vision_tower_outputs[num_images][SLEN*HIDDEN_SIZE];
 
     input_embeds_split = process_input_ids(input_ids);
     // float embeds_split[num_images + 1][MAX_LEN][HIDDEN_SIZE];
@@ -206,6 +206,7 @@ void tokenizer_image_token(
     std::vector<std::vector<int>> tokenize_prompt_chunks;
     for(int i = 0; i < chunks.size(); i++) {
         if (chunks[i].empty()) {
+            tokenize_prompt_chunks.push_back({});
             continue; // 停止處理空的 chunk
         }
         std::vector<int> chunk_ids = *tokenizer->Encode(chunks[i]);
