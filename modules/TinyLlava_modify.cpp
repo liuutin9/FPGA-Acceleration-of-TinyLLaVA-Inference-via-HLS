@@ -16,12 +16,18 @@
 using namespace tokenizers;
 
 void TinyLlava(){
+    std::string begin_prompt = "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: ";
     std::string prompt; 
+    std::string end_prompt = " ASSISTANT:";
     std::string image_path = "../test.jpg";
     chat(prompt, image_path);
+    std::vector<int> begin_prompt_ids_vector = {32, 8537, 1022, 257, 11040, 2836, 290, 281, 11666, 4430, 8796, 13, 383, 8796, 3607, 7613, 11, 6496, 11, 290, 23507, 7429, 284, 262, 2836, 338, 2683, 13, 1294, 1137, 25, 220};
+    std::vector<int> input_ids_vector = {2061, 318, 1306, 284, 262, 7647, 16430, 30, 1867, 318, 340, 1804, 30};
+    std::vector<int> end_prompt_ids_vector = {24994, 8808, 8643, 25};
+    prompt = begin_prompt + prompt + end_prompt;
     auto tokenizer = init_tokenizer();
     // int * input_ids;
-    std::vector<int> input_ids_vector;
+    // std::vector<int> input_ids_vector;
     float preprocessed_image[NUM_CHANNELS][IMAGE_SIZE][IMAGE_SIZE];
     float preprocessed_image_1D[NUM_CHANNELS*IMAGE_SIZE*IMAGE_SIZE];
     int max_len;
@@ -38,13 +44,13 @@ void TinyLlava(){
         preprocess(preprocessed_image, image);
         memcpy(preprocessed_image_1D, preprocessed_image, NUM_CHANNELS * IMAGE_SIZE * IMAGE_SIZE * sizeof(float));
         input_ids_vector = tokenizer->Encode(prompt);
-        std::pair<std::vector<std::vector<float>>, int> pair_out = prepare_input_for_multimodel(input_ids_vector, preprocessed_image_1D);
-        for(int i = 0; i < pair_out.first.size(); i++){
+        std::vector<std::vector<float>> input_for_multimodel = prepare_input_for_multimodel(input_ids_vector, preprocessed_image_1D);
+        for(int i = 0; i < input_for_multimodel.size(); i++){
             for(int j = 0; j < HIDDEN_SIZE; j++){
-                embedding[i * HIDDEN_SIZE +  j] = pair_out.first[i][j];
+                embedding[i * HIDDEN_SIZE +  j] = input_for_multimodel[i][j];
             }
         }
-        max_len = pair_out.second;
+        max_len = input_for_multimodel.size();
     }
     int output_ids[SLEN];
     PhiForCausalLM_forward(
@@ -67,42 +73,80 @@ void encode_images(
     Connector_forward(output, connector_input);
 }
 
-std::pair<std::vector<std::vector<float>>, int> prepare_input_for_multimodel(
+std::vector<std::vector<float>> prepare_input_for_multimodel(
     std::vector<int> input_ids,
     float image[NUM_CHANNELS*IMAGE_SIZE*IMAGE_SIZE]
 ){  
-    std::vector<std::vector<float>> input_embeds;
     float vision_tower_output[SLEN*HIDDEN_SIZE];
+    std::pair<std::vector<std::vector<float>>, std::vector<std::vector<float>>> process_input_ids_output_pair;
+    int image_token_idx = 0;
 
-    input_embeds = process_input_ids(input_ids);
+    process_input_ids_output_pair = process_input_ids(input_ids);
+    std::vector<std::vector<float>> front_input_embeds = process_input_ids_output_pair.first;
+    std::vector<std::vector<float>> back_input_embeds = process_input_ids_output_pair.second;
+    //image_token_idx = process_input_ids_output_pair.second;
 
     encode_images(vision_tower_output, image);
     
     std::vector<std::vector<float>> output_embedding;
-    for(const auto& vec : input_embeds){
+    for(const auto& vec : front_input_embeds){
         output_embedding.push_back(vec);
     }
     for(int j = 0; j < SLEN; j++){
-        std::vector<float> image_feature(vision_tower_output[j], vision_tower_output[j] + HIDDEN_SIZE);
+        std::vector<float> image_feature(
+            vision_tower_output + j * HIDDEN_SIZE,
+            vision_tower_output + (j + 1) * HIDDEN_SIZE
+        );
         output_embedding.push_back(image_feature);
-        if(output_embedding.size() == TOKENIZER_MODEL_MAX_LENGTH) 
+        if(output_embedding.size() >= TOKENIZER_MODEL_MAX_LENGTH) 
             break;
     }
+    for(const auto& vec : back_input_embeds){
+        if(output_embedding.size() >= TOKENIZER_MODEL_MAX_LENGTH) 
+            break;
+        else
+            output_embedding.push_back(vec);
+    }
 
-    std::pair<std::vector<std::vector<float>>, int> out = {output_embedding, input_embeds.size()};
-
-    return out;
+    return output_embedding;
 }
 
-std::vector<std::vector<float>> process_input_ids(const std::vector<int>& cur_input_ids) {
-    std::vector<std::vector<float>> input_embeds;
-    for (int i = 0; i < cur_input_ids.size() - 1; ++i) {
-        std::vector<std::vector<float>> segment_embed;
-        int token_id = cur_input_ids[i];
-        std::vector<float> embedding(language_model_model_embed_tokens_weight[token_id], language_model_model_embed_tokens_weight[token_id] + HIDDEN_SIZE);
-        input_embeds.push_back(embedding);
+std::pair<std::vector<std::vector<float>>, std::vector<std::vector<float>>> process_input_ids(const std::vector<int>& cur_input_ids) {
+    std::vector<int> front;
+    std::vector<int> back;
+    auto i = cur_input_ids.begin();
+    int image_token_idx = 0;
+    while(i != cur_input_ids.end()) {
+        if (*i == IMAGE_TOKEN_INDEX) {
+            i++;
+            break;
+        }else{
+            front.push_back(*i);
+            i++;
+            image_token_idx++;
+        }
     }
-    return input_embeds;
+    while(i != cur_input_ids.end()) {
+        back.push_back(*i);
+        i++;
+    }
+
+    std::vector<std::vector<float>> front_input_embeds;
+    for (int i = 0; i < front.size(); i++) {
+        std::vector<std::vector<float>> segment_embed;
+        int token_id = front[i];
+        std::vector<float> embedding(language_model_model_embed_tokens_weight[token_id], language_model_model_embed_tokens_weight[token_id] + HIDDEN_SIZE);
+        front_input_embeds.push_back(embedding);
+    }
+    std::vector<std::vector<float>> back_input_embeds;
+    for (int i = 0; i < back.size(); i++) {
+        std::vector<std::vector<float>> segment_embed;
+        int token_id = back[i];
+        std::vector<float> embedding(language_model_model_embed_tokens_weight[token_id], language_model_model_embed_tokens_weight[token_id] + HIDDEN_SIZE);
+        back_input_embeds.push_back(embedding);
+    }
+    std::pair<std::vector<std::vector<float>>, std::vector<std::vector<float>>> out_pair = {front_input_embeds, back_input_embeds};
+    return out_pair;
 }
 
 int load_image(

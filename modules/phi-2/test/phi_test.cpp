@@ -18,7 +18,7 @@
 #define MAX_NUM 1
 #define NUM_CHANNELS 3
 #define IMAGE_SIZE 384
-#define TOKENIZER_MODEL_MAX_LENGTH 3072
+#define TOKENIZER_MODEL_MAX_LENGTH 128
 
 
 // "language_model.lm_head.bias"
@@ -87,6 +87,7 @@ float input_embed[HIDDEN_SIZE];
 #define VISION_HIDDEN_SIZE 1152
 float vision_tower_output[INPUT_DIM*HIDDEN_SIZE];
 float preprocessed_image[NUM_CHANNELS*IMAGE_SIZE*IMAGE_SIZE];
+float preprocessed_image_1D[NUM_CHANNELS*IMAGE_SIZE*IMAGE_SIZE];
 float connector_output[INPUT_DIM*HIDDEN_SIZE];
 float embedding[SLEN*HIDDEN_SIZE];
 //std::vector<float> embedding(SLEN * HIDDEN_SIZE);
@@ -889,57 +890,137 @@ void load_image_processor_output(const std::string& filename) {
 //     Connector_forward(output, connector_input);
 // }
 
-std::vector<std::vector<float>> process_input_ids(const std::vector<int>& cur_input_ids) {
-    std::vector<std::vector<float>> input_embeds;
-    for (int i = 0; i < cur_input_ids.size() - 1; ++i) {
-        std::vector<std::vector<float>> segment_embed;
-        int token_id = cur_input_ids[i];
-        std::vector<float> embedding(language_model_model_embed_tokens_weight[token_id], language_model_model_embed_tokens_weight[token_id] + HIDDEN_SIZE);
-        input_embeds.push_back(embedding);
+// std::vector<std::vector<float>> process_input_ids(const std::vector<int>& cur_input_ids) {
+//     std::vector<std::vector<float>> input_embeds;
+//     for (int i = 0; i < cur_input_ids.size() - 1; ++i) {
+//         std::vector<std::vector<float>> segment_embed;
+//         int token_id = cur_input_ids[i];
+//         std::vector<float> embedding(language_model_model_embed_tokens_weight[token_id], language_model_model_embed_tokens_weight[token_id] + HIDDEN_SIZE);
+//         input_embeds.push_back(embedding);
+//     }
+//     return input_embeds;
+// }
+
+// std::pair<std::vector<float>, int> prepare_input_for_multimodel(
+//     std::vector<int> input_ids,
+//     float image[NUM_CHANNELS*IMAGE_SIZE*IMAGE_SIZE]
+// ){  
+//     std::vector<std::vector<float>> input_embeds;
+//     float vision_tower_output[SLEN*HIDDEN_SIZE];
+
+//     input_embeds = process_input_ids(input_ids);
+
+//     // encode_images(vision_tower_output, image);
+//     load_previous_output("connector_cpp_output.txt");
+//     std::cout << "concat input_embeds" << std::endl;
+//     // 🔹改成一維 flat 向量
+//     std::vector<float> output_embedding;
+//     output_embedding.reserve(TOKENIZER_MODEL_MAX_LENGTH * HIDDEN_SIZE);
+
+//     // 文字部分 flatten
+//     for (const auto& vec : input_embeds) {
+//         output_embedding.insert(output_embedding.end(), vec.begin(), vec.end());
+//     }
+
+//     // 圖像部分 flatten
+//     for (int j = 0; j < SLEN; j++) {
+//         if (output_embedding.size() + HIDDEN_SIZE > TOKENIZER_MODEL_MAX_LENGTH * HIDDEN_SIZE) {
+//             std::cout << "length = TOKENIZER_MODEL_MAX_LENGTH" << std::endl;
+//             break;
+//         }
+//         output_embedding.insert(
+//             output_embedding.end(),
+//             vision_tower_output + j * HIDDEN_SIZE,
+//             vision_tower_output + (j + 1) * HIDDEN_SIZE
+//         );
+//     }
+
+//     // 回傳 (flat embedding, 文字長度)
+//     std::pair<std::vector<float>, int> out = {output_embedding, (int)input_embeds.size()};
+//     return out;
+// }
+
+
+std::pair<std::vector<std::vector<float>>, std::vector<std::vector<float>>> process_input_ids(const std::vector<int>& cur_input_ids) {
+    std::vector<int> front;
+    std::vector<int> back;
+    auto i = cur_input_ids.begin();
+    int image_token_idx = 0;
+    while(i != cur_input_ids.end()) {
+        if (*i == IMAGE_TOKEN_INDEX) {
+            i++;
+            break;
+        }else{
+            front.push_back(*i);
+            i++;
+            image_token_idx++;
+        }
     }
-    return input_embeds;
+    while(i != cur_input_ids.end()) {
+        back.push_back(*i);
+        i++;
+    }
+
+    std::vector<std::vector<float>> front_input_embeds;
+    for (int i = 0; i < front.size(); i++) {
+        std::vector<std::vector<float>> segment_embed;
+        int token_id = front[i];
+        std::vector<float> embedding(language_model_model_embed_tokens_weight[token_id], language_model_model_embed_tokens_weight[token_id] + HIDDEN_SIZE);
+        front_input_embeds.push_back(embedding);
+    }
+    std::vector<std::vector<float>> back_input_embeds;
+    for (int i = 0; i < back.size(); i++) {
+        std::vector<std::vector<float>> segment_embed;
+        int token_id = back[i];
+        std::vector<float> embedding(language_model_model_embed_tokens_weight[token_id], language_model_model_embed_tokens_weight[token_id] + HIDDEN_SIZE);
+        back_input_embeds.push_back(embedding);
+    }
+    std::pair<std::vector<std::vector<float>>, std::vector<std::vector<float>>> out_pair = {front_input_embeds, back_input_embeds};
+    return out_pair;
 }
 
-std::pair<std::vector<float>, int> prepare_input_for_multimodel(
+
+std::vector<std::vector<float>> prepare_input_for_multimodel(
     std::vector<int> input_ids,
     float image[NUM_CHANNELS*IMAGE_SIZE*IMAGE_SIZE]
 ){  
-    std::vector<std::vector<float>> input_embeds;
     float vision_tower_output[SLEN*HIDDEN_SIZE];
+    std::pair<std::vector<std::vector<float>>, std::vector<std::vector<float>>> process_input_ids_output_pair;
+    int image_token_idx = 0;
 
-    input_embeds = process_input_ids(input_ids);
+    process_input_ids_output_pair = process_input_ids(input_ids);
+    std::vector<std::vector<float>> front_input_embeds = process_input_ids_output_pair.first;
+    std::vector<std::vector<float>> back_input_embeds = process_input_ids_output_pair.second;
+    //image_token_idx = process_input_ids_output_pair.second;
 
     // encode_images(vision_tower_output, image);
     load_previous_output("connector_cpp_output.txt");
     std::cout << "concat input_embeds" << std::endl;
-    // 🔹改成一維 flat 向量
-    std::vector<float> output_embedding;
-    output_embedding.reserve(TOKENIZER_MODEL_MAX_LENGTH * HIDDEN_SIZE);
-
-    // 文字部分 flatten
-    for (const auto& vec : input_embeds) {
-        output_embedding.insert(output_embedding.end(), vec.begin(), vec.end());
+    
+    std::vector<std::vector<float>> output_embedding;
+    for(const auto& vec : front_input_embeds){
+        output_embedding.push_back(vec);
     }
-
-    // 圖像部分 flatten
-    for (int j = 0; j < SLEN; j++) {
-        if (output_embedding.size() + HIDDEN_SIZE > TOKENIZER_MODEL_MAX_LENGTH * HIDDEN_SIZE) {
-            std::cout << "length = TOKENIZER_MODEL_MAX_LENGTH" << std::endl;
-            break;
-        }
-        output_embedding.insert(
-            output_embedding.end(),
+    std::cout << "concat front_input_embeds" << std::endl;
+    for(int j = 0; j < SLEN; j++){
+        std::vector<float> image_feature(
             vision_tower_output + j * HIDDEN_SIZE,
             vision_tower_output + (j + 1) * HIDDEN_SIZE
         );
+        output_embedding.push_back(image_feature);
+        if(output_embedding.size() >= TOKENIZER_MODEL_MAX_LENGTH) 
+            break;
     }
-
-    // 回傳 (flat embedding, 文字長度)
-    std::pair<std::vector<float>, int> out = {output_embedding, (int)input_embeds.size()};
-    return out;
+    std::cout << "concat image_feature" << std::endl;
+    for(const auto& vec : back_input_embeds){
+        if(output_embedding.size() >= TOKENIZER_MODEL_MAX_LENGTH) 
+            break;
+        else
+            output_embedding.push_back(vec);
+    }
+    std::cout << "concat back_input_embeds" << std::endl;
+    return output_embedding;
 }
-
-
 
 int main(){
     // load_siglip_embedding_weight();
@@ -952,21 +1033,32 @@ int main(){
     std::vector<std::string> test_sentences = {
         "What is next to the parking meter? What is it doing?"
     };
+    std::vector<int> begin_prompt_ids_vector = {32, 8537, 1022, 257, 11040, 2836, 290, 281, 11666, 4430, 8796, 13, 383, 8796, 3607, 7613, 11, 6496, 11, 290, 23507, 7429, 284, 262, 2836, 338, 2683, 13, 1294, 1137, 25, 220};
     std::vector<int> input_ids_vector = {2061, 318, 1306, 284, 262, 7647, 16430, 30, 1867, 318, 340, 1804, 30};
+    std::vector<int> end_prompt_ids_vector = {24994, 8808, 8643, 25};
+    std::vector<int> prompt_ids_vector = {32, 8537, 1022, 257, 11040, 2836, 290, 281, 11666, 4430, 8796, 13, 383, 8796, 3607, 7613, 11, 6496, 11, 290, 23507, 7429, 284, 262, 2836, 338, 2683, 13, 1294, 1137, 25, 220, 2061, 318, 1306, 284, 262, 7647, 16430, 30, 1867, 318, 340, 1804, 30, 24994, 8808, 8643, 25};
+
     // load_previous_output("connector_cpp_output.txt");
 
     std::cout << "load_image_processor_output" << std :: endl;
 
     load_image_processor_output("preprocessed_implementation_cpp.bin");
+    memcpy(preprocessed_image_1D, preprocessed_image, NUM_CHANNELS * IMAGE_SIZE * IMAGE_SIZE * sizeof(float));
     int input_len = 2560;
 
     std::cout << "prepare_input_for_multimodel" << std :: endl;
 
-    std::pair<std::vector<float>, int> pair_out = prepare_input_for_multimodel(input_ids_vector, preprocessed_image);
+    std::vector<std::vector<float>> input_for_multimodel = prepare_input_for_multimodel(prompt_ids_vector, preprocessed_image_1D);
+    for(int i = 0; i < input_for_multimodel.size(); i++){
+        std :: cout << "i : " << i << std::endl;
+        memcpy(embedding + i * HIDDEN_SIZE, input_for_multimodel[i].data(), HIDDEN_SIZE);
+        // for(int j = 0; j < HIDDEN_SIZE; j++){
+        //     embedding[i * HIDDEN_SIZE +  j] = input_for_multimodel[i][j];
+        // }
+    }
     
     std::cout << "finish prepare_input_for_multimodel" << std :: endl;
-    std::vector<float> embedding_vector = pair_out.first;
-    std::cout << "lengh : " << embedding_vector.size() << std :: endl;
+    std::cout << "lengh : " << input_for_multimodel.size() << std :: endl;
     // for(int i = 0; i < pair_out.first.size(); i++){
     //     std::cout << "i = " << i << std::endl;
     //     for(int j = 0; j < HIDDEN_SIZE; j++){
@@ -980,14 +1072,14 @@ int main(){
 
     std::cout << "load_llm_weight" << std :: endl;
 
-    input_len = pair_out.second;
+    input_len = input_for_multimodel.size();
     load_llm_weight();
 
     std::cout << "finish load_llm_weight" << std :: endl;
 
     PhiForCausalLM_forward(
         phi_output_ids,
-        embedding_vector.data(),
+        embedding,
         input_len
     );
 
