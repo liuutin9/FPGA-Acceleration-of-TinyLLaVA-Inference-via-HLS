@@ -16,7 +16,7 @@
 #include <cmath>
 #include <ap_fixed.h>
 
-typedef ap_fixed<16,10> fixed16_10;
+typedef ap_fixed<32,14> fixed32_14;
 
 using namespace std;
 
@@ -539,7 +539,7 @@ int main(int argc, char* argv[])
 	//   o) Allocate Memory to store the results: RES array
 	//   o) Create Buffers in Global Memory to store data
 	// ================================================================
-	fixed16_10 *IN, *WEIGHT, *BIAS, *OUT;
+	fixed32_14 *IN, *WEIGHT, *BIAS, *OUT;
 
 	#ifdef ALL_MESSAGES
 	cout << endl;
@@ -558,47 +558,47 @@ int main(int argc, char* argv[])
 	void *ptr=nullptr;
 
 	cout << "HOST-Info: Allocating memory for IN ... ";
-	if (posix_memalign(&ptr,4096,SIZE_IN*sizeof(fixed16_10))) {
+	if (posix_memalign(&ptr,4096,SIZE_IN*sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for IN array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	IN = reinterpret_cast<fixed16_10*>(ptr);
-	// use for loop to generate random fixed16_10 values
+	IN = reinterpret_cast<fixed32_14*>(ptr);
+	// use for loop to generate random fixed32_14 values
 	for (int i = 0; i < SIZE_IN; i++) {
-		IN[i] = fixed16_10(i / 1000.0f); // Example: generating fixed16_10 values from 0.0 to 255.9
+		IN[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
 	}
 	cout << "Generated " << SIZE_IN << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for WEIGHT ... ";
-	if (posix_memalign(&ptr,4096,SIZE_WEIGHT*sizeof(fixed16_10))) {
+	if (posix_memalign(&ptr,4096,SIZE_WEIGHT*sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for WEIGHT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	WEIGHT = reinterpret_cast<fixed16_10*>(ptr);
-	// use for loop to generate random fixed16_10 values
+	WEIGHT = reinterpret_cast<fixed32_14*>(ptr);
+	// use for loop to generate random fixed32_14 values
 	for (int i = 0; i < SIZE_WEIGHT; i++) {
-		WEIGHT[i] = fixed16_10(i / 1000.0f); // Example: generating fixed16_10 values from 0.0 to 255.9
+		WEIGHT[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
 	}
 	cout << "Generated " << SIZE_WEIGHT << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for BIAS ... ";
-	if (posix_memalign(&ptr,4096,SIZE_BIAS*sizeof(fixed16_10))) {
+	if (posix_memalign(&ptr,4096,SIZE_BIAS*sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for BIAS array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	BIAS = reinterpret_cast<fixed16_10*>(ptr);
-	// use for loop to generate random fixed16_10 values
+	BIAS = reinterpret_cast<fixed32_14*>(ptr);
+	// use for loop to generate random fixed32_14 values
 	for (int i = 0; i < SIZE_BIAS; i++) {
-		BIAS[i] = fixed16_10(i / 1000.0f); // Example: generating fixed16_10 values from 0.0 to 255.9
+		BIAS[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
 	}
 	cout << "Generated " << SIZE_BIAS << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for OUT ... ";
-	if (posix_memalign(&ptr,4096,SIZE_OUT*sizeof(fixed16_10))) {
+	if (posix_memalign(&ptr,4096,SIZE_OUT*sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for OUT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	OUT = reinterpret_cast<fixed16_10*>(ptr);
+	OUT = reinterpret_cast<fixed32_14*>(ptr);
 	cout << "Allocated" << endl;
 
 	cout << endl;
@@ -616,10 +616,10 @@ int main(int argc, char* argv[])
 	cl_mem buffer_phi_linear_out, buffer_phi_linear_in, buffer_phi_linear_weight, buffer_phi_linear_bias;
 
 	// size 和 read / write 權限要再修正
-	OCL_CHECK(errCode, buffer_phi_linear_out = clCreateBuffer(Context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, SIZE_OUT * sizeof(fixed16_10), OUT, &errCode));
-	OCL_CHECK(errCode, buffer_phi_linear_in = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_IN * sizeof(fixed16_10), IN, &errCode));
-	OCL_CHECK(errCode, buffer_phi_linear_weight = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_WEIGHT * sizeof(fixed16_10), WEIGHT, &errCode));
-	OCL_CHECK(errCode, buffer_phi_linear_bias = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_BIAS * sizeof(fixed16_10), BIAS, &errCode));
+	OCL_CHECK(errCode, buffer_phi_linear_out = clCreateBuffer(Context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, SIZE_OUT * sizeof(fixed32_14), OUT, &errCode));
+	OCL_CHECK(errCode, buffer_phi_linear_in = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_IN * sizeof(fixed32_14), IN, &errCode));
+	OCL_CHECK(errCode, buffer_phi_linear_weight = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_WEIGHT * sizeof(fixed32_14), WEIGHT, &errCode));
+	OCL_CHECK(errCode, buffer_phi_linear_bias = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_BIAS * sizeof(fixed32_14), BIAS, &errCode));
 
 	// ============================================================================
 	// Step 5: Set Kernel Arguments and Run the Application
@@ -723,7 +723,7 @@ int main(int argc, char* argv[])
 	// ------------------------------------------------------
 	// Step 6: Check Output Results
 	// ------------------------------------------------------
-	fixed16_10 golden_out[HIDDEN_SIZE];
+	fixed32_14 golden_out[HIDDEN_SIZE];
 	for (int i = 0; i < HIDDEN_SIZE; i++) {
 		golden_out[i] = BIAS[i];
 		for (int j = 0; j < HIDDEN_SIZE; j++) {
@@ -741,11 +741,11 @@ int main(int argc, char* argv[])
 	}
 
 	// Count the number of errors
-	fixed16_10 threshold = fixed16_10(0.00001);
+	fixed32_14 threshold = fixed32_14(0.00001);
 
 	int error_count = 0;
 	for (int i = 0; i < HIDDEN_SIZE; i++) {
-	    fixed16_10 err = golden_out[i] - OUT[i];
+	    fixed32_14 err = golden_out[i] - OUT[i];
 	    if (err < 0) err = -err;  // 或用 ap_fixed 自帶的 abs()
 	    if (err > threshold) {
 	        error_count++;

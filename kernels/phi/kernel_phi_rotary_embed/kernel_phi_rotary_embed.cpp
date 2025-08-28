@@ -7,15 +7,15 @@
 #define ROTARY_DIM 32
 #define HALF_ROTARY_DIM 16
 
-typedef ap_fixed<16,10> fixed16_10;
+typedef ap_fixed<32,14> fixed32_14;
 
 extern "C" {
     void kernel_phi_rotary_embed(
-        fixed16_10 out_q[HIDDEN_SIZE],
-        fixed16_10 out_k[HIDDEN_SIZE],
-        fixed16_10 in_q[HIDDEN_SIZE],
-        fixed16_10 in_k[HIDDEN_SIZE],
-        fixed16_10* position_idx
+        fixed32_14 out_q[HIDDEN_SIZE],
+        fixed32_14 out_k[HIDDEN_SIZE],
+        fixed32_14 in_q[HIDDEN_SIZE],
+        fixed32_14 in_k[HIDDEN_SIZE],
+        fixed32_14* position_idx
     ) {
 
         #pragma HLS INTERFACE m_axi port=out_q offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
@@ -31,13 +31,13 @@ extern "C" {
         #pragma HLS INTERFACE s_axilite port=position_idx bundle=control
         #pragma HLS INTERFACE s_axilite port=return bundle=control
 
-        fixed16_10 local_out_q[HIDDEN_SIZE];
-        fixed16_10 local_out_k[HIDDEN_SIZE];
-        fixed16_10 local_in_q[HIDDEN_SIZE];
-        fixed16_10 local_in_k[HIDDEN_SIZE];
-        fixed16_10 local_base[HALF_ROTARY_DIM] = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
-        fixed16_10 local_cosine[HALF_ROTARY_DIM];
-        fixed16_10 local_sine[HALF_ROTARY_DIM];
+        fixed32_14 local_out_q[HIDDEN_SIZE];
+        fixed32_14 local_out_k[HIDDEN_SIZE];
+        fixed32_14 local_in_q[HIDDEN_SIZE];
+        fixed32_14 local_in_k[HIDDEN_SIZE];
+        fixed32_14 local_base[HALF_ROTARY_DIM] = {1, 0.562341, 0.316228, 0.177828, 0.1, 0.0562341, 0.0316228, 0.0177828, 0.01, 0.00562341, 0.00316228, 0.00177828, 0.001, 0.000562341, 0.000316228, 0.000177828};
+        fixed32_14 local_cosine[HALF_ROTARY_DIM];
+        fixed32_14 local_sine[HALF_ROTARY_DIM];
 
         #pragma HLS bind_storage variable=local_out_q type=RAM_T2P impl=bram
         #pragma HLS bind_storage variable=local_out_k type=RAM_T2P impl=bram
@@ -79,13 +79,13 @@ extern "C" {
                 int idx1 = i * ROTARY_DIM + j;
                 int idx2 = idx1 + HALF_ROTARY_DIM;
 
-                fixed16_10 r1 = local_in_q[idx2];
-                fixed16_10 r2 = local_in_q[idx1];
+                fixed32_14 r1 = local_in_q[idx2];
+                fixed32_14 r2 = local_in_q[idx1];
                 local_out_q[idx1] = local_in_q[idx1] * local_cosine[j] - r1 * local_sine[j];
                 local_out_q[idx2] = local_in_q[idx2] * local_cosine[j] - r2 * local_sine[j];
 
-                fixed16_10 r3 = local_in_k[idx2];
-                fixed16_10 r4 = local_in_k[idx1];
+                fixed32_14 r3 = local_in_k[idx2];
+                fixed32_14 r4 = local_in_k[idx1];
                 local_out_k[idx1] = local_in_k[idx1] * local_cosine[j] - r3 * local_sine[j];
                 local_out_k[idx2] = local_in_k[idx2] * local_cosine[j] - r4 * local_sine[j];
             }

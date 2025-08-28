@@ -7,16 +7,14 @@
 #define DIVIDE_BLOCK (HIDDEN_SIZE / DIVIDE_SIZE)
 #define LAYER_NORM_EPS 0.00001
 
-typedef ap_fixed<24,10> fixed16_10;
-//typedef float fixed16_10;
 typedef ap_fixed<32,14> fixed32_14;
 
 extern "C" {
     void kernel_phi_layernorm(
-        fixed16_10 out[HIDDEN_SIZE],
-        fixed16_10 in[HIDDEN_SIZE],
-        fixed16_10 weight[HIDDEN_SIZE],
-        fixed16_10 bias[HIDDEN_SIZE]
+        fixed32_14 out[HIDDEN_SIZE],
+        fixed32_14 in[HIDDEN_SIZE],
+        fixed32_14 weight[HIDDEN_SIZE],
+        fixed32_14 bias[HIDDEN_SIZE]
     ) {
 
         #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
@@ -38,9 +36,9 @@ extern "C" {
         #pragma HLS bind_storage variable=local_in type=RAM_T2P impl=bram
 		#pragma HLS bind_storage variable=local_weight type=RAM_T2P impl=bram
 
-        fixed32_14 mean = fixed16_10(0.0f);
-        fixed32_14 variance = fixed16_10(0.0f);
-        fixed32_14 eps = fixed16_10(LAYER_NORM_EPS);
+        fixed32_14 mean = fixed32_14(0.0f);
+        fixed32_14 variance = fixed32_14(0.0f);
+        fixed32_14 eps = fixed32_14(LAYER_NORM_EPS);
 
         init:
         for (int i = 0; i < HIDDEN_SIZE; i++) {
@@ -53,7 +51,7 @@ extern "C" {
 
         mean_loop:
 //		for (int i = 0; i < DIVIDE_BLOCK; i++) {
-//			fixed16_10 sum = fixed16_10(0.0f);
+//			fixed32_14 sum = fixed32_14(0.0f);
 //			for (int j = 0; j < DIVIDE_SIZE; j++) {
 //				#pragma HLS PIPELINE II=1
 //            	#pragma HLS UNROLL factor=2
@@ -99,7 +97,7 @@ extern "C" {
         for (int i = 0; i < HIDDEN_SIZE; i++) {
             #pragma HLS PIPELINE II=1
             #pragma HLS UNROLL factor=2
-            out[i] = fixed16_10(local_out[i]);
+            out[i] = fixed32_14(local_out[i]);
         }
     }
 }

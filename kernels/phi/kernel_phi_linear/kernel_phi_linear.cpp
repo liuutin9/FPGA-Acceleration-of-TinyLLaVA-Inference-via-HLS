@@ -5,7 +5,7 @@
 #define NUM_BLOCKS 8
 #define BLOCK_SIZE (HIDDEN_SIZE / NUM_BLOCKS)
 
-typedef ap_fixed<16,10> fixed16_10;
+typedef ap_fixed<32,14> fixed32_14;
 
 extern "C" {
     void kernel_phi_linear(
@@ -13,10 +13,10 @@ extern "C" {
         // float in[HIDDEN_SIZE],
         // float weight[HIDDEN_SIZE * HIDDEN_SIZE],
         // float bias[HIDDEN_SIZE]
-        fixed16_10* out,
-        fixed16_10* in,
-        fixed16_10* weight,
-        fixed16_10* bias
+        fixed32_14* out,
+        fixed32_14* in,
+        fixed32_14* weight,
+        fixed32_14* bias
     ) {
         #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
@@ -31,9 +31,9 @@ extern "C" {
 
         // 壓縮並存放到 local buffer
         // Local buffers for input slice and weight block
-        fixed16_10 local_in[HIDDEN_SIZE];
-        fixed16_10 local_w[BLOCK_SIZE * HIDDEN_SIZE];
-        fixed16_10 local_out[HIDDEN_SIZE];
+        fixed32_14 local_in[HIDDEN_SIZE];
+        fixed32_14 local_w[BLOCK_SIZE * HIDDEN_SIZE];
+        fixed32_14 local_out[HIDDEN_SIZE];
 
 		#pragma HLS bind_storage variable=local_in type=RAM_T2P impl=bram
 		#pragma HLS bind_storage variable=local_w type=RAM_T2P impl=uram

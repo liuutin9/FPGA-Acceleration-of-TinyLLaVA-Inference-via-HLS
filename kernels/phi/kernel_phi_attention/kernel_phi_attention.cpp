@@ -6,15 +6,15 @@
 #define HEAD_DIM 80
 #define SLEN 128
 
-typedef ap_fixed<16,10> fixed16_10;
+typedef ap_fixed<32,14> fixed32_14;
 
 extern "C" {
     void kernel_phi_attention(
-        float out_attention[NUM_ATTENTION_HEADS * HEAD_DIM],
-        float in_q[NUM_KEY_VALUE_HEADS * HEAD_DIM],
-        float in_k[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM],
-        float in_v[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM],
-        int position_idx
+        fixed32_14 out_attention[NUM_ATTENTION_HEADS * HEAD_DIM],
+        fixed32_14 in_q[NUM_KEY_VALUE_HEADS * HEAD_DIM],
+        fixed32_14 in_k[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM],
+        fixed32_14 in_v[NUM_KEY_VALUE_HEADS * SLEN * HEAD_DIM],
+        int* position_idx
     ) {
 
         #pragma HLS INTERFACE m_axi port=out_attention offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
@@ -30,11 +30,11 @@ extern "C" {
         #pragma HLS INTERFACE s_axilite port=position_idx bundle=control
         #pragma HLS INTERFACE s_axilite port=return bundle=control
 
-        fixed16_10 local_q_per_head[HEAD_DIM];
-        fixed16_10 local_k_per_head[SLEN * HEAD_DIM];
-        fixed16_10 local_v_per_head[SLEN * HEAD_DIM];
-        fixed16_10 qkt[SLEN];
-        int curr_len = position_idx + 1;
+        fixed32_14 local_q_per_head[HEAD_DIM];
+        fixed32_14 local_k_per_head[SLEN * HEAD_DIM];
+        fixed32_14 local_v_per_head[SLEN * HEAD_DIM];
+        fixed32_14 qkt[SLEN];
+        int curr_len = position_idx[0] + 1;
 
         #pragma HLS bind_storage variable=local_q_per_head type=RAM_T2P impl=bram
         #pragma HLS bind_storage variable=local_k_per_head type=RAM_T2P impl=bram
@@ -65,7 +65,7 @@ extern "C" {
             }
             compute_qkt:
             for (int j = 0; j < curr_len; j++) {
-                fixed16_10 sum = 0;
+                fixed32_14 sum = 0;
                 for (int k = 0; k < HEAD_DIM; k++) {
                     #pragma HLS PIPELINE II=1
                     #pragma HLS UNROLL factor=4
@@ -74,7 +74,7 @@ extern "C" {
                 qkt[j] = sum * scaling;
             }
             compute_softmax:
-            fixed16_10 max_qkt = qkt[0];
+            fixed32_14 max_qkt = qkt[0];
             for (int j = 1; j < curr_len; j++) {
                 max_qkt = hls::max(max_qkt, qkt[j]);
             }
@@ -85,7 +85,7 @@ extern "C" {
                 sum_exp += exp_qkt[j];
             }
             for (int j = 0; j < curr_len; j++) {
-                qkt[j] = fixed16_10(exp_qkt[j] / sum_exp);
+                qkt[j] = fixed32_14(exp_qkt[j] / sum_exp);
             }
             compute_attention_output:
             for (int j = 0; j < curr_len; j++) {
