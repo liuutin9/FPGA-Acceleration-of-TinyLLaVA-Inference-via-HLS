@@ -55,6 +55,20 @@ int readTxtFile(const char *filename, string &content) {
 }
 
 // =========================================
+// Helper Function: Read binary file
+// =========================================
+int readBinaryFile(const char *filename, vector<char> &buffer) {
+    ifstream file(filename, ios::binary);
+    if (!file) {
+        cerr << "Error opening file: " << filename << endl;
+        return 1;
+    }
+    buffer.assign((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+    file.close();
+    return 0;
+}
+
+// =========================================
 // Helper Function: Initialize tokenizer
 // =========================================
 int initTokenizer(const string tokenizer_json_path, unique_ptr<tokenizers::Tokenizer> &tokenizer) {
@@ -76,6 +90,10 @@ int initTokenizer(const string tokenizer_json_path, unique_ptr<tokenizers::Token
     }
 
     return 0;
+}
+
+int loadData() {
+
 }
 
 // =========================================
