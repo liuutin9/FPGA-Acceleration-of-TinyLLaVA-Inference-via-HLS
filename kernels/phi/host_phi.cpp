@@ -21,6 +21,8 @@
 #include "tokenizers_cpp.h"
 
 typedef ap_fixed<32,14> fixed32_14;
+typedef ap_fixed<24,10> fixed24_10;
+typedef ap_fixed<16,10> fixed16_10;
 
 using namespace std;
 
@@ -58,6 +60,41 @@ int readTxtFile(const char *filename, string &content) {
 // =========================================
 // Helper Function: Read binary file
 // =========================================
+int readBinaryFile(
+	const char *filename,
+    std::vector<char> &buffer,
+	std::streampos byte_offset,
+	std::size_t byte_size
+) {
+    std::ifstream file(filename, std::ios::binary);
+    if (!file) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return 1;
+    }
+
+    // 移動到指定位置
+    file.seekg(byte_offset);
+    if (!file) {
+        std::cerr << "Error seeking file: " << filename << std::endl;
+        return 2;
+    }
+
+    // 調整 buffer 大小，準備讀取
+    buffer.resize(byte_size);
+
+    // 讀取 byte_size bytes
+    file.read(buffer.data(), byte_size);
+    if (!file) {
+        std::cerr << "Error reading file: " << filename << std::endl;
+        return 3;
+    }
+
+    return 0;
+}
+
+// =========================================
+// Helper Function: Read binary file
+// =========================================
 int readBinaryFile(const char *filename, vector<char> &buffer) {
     ifstream file(filename, ios::binary);
     if (!file) {
@@ -66,6 +103,71 @@ int readBinaryFile(const char *filename, vector<char> &buffer) {
     }
     buffer.assign((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
     file.close();
+    return 0;
+}
+
+// =========================================
+// Helper Function: Convert binary data to float
+// =========================================
+int binaryToFloat(float* out, const vector<char>& binary) {
+	float tmp;
+    for (int i = 0; i < binary.size(); i += 4) {
+        memcpy(&tmp, &binary[i], sizeof(float));
+        out[i / 4] = tmp;
+    }
+    return 0;
+}
+
+// =========================================
+// Helper Function: Load data from binary file
+// =========================================
+int loadData_float32(float* out, int len_offset, int length, const char *filename) {
+    vector<char> binary;
+    if (readBinaryFile(filename, binary, len_offset * 4, length * 4) != 0) {
+        return -1;
+    }
+    return binaryToFloat(out, binary);
+}
+
+// =========================================
+// Helper Function: Load data from binary file
+// =========================================
+int loadData_fixed32_14(fixed32_14* out, int len_offset, int length, const char *filename) {
+    float* tmp;
+    if (loadData_float32(tmp, len_offset, length, filename) != 0) {
+        return -1;
+    }
+    for (int i = 0; i < length; i++) {
+        out[i] = fixed32_14(tmp[i]);
+    }
+    return 0;
+}
+
+// =========================================
+// Helper Function: Load data from binary file
+// =========================================
+int loadData_fixed24_10(fixed24_10* out, int len_offset, int length, const char *filename) {
+    float* tmp;
+    if (loadData_float32(tmp, len_offset, length, filename) != 0) {
+        return -1;
+    }
+    for (int i = 0; i < length; i++) {
+        out[i] = fixed24_10(tmp[i]);
+    }
+    return 0;
+}
+
+// =========================================
+// Helper Function: Load data from binary file
+// =========================================
+int loadData_fixed16_10(fixed16_10* out, int len_offset, int length, const char *filename) {
+    float* tmp;
+    if (loadData_float32(tmp, len_offset, length, filename) != 0) {
+        return -1;
+    }
+    for (int i = 0; i < length; i++) {
+        out[i] = fixed16_10(tmp[i]);
+    }
     return 0;
 }
 
@@ -91,26 +193,6 @@ int initTokenizer(const string tokenizer_json_path, unique_ptr<tokenizers::Token
     }
 
     return 0;
-}
-
-int binaryToFloat(float* out, const vector<char>& binary) {
-	char buffer[2];
-	half tmp;
-	for (size_t i = 0; i < binary.size(); i += 2) {
-		buffer[0] = binary[i];
-		buffer[1] = binary[i + 1];
-		memcpy(&tmp, buffer, sizeof(half));
-		out[i / 2] = static_cast<float>(tmp);
-	}
-	return 0;
-}
-
-int loadData(float* out, const char *filename) {
-    vector<char> binary;
-    if (readBinaryFile(filename, binary) != 0) {
-        return -1;
-    }
-    return binaryToFloat(out, binary);
 }
 
 // =========================================
