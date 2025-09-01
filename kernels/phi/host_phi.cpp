@@ -16,6 +16,7 @@
 #include <cmath>
 #include <ap_fixed.h>
 #include <vector>
+#include <hls_half.h>
 #include "tokenizers_c.h"
 #include "tokenizers_cpp.h"
 
@@ -92,8 +93,24 @@ int initTokenizer(const string tokenizer_json_path, unique_ptr<tokenizers::Token
     return 0;
 }
 
-int loadData() {
+int binaryToFloat(float* out, const vector<char>& binary) {
+	char buffer[2];
+	half tmp;
+	for (size_t i = 0; i < binary.size(); i += 2) {
+		buffer[0] = binary[i];
+		buffer[1] = binary[i + 1];
+		memcpy(&tmp, buffer, sizeof(half));
+		out[i / 2] = static_cast<float>(tmp);
+	}
+	return 0;
+}
 
+int loadData(float* out, const char *filename) {
+    vector<char> binary;
+    if (readBinaryFile(filename, binary) != 0) {
+        return -1;
+    }
+    return binaryToFloat(out, binary);
 }
 
 // =========================================
