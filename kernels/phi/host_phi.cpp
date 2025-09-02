@@ -111,7 +111,7 @@ int readBinaryFile(const char *filename, vector<char> &buffer) {
 // =========================================
 int binaryToFloat(float* out, const vector<char>& binary) {
 	float tmp;
-    for (int i = 0; i < binary.size(); i += 4) {
+    for (size_t i = 0; i < binary.size(); i += 4) {
         memcpy(&tmp, &binary[i], sizeof(float));
         out[i / 4] = tmp;
     }
@@ -133,7 +133,7 @@ int loadData_float32(float* out, int len_offset, int length, const char *filenam
 // Helper Function: Load data from binary file
 // =========================================
 int loadData_fixed32_14(fixed32_14* out, int len_offset, int length, const char *filename) {
-    float* tmp;
+	float tmp[length];
     if (loadData_float32(tmp, len_offset, length, filename) != 0) {
         return -1;
     }
@@ -147,7 +147,7 @@ int loadData_fixed32_14(fixed32_14* out, int len_offset, int length, const char 
 // Helper Function: Load data from binary file
 // =========================================
 int loadData_fixed24_10(fixed24_10* out, int len_offset, int length, const char *filename) {
-    float* tmp;
+	float tmp[length];
     if (loadData_float32(tmp, len_offset, length, filename) != 0) {
         return -1;
     }
@@ -161,7 +161,7 @@ int loadData_fixed24_10(fixed24_10* out, int len_offset, int length, const char 
 // Helper Function: Load data from binary file
 // =========================================
 int loadData_fixed16_10(fixed16_10* out, int len_offset, int length, const char *filename) {
-    float* tmp;
+    float tmp[length];
     if (loadData_float32(tmp, len_offset, length, filename) != 0) {
         return -1;
     }
