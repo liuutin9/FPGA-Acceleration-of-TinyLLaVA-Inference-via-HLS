@@ -680,12 +680,21 @@ int main(int argc, char* argv[])
 	// -------------------------------------------------------------
 	// Step 3.4: Create a Kernels
 	// -------------------------------------------------------------
-	cl_kernel kernel_phi_linear;
+	cl_kernel kernel_phi_linear_1, kernel_phi_linear_2;
+	cl_kernel kernel_phi_layernorm, kernel_phi_mlp, kernel_phi_attention;
+	cl_kernel kernel_phi_residual_add, kernel_phi_copy, kernel_phi_rotary_embed;
 
 	#ifdef ALL_MESSAGES
 	cout << "HOST-Info: Creating Kernels ..." << endl;
 	#endif
-	OCL_CHECK(errCode, kernel_phi_linear = clCreateKernel(Program, "kernel_phi_linear", &errCode));
+	OCL_CHECK(errCode, kernel_phi_linear_1 = clCreateKernel(Program, "kernel_phi_linear_1", &errCode));
+	OCL_CHECK(errCode, kernel_phi_linear_2 = clCreateKernel(Program, "kernel_phi_linear_2", &errCode));
+	OCL_CHECK(errCode, kernel_phi_layernorm = clCreateKernel(Program, "kernel_phi_layernorm", &errCode));
+	OCL_CHECK(errCode, kernel_phi_mlp = clCreateKernel(Program, "kernel_phi_mlp", &errCode));
+	OCL_CHECK(errCode, kernel_phi_attention = clCreateKernel(Program, "kernel_phi_attention", &errCode));
+	OCL_CHECK(errCode, kernel_phi_residual_add = clCreateKernel(Program, "kernel_phi_residual_add", &errCode));
+	OCL_CHECK(errCode, kernel_phi_copy = clCreateKernel(Program, "kernel_phi_copy", &errCode));
+	OCL_CHECK(errCode, kernel_phi_rotary_embed = clCreateKernel(Program, "kernel_phi_rotary_embed", &errCode));
 
 	// TODO
 	// ================================================================
@@ -698,6 +707,7 @@ int main(int argc, char* argv[])
 	//   o) Create Buffers in Global Memory to store data
 	// ================================================================
 	fixed32_14 *IN, *WEIGHT, *BIAS, *OUT;
+	fixed32_14 *PHI_IN, *PHI_OUT, *PHI_2560_2560_1, *PHI_2560_2560_2, *PHI_2560_1, *PHI_2560_2;
 
 	#ifdef ALL_MESSAGES
 	cout << endl;
@@ -722,9 +732,10 @@ int main(int argc, char* argv[])
 	}
 	IN = reinterpret_cast<fixed32_14*>(ptr);
 	// use for loop to generate random fixed32_14 values
-	for (int i = 0; i < SIZE_IN; i++) {
-		IN[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
-	}
+	//	for (int i = 0; i < SIZE_IN; i++) {
+	//		IN[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
+	//	}
+	loadData_fixed32_14(IN, 526 * SIZE_IN, SIZE_IN, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_embed_tokens_weight.bin");
 	cout << "Generated " << SIZE_IN << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for WEIGHT ... ";
@@ -734,9 +745,10 @@ int main(int argc, char* argv[])
 	}
 	WEIGHT = reinterpret_cast<fixed32_14*>(ptr);
 	// use for loop to generate random fixed32_14 values
-	for (int i = 0; i < SIZE_WEIGHT; i++) {
-		WEIGHT[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
-	}
+	//	for (int i = 0; i < SIZE_WEIGHT; i++) {
+	//		WEIGHT[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
+	//	}
+	loadData_fixed32_14(WEIGHT, 0, SIZE_WEIGHT, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_weight.bin");
 	cout << "Generated " << SIZE_WEIGHT << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for BIAS ... ";
@@ -746,10 +758,27 @@ int main(int argc, char* argv[])
 	}
 	BIAS = reinterpret_cast<fixed32_14*>(ptr);
 	// use for loop to generate random fixed32_14 values
-	for (int i = 0; i < SIZE_BIAS; i++) {
-		BIAS[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
-	}
+	//	for (int i = 0; i < SIZE_BIAS; i++) {
+	//		BIAS[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
+	//	}
+	loadData_fixed32_14(BIAS, 0, SIZE_BIAS, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_bias.bin");
 	cout << "Generated " << SIZE_BIAS << " values" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_IN ... ";
+	if (posix_memalign(&ptr, 4096, HIDDEN_SIZE * sizeof(fixed32_14))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_IN array" << endl << endl;
+		return EXIT_FAILURE;
+	}
+	PHI_IN = reinterpret_cast<fixed32_14*>(ptr);
+	cout << "PHI_IN has been allocated!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_OUT ... ";
+	if (posix_memalign(&ptr, 4096, HIDDEN_SIZE * sizeof(fixed32_14))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_OUT array" << endl << endl;
+		return EXIT_FAILURE;
+	}
+	PHI_OUT = reinterpret_cast<fixed32_14*>(ptr);
+	cout << "PHI_OUT has been allocated!" << endl;
 
 	cout << "HOST-Info: Allocating memory for OUT ... ";
 	if (posix_memalign(&ptr,4096,SIZE_OUT*sizeof(fixed32_14))) {
@@ -771,13 +800,27 @@ int main(int argc, char* argv[])
 	#ifdef ALL_MESSAGES
 	cout << "HOST-Info: Allocating buffers ..." << endl;
 	#endif
-	cl_mem buffer_phi_linear_out, buffer_phi_linear_in, buffer_phi_linear_weight, buffer_phi_linear_bias;
+	// cl_mem_ext_ptr_t bank_ext;
+	// bank_ext.flags = XCL_MEM_DDR_BANK0;
+	// bank_ext.obj   = OUT;
+	// bank_ext.param = 0;
+
+	cl_mem buffer_1, buffer_2, buffer_3, buffer_q, buffer_k, buffer_v;
+	cl_mem buffer_2560_2560_1, buffer_2560_2560_2, buffer_2560_1, buffer_2560_2;
+	int integer_value;
 
 	// size 和 read / write 權限要再修正
-	OCL_CHECK(errCode, buffer_phi_linear_out = clCreateBuffer(Context, CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR, SIZE_OUT * sizeof(fixed32_14), OUT, &errCode));
-	OCL_CHECK(errCode, buffer_phi_linear_in = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_IN * sizeof(fixed32_14), IN, &errCode));
-	OCL_CHECK(errCode, buffer_phi_linear_weight = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_WEIGHT * sizeof(fixed32_14), WEIGHT, &errCode));
-	OCL_CHECK(errCode, buffer_phi_linear_bias = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, SIZE_BIAS * sizeof(fixed32_14), BIAS, &errCode));
+	OCL_CHECK(errCode, buffer_1 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), PHI_IN, &errCode));
+	OCL_CHECK(errCode, buffer_2 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), PHI_OUT, &errCode));
+	OCL_CHECK(errCode, buffer_3 = clCreateBuffer(Context, CL_MEM_READ_WRITE, HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_q = clCreateBuffer(Context, CL_MEM_READ_WRITE, HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_k = clCreateBuffer(Context, CL_MEM_READ_WRITE, HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_v = clCreateBuffer(Context, CL_MEM_READ_WRITE, HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+
+	OCL_CHECK(errCode, buffer_2560_2560_1 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14), PHI_2560_2560_1, &errCode));
+	OCL_CHECK(errCode, buffer_2560_2560_2 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14), PHI_2560_2560_2, &errCode));
+	OCL_CHECK(errCode, buffer_2560_1 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), PHI_2560_1, &errCode));
+	OCL_CHECK(errCode, buffer_2560_2 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), PHI_2560_2, &errCode));
 
 	// ============================================================================
 	// Step 5: Set Kernel Arguments and Run the Application
@@ -818,10 +861,38 @@ int main(int argc, char* argv[])
 	cout << "HOST-Info: Setting Kernel arguments ..." << endl;
 	#endif
 
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear, 0, sizeof(cl_mem), &buffer_phi_linear_out));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear, 1, sizeof(cl_mem), &buffer_phi_linear_in));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear, 2, sizeof(cl_mem), &buffer_phi_linear_weight));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear, 3, sizeof(cl_mem), &buffer_phi_linear_bias));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear_1, 0, sizeof(cl_mem), &buffer_3));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear_1, 1, sizeof(cl_mem), &buffer_2));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear_1, 2, sizeof(cl_mem), &buffer_2560_2560_1));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear_1, 3, sizeof(cl_mem), &buffer_2560_1));
+
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear_2, 0, sizeof(cl_mem), &buffer_v));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear_2, 1, sizeof(cl_mem), &buffer_2));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear_2, 2, sizeof(cl_mem), &buffer_2560_2560_2));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_linear_2, 3, sizeof(cl_mem), &buffer_2560_2));
+
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 0, sizeof(cl_mem), &buffer_1));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 1, sizeof(cl_mem), &buffer_2));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 2, sizeof(cl_mem), &buffer_2560_1));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 3, sizeof(cl_mem), &buffer_2560_2));
+
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp, 0, sizeof(cl_mem), &buffer_2));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp, 1, sizeof(cl_mem), &buffer_3));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp, 2, sizeof(cl_mem), &buffer_2560_2560_1));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp, 3, sizeof(cl_mem), &buffer_2560_1));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp, 4, sizeof(cl_mem), &buffer_2560_2560_2));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp, 5, sizeof(cl_mem), &buffer_2560_2));
+
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 0, sizeof(cl_mem), &buffer_2));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 1, sizeof(cl_mem), &buffer_q));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 2, sizeof(cl_mem), &buffer_k));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 3, sizeof(cl_mem), &buffer_v));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 4, sizeof(int), &integer_value));
+
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_residual_add, 0, sizeof(cl_mem), &buffer_1));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_residual_add, 1, sizeof(cl_mem), &buffer_2));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_residual_add, 2, sizeof(cl_mem), &buffer_3));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_residual_add, 3, sizeof(cl_mem), &buffer_q));
 
     // Initialize tokenizer
     #ifdef ALL_MESSAGES
