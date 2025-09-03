@@ -881,10 +881,18 @@ int main(int argc, char* argv[])
 	cl_event Mem_op_event[Nb_Of_Mem_Events],
 	          K_exe_event[Nb_Of_Exe_Events];
 
-	cl_event event_wait_list_layernorm[3];
-	cl_event event_wait_list_proj[1];
-	cl_event event_wait_list_proj_1[2];
-	cl_event event_wait_list_proj_2[2];
+
+	cl_event event_buffer_1;
+	cl_event event_buffer_2;
+	cl_event event_buffer_3;
+	cl_event event_buffer_q;
+	cl_event event_buffer_k;
+	cl_event event_buffer_v;
+	cl_event event_buffer_2560_2560_1;
+	cl_event event_buffer_2560_2560_2;
+	cl_event event_buffer_2560_1;
+	cl_event event_buffer_2560_2;
+	vector<cl_event> event_wait_list;
 
 
 	#ifdef ALL_MESSAGES
@@ -985,7 +993,7 @@ int main(int argc, char* argv[])
 	for (int i = 0; i < PHI_SLEN; i++) {
 		weight_path = weight_folder_path + phi_embed_tokens_weight;
 		loadData_fixed32_14(PHI_IN, tokenized_input[i] * HIDDEN_SIZE, HIDDEN_SIZE, weight_path.c_str());
-		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_1, 0, 0, NULL, &event_wait_list_layernorm[0]));
+		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_1, 0, 0, NULL, &event_buffer_1));
 		for (int j = 0; j < 32; j++) {
 
 			// pre-layernorm
@@ -993,19 +1001,30 @@ int main(int argc, char* argv[])
 			loadData_fixed32_14(PHI_2560_1, 0, HIDDEN_SIZE, weight_path.c_str());
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_input_layernorm_bias_filename_postfix;
 			loadData_fixed32_14(PHI_2560_2, 0, HIDDEN_SIZE, weight_path.c_str());
-			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_1, 0, 0, NULL, &event_wait_list_layernorm[1]));
-			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2, 0, 0, NULL, &event_wait_list_layernorm[2]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, 3, event_wait_list_layernorm, &event_wait_list_proj[0]));
-			for (int n = 0; n < 3; n++) {
-				OCL_CHECK(errCode, errCode = clReleaseEvent(event_wait_list_decoder_layer_layernorm[n]));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_1, 0, 0, NULL, &event_buffer_2560_1));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2, 0, 0, NULL, &event_buffer_2560_2));
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_1);
+			event_wait_list.push_back(event_buffer_2560_1);
+			event_wait_list.push_back(event_buffer_2560_2);
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, event_wait_list.size(), event_wait_list.data(), &event_buffer_2));
+			clWaitForEvents(1, &event_buffer_2);
+			for (int n = 0; n < event_wait_list.size(); n++) {
+				OCL_CHECK(errCode, errCode = clReleaseEvent(event_wait_list[n]));
 			}
 
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_q_proj_weight_filename_postfix;
 			loadData_fixed32_14(PHI_2560_2560_1, 0, HIDDEN_SIZE * HIDDEN_SIZE, weight_path.c_str());
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_q_proj_bias_filename_postfix;
 			loadData_fixed32_14(PHI_2560_2560_2, 0, HIDDEN_SIZE, weight_path.c_str());
-			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2560_1, 0, 0, NULL, &Mem_op_event[6]));
-			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_1, 0, 0, NULL, &Mem_op_event[7]));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2560_1, 0, 0, NULL, &event_buffer_2560_2560_1));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_1, 0, 0, NULL, &event_buffer_2560_1));
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_2);
+			event_wait_list.push_back(event_buffer_2560_2560_1);
+			event_wait_list.push_back(event_buffer_2560_1);
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_linear_1, event_wait_list.size(), event_wait_list.data(), &event_buffer_q));
+			// TODO
 
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_k_proj_weight_filename_postfix;
 			loadData_fixed32_14(PHI_DECODER_LAYER_K_PROJ_WEIGHT, 0, HIDDEN_SIZE * HIDDEN_SIZE, weight_path.c_str());
