@@ -34,6 +34,8 @@ using namespace std;
 #define SIZE_WEIGHT (HIDDEN_SIZE * HIDDEN_SIZE)
 #define SIZE_BIAS HIDDEN_SIZE
 
+#define PHI_SLEN 832
+
 #define OCL_CHECK(error, call)                                                                   	 \
     do {                                                                                             \
         call;                                                                                        \
@@ -42,6 +44,9 @@ using namespace std;
             exit(EXIT_FAILURE);                                                                      \
         }                                                                                            \
     } while (0)
+
+string weight_folder_path = "/home/undergraduate/ytliu24/vitis_workspace/weights/";
+string weight_file_name;
 
 // =========================================
 // Helper Function: Read txt file
@@ -193,6 +198,15 @@ int initTokenizer(const string tokenizer_json_path, unique_ptr<tokenizers::Token
     }
 
     return 0;
+}
+
+// =========================================
+// Helper Function: Set bank extension pointer
+// =========================================
+void setBankExtensionPointer(cl_mem_ext_ptr_t &bank_ext, unsigned id, void* obj, void* param) {
+    bank_ext.flags = id | XCL_MEM_TOPOLOGY;
+    bank_ext.obj   = obj;
+    bank_ext.param = param;
 }
 
 // =========================================
@@ -800,27 +814,34 @@ int main(int argc, char* argv[])
 	#ifdef ALL_MESSAGES
 	cout << "HOST-Info: Allocating buffers ..." << endl;
 	#endif
-	// cl_mem_ext_ptr_t bank_ext;
-	// bank_ext.flags = XCL_MEM_DDR_BANK0;
-	// bank_ext.obj   = OUT;
-	// bank_ext.param = 0;
+	cl_mem_ext_ptr_t bank_ext;
 
 	cl_mem buffer_1, buffer_2, buffer_3, buffer_q, buffer_k, buffer_v;
 	cl_mem buffer_2560_2560_1, buffer_2560_2560_2, buffer_2560_1, buffer_2560_2;
 	int integer_value;
 
 	// size 和 read / write 權限要再修正
-	OCL_CHECK(errCode, buffer_1 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), PHI_IN, &errCode));
-	OCL_CHECK(errCode, buffer_2 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), PHI_OUT, &errCode));
-	OCL_CHECK(errCode, buffer_3 = clCreateBuffer(Context, CL_MEM_READ_WRITE, HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
-	OCL_CHECK(errCode, buffer_q = clCreateBuffer(Context, CL_MEM_READ_WRITE, HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
-	OCL_CHECK(errCode, buffer_k = clCreateBuffer(Context, CL_MEM_READ_WRITE, HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
-	OCL_CHECK(errCode, buffer_v = clCreateBuffer(Context, CL_MEM_READ_WRITE, HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	setBankExtensionPointer(bank_ext, 0, PHI_IN, NULL);
+	OCL_CHECK(errCode, buffer_1 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	setBankExtensionPointer(bank_ext, 1, PHI_OUT, NULL);
+	OCL_CHECK(errCode, buffer_2 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	setBankExtensionPointer(bank_ext, 2, NULL, NULL);
+	OCL_CHECK(errCode, buffer_3 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	setBankExtensionPointer(bank_ext, 3, NULL, NULL);
+	OCL_CHECK(errCode, buffer_q = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	setBankExtensionPointer(bank_ext, 4, NULL, NULL);
+	OCL_CHECK(errCode, buffer_k = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	setBankExtensionPointer(bank_ext, 5, NULL, NULL);
+	OCL_CHECK(errCode, buffer_v = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
 
-	OCL_CHECK(errCode, buffer_2560_2560_1 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14), PHI_2560_2560_1, &errCode));
-	OCL_CHECK(errCode, buffer_2560_2560_2 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14), PHI_2560_2560_2, &errCode));
-	OCL_CHECK(errCode, buffer_2560_1 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), PHI_2560_1, &errCode));
-	OCL_CHECK(errCode, buffer_2560_2 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), PHI_2560_2, &errCode));
+	setBankExtensionPointer(bank_ext, 6, PHI_2560_2560_1, NULL);
+	OCL_CHECK(errCode, buffer_2560_2560_1 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	setBankExtensionPointer(bank_ext, 7, PHI_2560_2560_2, NULL);
+	OCL_CHECK(errCode, buffer_2560_2560_2 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	setBankExtensionPointer(bank_ext, 8, PHI_2560_1, NULL);
+	OCL_CHECK(errCode, buffer_2560_1 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	setBankExtensionPointer(bank_ext, 9, PHI_2560_2, NULL);
+	OCL_CHECK(errCode, buffer_2560_2 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
 
 	// ============================================================================
 	// Step 5: Set Kernel Arguments and Run the Application
@@ -894,6 +915,15 @@ int main(int argc, char* argv[])
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_residual_add, 2, sizeof(cl_mem), &buffer_3));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_residual_add, 3, sizeof(cl_mem), &buffer_q));
 
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy, 0, sizeof(cl_mem), &buffer_q));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy, 1, sizeof(cl_mem), &buffer_1));
+
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 0, sizeof(cl_mem), &buffer_q));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 1, sizeof(cl_mem), &buffer_k));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 2, sizeof(cl_mem), &buffer_3));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 3, sizeof(cl_mem), &buffer_v));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 4, sizeof(int), &integer_value));
+
     // Initialize tokenizer
     #ifdef ALL_MESSAGES
 	cout << "HOST_Info: Initializing tokenizer..." << endl;
@@ -928,6 +958,16 @@ int main(int argc, char* argv[])
         cout << token_id << " ";
     }
     cout << "]" << endl;
+
+	int input_length = tokenized_input.size();
+
+	for (int i = 0; i < PHI_SLEN; i++) {
+		loadData_fixed32_14(PHI_IN, tokenized_input[i] * HIDDEN_SIZE, HIDDEN_SIZE, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_embed_tokens_weight.bin");
+		for (int j = 0; j < 32; j++) {
+			loadData_fixed32_14(PHI_2560_1, 0, HIDDEN_SIZE, "/home/undergraduate/ytliu24/vitis_workspace/weights/zero.bin");
+			loadData_fixed32_14(PHI_2560_2, 0, HIDDEN_SIZE, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_bias.bin");
+		}
+	}
 
 	// ------------------------------------------------------
 	// Step 5.2: Copy Input data from Host to Global Memory
