@@ -45,8 +45,20 @@ using namespace std;
         }                                                                                            \
     } while (0)
 
+string weight_path;
 string weight_folder_path = "/home/undergraduate/ytliu24/vitis_workspace/weights/";
-string weight_file_name;
+string phi_embed_tokens_weight = "language_model_model_embed_tokens_weight.bin";
+string phi_decoder_layer_filename_prefix = "language_model_model_layers_";
+string phi_input_layernorm_weight_filename_postfix = "_input_layernorm_weight.bin";
+string phi_input_layernorm_bias_filename_postfix = "_input_layernorm_bias.bin";
+string phi_q_proj_weight_filename_postfix = "_self_attn_q_proj_weight.bin";
+string phi_q_proj_bias_filename_postfix = "_self_attn_q_proj_bias.bin";
+string phi_k_proj_weight_filename_postfix = "_self_attn_k_proj_weight.bin";
+string phi_k_proj_bias_filename_postfix = "_self_attn_k_proj_bias.bin";
+string phi_v_proj_weight_filename_postfix = "_self_attn_v_proj_weight.bin";
+string phi_v_proj_bias_filename_postfix = "_self_attn_v_proj_bias.bin";
+
+char filename_buffer[256];
 
 // =========================================
 // Helper Function: Read txt file
@@ -722,6 +734,10 @@ int main(int argc, char* argv[])
 	// ================================================================
 	fixed32_14 *IN, *WEIGHT, *BIAS, *OUT;
 	fixed32_14 *PHI_IN, *PHI_OUT, *PHI_2560_2560_1, *PHI_2560_2560_2, *PHI_2560_1, *PHI_2560_2;
+	fixed32_14 *PHI_DECODER_LAYER_LAYERNORM_WEIGHT, *PHI_DECODER_LAYER_LAYERNORM_BIAS;
+	fixed32_14 *PHI_DECODER_LAYER_Q_PROJ_WEIGHT, *PHI_DECODER_LAYER_Q_PROJ_BIAS;
+	fixed32_14 *PHI_DECODER_LAYER_K_PROJ_WEIGHT, *PHI_DECODER_LAYER_K_PROJ_BIAS;
+	fixed32_14 *PHI_DECODER_LAYER_V_PROJ_WEIGHT, *PHI_DECODER_LAYER_V_PROJ_BIAS;
 
 	#ifdef ALL_MESSAGES
 	cout << endl;
@@ -859,11 +875,16 @@ int main(int argc, char* argv[])
 	//         o) Copy Results from Global Memory to Host
 	// ============================================================================
 	// TODO 這裡要改
-	int Nb_Of_Mem_Events = 5,
+	int Nb_Of_Mem_Events = 10,
 		Nb_Of_Exe_Events = 1;
 
 	cl_event Mem_op_event[Nb_Of_Mem_Events],
 	          K_exe_event[Nb_Of_Exe_Events];
+
+	cl_event event_wait_list_layernorm[3];
+	cl_event event_wait_list_proj[1];
+	cl_event event_wait_list_proj_1[2];
+	cl_event event_wait_list_proj_2[2];
 
 
 	#ifdef ALL_MESSAGES
@@ -962,10 +983,39 @@ int main(int argc, char* argv[])
 	int input_length = tokenized_input.size();
 
 	for (int i = 0; i < PHI_SLEN; i++) {
-		loadData_fixed32_14(PHI_IN, tokenized_input[i] * HIDDEN_SIZE, HIDDEN_SIZE, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_embed_tokens_weight.bin");
+		weight_path = weight_folder_path + phi_embed_tokens_weight;
+		loadData_fixed32_14(PHI_IN, tokenized_input[i] * HIDDEN_SIZE, HIDDEN_SIZE, weight_path.c_str());
+		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_1, 0, 0, NULL, &event_wait_list_layernorm[0]));
 		for (int j = 0; j < 32; j++) {
-			loadData_fixed32_14(PHI_2560_1, 0, HIDDEN_SIZE, "/home/undergraduate/ytliu24/vitis_workspace/weights/zero.bin");
-			loadData_fixed32_14(PHI_2560_2, 0, HIDDEN_SIZE, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_bias.bin");
+
+			// pre-layernorm
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_input_layernorm_weight_filename_postfix;
+			loadData_fixed32_14(PHI_2560_1, 0, HIDDEN_SIZE, weight_path.c_str());
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_input_layernorm_bias_filename_postfix;
+			loadData_fixed32_14(PHI_2560_2, 0, HIDDEN_SIZE, weight_path.c_str());
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_1, 0, 0, NULL, &event_wait_list_layernorm[1]));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2, 0, 0, NULL, &event_wait_list_layernorm[2]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, 3, event_wait_list_layernorm, &event_wait_list_proj[0]));
+			for (int n = 0; n < 3; n++) {
+				OCL_CHECK(errCode, errCode = clReleaseEvent(event_wait_list_decoder_layer_layernorm[n]));
+			}
+
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_q_proj_weight_filename_postfix;
+			loadData_fixed32_14(PHI_2560_2560_1, 0, HIDDEN_SIZE * HIDDEN_SIZE, weight_path.c_str());
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_q_proj_bias_filename_postfix;
+			loadData_fixed32_14(PHI_2560_2560_2, 0, HIDDEN_SIZE, weight_path.c_str());
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2560_1, 0, 0, NULL, &Mem_op_event[6]));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_1, 0, 0, NULL, &Mem_op_event[7]));
+
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_k_proj_weight_filename_postfix;
+			loadData_fixed32_14(PHI_DECODER_LAYER_K_PROJ_WEIGHT, 0, HIDDEN_SIZE * HIDDEN_SIZE, weight_path.c_str());
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_k_proj_bias_filename_postfix;
+			loadData_fixed32_14(PHI_DECODER_LAYER_K_PROJ_BIAS, 0, HIDDEN_SIZE, weight_path.c_str());
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_v_proj_weight_filename_postfix;
+			loadData_fixed32_14(PHI_DECODER_LAYER_V_PROJ_WEIGHT, 0, HIDDEN_SIZE * HIDDEN_SIZE, weight_path.c_str());
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_v_proj_bias_filename_postfix;
+			loadData_fixed32_14(PHI_DECODER_LAYER_V_PROJ_BIAS, 0, HIDDEN_SIZE, weight_path.c_str());
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_linear_in, 0, 0, NULL, &Mem_op_event[0]));
 		}
 	}
 
