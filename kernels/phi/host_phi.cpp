@@ -57,6 +57,8 @@ string phi_k_proj_weight_filename_postfix = "_self_attn_k_proj_weight.bin";
 string phi_k_proj_bias_filename_postfix = "_self_attn_k_proj_bias.bin";
 string phi_v_proj_weight_filename_postfix = "_self_attn_v_proj_weight.bin";
 string phi_v_proj_bias_filename_postfix = "_self_attn_v_proj_bias.bin";
+string phi_dense_weight_filename_postfix = "_self_attn_dense_weight.bin";
+string phi_dense_bias_filename_postfix = "_self_attn_dense_bias.bin";
 
 char filename_buffer[256];
 
@@ -834,7 +836,7 @@ int main(int argc, char* argv[])
 
 	cl_mem buffer_1, buffer_2, buffer_3, buffer_q, buffer_k, buffer_v;
 	cl_mem buffer_2560_2560_1, buffer_2560_2560_2, buffer_2560_1, buffer_2560_2;
-	int integer_value;
+	fixed32_14 fixed32_14_value;
 
 	// size 和 read / write 權限要再修正
 	setBankExtensionPointer(bank_ext, 0, PHI_IN, NULL);
@@ -892,6 +894,7 @@ int main(int argc, char* argv[])
 	cl_event event_buffer_2560_2560_2;
 	cl_event event_buffer_2560_1;
 	cl_event event_buffer_2560_2;
+	cl_event event_rotary_embed_qk;
 	vector<cl_event> event_wait_list;
 
 
@@ -937,7 +940,7 @@ int main(int argc, char* argv[])
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 1, sizeof(cl_mem), &buffer_q));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 2, sizeof(cl_mem), &buffer_k));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 3, sizeof(cl_mem), &buffer_v));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 4, sizeof(int), &integer_value));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_attention, 4, sizeof(fixed32_14), &fixed32_14_value));
 
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_residual_add, 0, sizeof(cl_mem), &buffer_1));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_residual_add, 1, sizeof(cl_mem), &buffer_2));
@@ -951,7 +954,7 @@ int main(int argc, char* argv[])
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 1, sizeof(cl_mem), &buffer_k));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 2, sizeof(cl_mem), &buffer_3));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 3, sizeof(cl_mem), &buffer_v));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 4, sizeof(int), &integer_value));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 4, sizeof(fixed32_14), &fixed32_14_value));
 
     // Initialize tokenizer
     #ifdef ALL_MESSAGES
@@ -1009,10 +1012,14 @@ int main(int argc, char* argv[])
 			event_wait_list.push_back(event_buffer_2560_2);
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, event_wait_list.size(), event_wait_list.data(), &event_buffer_2));
 			clWaitForEvents(1, &event_buffer_2);
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_2560_1);
+			event_wait_list.push_back(event_buffer_2560_2);
 			for (int n = 0; n < event_wait_list.size(); n++) {
 				OCL_CHECK(errCode, errCode = clReleaseEvent(event_wait_list[n]));
 			}
 
+			// q-proj
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_q_proj_weight_filename_postfix;
 			loadData_fixed32_14(PHI_2560_2560_1, 0, HIDDEN_SIZE * HIDDEN_SIZE, weight_path.c_str());
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_q_proj_bias_filename_postfix;
@@ -1023,18 +1030,98 @@ int main(int argc, char* argv[])
 			event_wait_list.push_back(event_buffer_2);
 			event_wait_list.push_back(event_buffer_2560_2560_1);
 			event_wait_list.push_back(event_buffer_2560_1);
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_linear_1, event_wait_list.size(), event_wait_list.data(), &event_buffer_q));
-			// TODO
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_linear_1, event_wait_list.size(), event_wait_list.data(), &event_buffer_3));
 
+			// k-proj
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_k_proj_weight_filename_postfix;
 			loadData_fixed32_14(PHI_DECODER_LAYER_K_PROJ_WEIGHT, 0, HIDDEN_SIZE * HIDDEN_SIZE, weight_path.c_str());
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_k_proj_bias_filename_postfix;
 			loadData_fixed32_14(PHI_DECODER_LAYER_K_PROJ_BIAS, 0, HIDDEN_SIZE, weight_path.c_str());
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2560_2, 0, 0, NULL, &event_buffer_2560_2560_2));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2, 0, 0, NULL, &event_buffer_2560_2));
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_2);
+			event_wait_list.push_back(event_buffer_2560_2560_2);
+			event_wait_list.push_back(event_buffer_2560_2);
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_linear_2, event_wait_list.size(), event_wait_list.data(), &event_buffer_v));
+
+			// Release q-proj and k-proj events
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_2560_2560_1);
+			event_wait_list.push_back(event_buffer_2560_1);
+			event_wait_list.push_back(event_buffer_2560_2560_2);
+			event_wait_list.push_back(event_buffer_2560_2);
+			clWaitForEvents(5, event_wait_list.data());
+			for (int n = 0; n < event_wait_list.size(); n++) {
+				OCL_CHECK(errCode, errCode = clReleaseEvent(event_wait_list[n]));
+			}
+
+			// rotary embed
+			fixed32_14_value = fixed32_14(i);
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_3);
+			event_wait_list.push_back(event_buffer_v);
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_rotary_embed, event_wait_list.size(), event_wait_list.data(), &event_rotary_embed_qk));
+			clWaitForEvents(1, &event_rotary_embed_qk);
+			for (int n = 0; n < event_wait_list.size(); n++) {
+				OCL_CHECK(errCode, errCode = clReleaseEvent(event_wait_list[n]));
+			}
+
+			// v-proj
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_v_proj_weight_filename_postfix;
 			loadData_fixed32_14(PHI_DECODER_LAYER_V_PROJ_WEIGHT, 0, HIDDEN_SIZE * HIDDEN_SIZE, weight_path.c_str());
 			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_v_proj_bias_filename_postfix;
 			loadData_fixed32_14(PHI_DECODER_LAYER_V_PROJ_BIAS, 0, HIDDEN_SIZE, weight_path.c_str());
-			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_linear_in, 0, 0, NULL, &Mem_op_event[0]));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2560_1, 0, 0, NULL, &event_buffer_2560_2560_2));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_1, 0, 0, NULL, &event_buffer_2560_2));
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_2);
+			event_wait_list.push_back(event_rotary_embed_qk);
+			event_wait_list.push_back(event_buffer_2560_2560_2);
+			event_wait_list.push_back(event_buffer_2560_2);
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_linear_1, event_wait_list.size(), event_wait_list.data(), &event_buffer_v));
+			clWaitForEvents(1, &event_buffer_v);
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_2);
+			event_wait_list.push_back(event_buffer_2560_2560_2);
+			event_wait_list.push_back(event_buffer_2560_2);
+			for (int n = 0; n < event_wait_list.size(); n++) {
+				OCL_CHECK(errCode, errCode = clReleaseEvent(event_wait_list[n]));
+			}
+
+			// attention
+			event_wait_list.clear();
+			event_wait_list.push_back(event_rotary_embed_qk);
+			event_wait_list.push_back(event_buffer_v);
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_attention, event_wait_list.size(), event_wait_list.data(), &event_buffer_2));
+			clWaitForEvents(1, &event_buffer_2);
+			for (int n = 0; n < event_wait_list.size(); n++) {
+				OCL_CHECK(errCode, errCode = clReleaseEvent(event_wait_list[n]));
+			}
+
+			// Copy
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_2);
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_copy, event_wait_list.size(), event_wait_list.data(), &event_buffer_q));
+
+			// dense
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_dense_weight_filename_postfix;
+			loadData_fixed32_14(PHI_2560_2560_1, 0, HIDDEN_SIZE * HIDDEN_SIZE, weight_path.c_str());
+			weight_path = weight_folder_path + phi_decoder_layer_filename_prefix + to_string(j) + phi_dense_bias_filename_postfix;
+			loadData_fixed32_14(PHI_2560_1, 0, HIDDEN_SIZE, weight_path.c_str());
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_2560_1, 0, 0, NULL, &event_buffer_2560_2560_1));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_2560_1, 0, 0, NULL, &event_buffer_2560_1));
+			event_wait_list.clear();
+			event_wait_list.push_back(event_buffer_2);
+			event_wait_list.push_back(event_buffer_2560_2560_1);
+			event_wait_list.push_back(event_buffer_2560_1);
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_linear_1, event_wait_list.size(), event_wait_list.data(), &event_buffer_3));
+			clWaitForEvents(1, &event_buffer_3);
+			for (int n = 0; n < event_wait_list.size(); n++) {
+				OCL_CHECK(errCode, errCode = clReleaseEvent(event_wait_list[n]));
+			}
+
+			// mlp: 等 event_buffer_3，不用 event_release buffer_3
 		}
 	}
 
