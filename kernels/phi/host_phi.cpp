@@ -740,6 +740,7 @@ int main(int argc, char* argv[])
 	fixed32_14 *PHI_DECODER_LAYER_Q_PROJ_WEIGHT, *PHI_DECODER_LAYER_Q_PROJ_BIAS;
 	fixed32_14 *PHI_DECODER_LAYER_K_PROJ_WEIGHT, *PHI_DECODER_LAYER_K_PROJ_BIAS;
 	fixed32_14 *PHI_DECODER_LAYER_V_PROJ_WEIGHT, *PHI_DECODER_LAYER_V_PROJ_BIAS;
+	fixed32_14 *PHI_2560_2560, *PHI_2560;
 
 	#ifdef ALL_MESSAGES
 	cout << endl;
@@ -812,6 +813,22 @@ int main(int argc, char* argv[])
 	PHI_OUT = reinterpret_cast<fixed32_14*>(ptr);
 	cout << "PHI_OUT has been allocated!" << endl;
 
+	cout << "HOST-Info: Allocating memory for PHI_2560_2560 ... ";
+	if (posix_memalign(&ptr, 4096, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_2560_2560 array" << endl << endl;
+		return EXIT_FAILURE;
+	}
+	PHI_2560_2560 = reinterpret_cast<fixed32_14*>(ptr);
+	cout << "PHI_2560_2560 has been allocated!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_2560 ... ";
+	if (posix_memalign(&ptr, 4096, HIDDEN_SIZE * sizeof(fixed32_14))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_2560 array" << endl << endl;
+		return EXIT_FAILURE;
+	}
+	PHI_2560 = reinterpret_cast<fixed32_14*>(ptr);
+	cout << "PHI_2560 has been allocated!" << endl;
+
 	cout << "HOST-Info: Allocating memory for OUT ... ";
 	if (posix_memalign(&ptr,4096,SIZE_OUT*sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for OUT array" << endl << endl;
@@ -836,6 +853,20 @@ int main(int argc, char* argv[])
 
 	cl_mem buffer_1, buffer_2, buffer_3, buffer_q, buffer_k, buffer_v;
 	cl_mem buffer_2560_2560_1, buffer_2560_2560_2, buffer_2560_1, buffer_2560_2;
+	cl_mem buffer_decoder_layer_layernorm_weight[32], buffer_decoder_layer_layernorm_bias[32];
+	cl_mem buffer_q_proj_weight[32], buffer_q_proj_bias[32];
+	cl_mem buffer_k_proj_weight[32], buffer_k_proj_bias[32];
+	cl_mem buffer_v_proj_weight[32], buffer_v_proj_bias[32];
+	cl_mem buffer_dense_weight[32], buffer_dense_bias[32];
+	cl_mem buffer_mlp_1_weight_1[32], buffer_mlp_1_bias_1[32];
+	cl_mem buffer_mlp_1_weight_2[32], buffer_mlp_1_bias_2[32];
+	cl_mem buffer_mlp_1_weight_3[32], buffer_mlp_1_bias_3[32];
+	cl_mem buffer_mlp_1_weight_4[32], buffer_mlp_1_bias_4[32];
+	cl_mem buffer_mlp_2_weight_1[32], buffer_mlp_2_bias_1[32];
+	cl_mem buffer_mlp_2_weight_2[32], buffer_mlp_2_bias_2[32];
+	cl_mem buffer_mlp_2_weight_3[32], buffer_mlp_2_bias_3[32];
+	cl_mem buffer_mlp_2_weight_4[32], buffer_mlp_2_bias_4[32];
+	cl_mem buffer_final_layernorm_weight, buffer_final_layernorm_bias;
 	fixed32_14 fixed32_14_value;
 
 	// size 和 read / write 權限要再修正
@@ -851,6 +882,17 @@ int main(int argc, char* argv[])
 	OCL_CHECK(errCode, buffer_k = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
 	setBankExtensionPointer(bank_ext, 5, NULL, NULL);
 	OCL_CHECK(errCode, buffer_v = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+
+	setBankExtensionPointer(bank_ext, 6, PHI_2560, NULL);
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_decoder_layer_layernorm_weight[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+		OCL_CHECK(errCode, )
+	}
+
+	setBankExtensionPointer(bank_ext, 7, PHI_2560, NULL);
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_decoder_layer_layernorm_bias[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	}
 
 	setBankExtensionPointer(bank_ext, 6, PHI_2560_2560_1, NULL);
 	OCL_CHECK(errCode, buffer_2560_2560_1 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
