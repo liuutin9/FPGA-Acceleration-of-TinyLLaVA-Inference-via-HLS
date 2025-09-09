@@ -7,50 +7,84 @@
 
 typedef ap_fixed<32,14> fixed32_14;
 
+inline void loadToLocal(fixed32_14 local[HIDDEN_SIZE], fixed32_14 global[HIDDEN_SIZE]) {
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        #pragma HLS PIPELINE II=1
+    	local[i] = global[i];
+    }
+}
+
+void initLocal(
+    fixed32_14 local_before_layernorm[HIDDEN_SIZE],
+    fixed32_14 local_after_attention[HIDDEN_SIZE],
+    fixed32_14 local_after_mlp[HIDDEN_SIZE],
+    fixed32_14 before_layernorm[HIDDEN_SIZE],
+    fixed32_14 after_attention[HIDDEN_SIZE],
+    fixed32_14 after_mlp[HIDDEN_SIZE]
+) {
+    #pragma HLS DATAFLOW
+    loadToLocal(local_before_layernorm, before_layernorm);
+    loadToLocal(local_after_attention, after_attention);
+    loadToLocal(local_after_mlp, after_mlp);
+}
+
+inline void storeOutput(fixed32_14 out[HIDDEN_SIZE], fixed32_14 local_out[HIDDEN_SIZE]) {
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        #pragma HLS PIPELINE II=1
+        #pragma HLS UNROLL factor=4
+    	out[i] = local_out[i];
+    }
+}
+
 extern "C" {
     void kernel_phi_add_residual(
         fixed32_14 out[HIDDEN_SIZE],
         fixed32_14 before_layernorm[HIDDEN_SIZE],
-        fixed32_14 before_mlp[HIDDEN_SIZE],
+        fixed32_14 after_attention[HIDDEN_SIZE],
         fixed32_14 after_mlp[HIDDEN_SIZE]
     ) {
 
         #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=before_layernorm offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=before_mlp offset=slave bundle=gmem2 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=after_attention offset=slave bundle=gmem2 depth=2560 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=after_mlp offset=slave bundle=gmem3 depth=2560 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out bundle=control
         #pragma HLS INTERFACE s_axilite port=before_layernorm bundle=control
-        #pragma HLS INTERFACE s_axilite port=before_mlp bundle=control
+        #pragma HLS INTERFACE s_axilite port=after_attention bundle=control
         #pragma HLS INTERFACE s_axilite port=after_mlp bundle=control
         #pragma HLS INTERFACE s_axilite port=return bundle=control
 
-        fixed32_14 local_q_per_head[BLOCK_SIZE];
-        fixed32_14 local_k_per_head[BLOCK_SIZE];
-        fixed32_14 local_v_per_head[BLOCK_SIZE];
+        fixed32_14 local_out[HIDDEN_SIZE];
+        fixed32_14 local_before_layernorm[HIDDEN_SIZE];
+        fixed32_14 local_after_attention[HIDDEN_SIZE];
+        fixed32_14 local_after_mlp[HIDDEN_SIZE];
 
-        #pragma HLS bind_storage variable=before_layernorm type=RAM_T2P impl=bram
-        #pragma HLS bind_storage variable=before_mlp type=RAM_T2P impl=bram
-        #pragma HLS bind_storage variable=after_mlp type=RAM_T2P impl=bram
+        #pragma HLS BIND_STORAGE variable=local_out type=RAM_1P impl=BRAM
+        #pragma HLS BIND_STORAGE variable=local_before_layernorm type=RAM_1P impl=BRAM
+        #pragma HLS BIND_STORAGE variable=local_after_attention type=RAM_1P impl=BRAM
+        #pragma HLS BIND_STORAGE variable=local_after_mlp type=RAM_1P impl=BRAM
 
-        #pragma HLS ARRAY_PARTITION variable=before_layernorm cyclic factor=4 dim=1
-        #pragma HLS ARRAY_PARTITION variable=before_mlp cyclic factor=4 dim=1
-        #pragma HLS ARRAY_PARTITION variable=after_mlp cyclic factor=4 dim=1
+        #pragma HLS ARRAY_PARTITION variable=local_out cyclic factor=4 dim=1
+        #pragma HLS ARRAY_PARTITION variable=local_before_layernorm cyclic factor=4 dim=1
+        #pragma HLS ARRAY_PARTITION variable=local_after_attention cyclic factor=4 dim=1
+        #pragma HLS ARRAY_PARTITION variable=local_after_mlp cyclic factor=4 dim=1
 
-        for (int i = 0; i < NUM_BLOCKS; i++) {
-            for (int j = 0; j < BLOCK_SIZE; j++) {
-                #pragma HLS PIPELINE II=1
-                #pragma HLS UNROLL factor=4
-                local_q_per_head[j] = before_layernorm[i * BLOCK_SIZE + j];
-                local_k_per_head[j] = before_mlp[i * BLOCK_SIZE + j];
-                local_v_per_head[j] = after_mlp[i * BLOCK_SIZE + j];
-            }
-            for (int j = 0; j < BLOCK_SIZE; j++) {
-                #pragma HLS PIPELINE II=1
-                #pragma HLS UNROLL factor=4
-                out[i * BLOCK_SIZE + j] = local_q_per_head[j] + local_k_per_head[j] + local_v_per_head[j];
-            }
+        initLocal(
+            local_before_layernorm,
+            local_after_attention,
+            local_after_mlp,
+            before_layernorm,
+            after_attention,
+            after_mlp
+        );
+
+        for (int i = 0; i < HIDDEN_SIZE; i++) {
+            #pragma HLS PIPELINE II=1
+            #pragma HLS UNROLL factor=4
+            local_out[i] = local_before_layernorm[i] + local_after_attention[i] + local_after_mlp[i];
         }
+
+        storeOutput(out, local_out);
     }
 }
