@@ -17,12 +17,14 @@
 #include <ap_fixed.h>
 #include <vector>
 #include <hls_half.h>
+#include <ap_int.h>
 #include "tokenizers_c.h"
 #include "tokenizers_cpp.h"
 
 typedef ap_fixed<32,14> fixed32_14;
 typedef ap_fixed<24,10> fixed24_10;
 typedef ap_fixed<16,10> fixed16_10;
+typedef ap_uint<16>  uint16;
 
 using namespace std;
 
@@ -123,6 +125,16 @@ int readBinaryFile(const char *filename, vector<char> &buffer) {
     buffer.assign((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
     file.close();
     return 0;
+}
+
+int binaryToUint16(uint16* out, const vector<char>& binary) {
+	char buf[2];
+	for (size_t i = 0; i < binary.size(); i += 2) {
+		buf[0] = binary[i];
+		buf[1] = binary[i + 1];
+		memcpy(&out[i / 2], &buf, sizeof(uint16));
+	}
+	return 0;
 }
 
 // =========================================
@@ -851,57 +863,121 @@ int main(int argc, char* argv[])
 	#endif
 	cl_mem_ext_ptr_t bank_ext;
 
-	cl_mem buffer_1, buffer_2, buffer_3, buffer_q, buffer_k, buffer_v;
-	cl_mem buffer_2560_2560_1, buffer_2560_2560_2, buffer_2560_1, buffer_2560_2;
+	cl_mem buffer_k_cache_1[32]; // length = 800, 250 MB
+	cl_mem buffer_v_cache_1[32]; // length = 800, 250 MB
+	cl_mem buffer_k_cache_2[32]; // length = 32, 10 MB
+	cl_mem buffer_v_cache_2[32]; // length = 32, 10 MB
+
+	// 0.77 MB
+	cl_mem buffer_layernorm_in, buffer_q_proj_in, buffer_k_proj_in, buffer_v_proj_in;
+	cl_mem buffer_residual_in, buffer_mlp_in, buffer_q_embed_in, buffer_k_embed_in;
+	cl_mem buffer_q, buffer_attn_out, buffer_dense_out, buffer_mlp_out;
 	cl_mem buffer_decoder_layer_layernorm_weight[32], buffer_decoder_layer_layernorm_bias[32];
-	cl_mem buffer_q_proj_weight[32], buffer_q_proj_bias[32];
-	cl_mem buffer_k_proj_weight[32], buffer_k_proj_bias[32];
-	cl_mem buffer_v_proj_weight[32], buffer_v_proj_bias[32];
-	cl_mem buffer_dense_weight[32], buffer_dense_bias[32];
-	cl_mem buffer_mlp_1_weight_1[32], buffer_mlp_1_bias_1[32];
-	cl_mem buffer_mlp_1_weight_2[32], buffer_mlp_1_bias_2[32];
-	cl_mem buffer_mlp_1_weight_3[32], buffer_mlp_1_bias_3[32];
-	cl_mem buffer_mlp_1_weight_4[32], buffer_mlp_1_bias_4[32];
-	cl_mem buffer_mlp_2_weight_1[32], buffer_mlp_2_bias_1[32];
-	cl_mem buffer_mlp_2_weight_2[32], buffer_mlp_2_bias_2[32];
-	cl_mem buffer_mlp_2_weight_3[32], buffer_mlp_2_bias_3[32];
-	cl_mem buffer_mlp_2_weight_4[32], buffer_mlp_2_bias_4[32];
 	cl_mem buffer_final_layernorm_weight, buffer_final_layernorm_bias;
+
 	fixed32_14 fixed32_14_value;
 
+	cl_mem buffer_q_proj_weight[2][32], buffer_q_proj_bias[2][32];
+	cl_mem buffer_k_proj_weight[2][32], buffer_k_proj_bias[2][32];
+	cl_mem buffer_v_proj_weight[2][32], buffer_v_proj_bias[2][32];
+	cl_mem buffer_dense_weight[2][32], buffer_dense_bias[2][32];
+
+	cl_mem buffer_mlp_fc1_weight[8][32], buffer_mlp_fc1_bias[8][32];
+	cl_mem buffer_mlp_fc2_weight[8][32], buffer_mlp_fc2_bias[8][32];
+
 	// size 和 read / write 權限要再修正
-	setBankExtensionPointer(bank_ext, 0, PHI_IN, NULL);
-	OCL_CHECK(errCode, buffer_1 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	setBankExtensionPointer(bank_ext, 1, PHI_OUT, NULL);
-	OCL_CHECK(errCode, buffer_2 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+
+	setBankExtensionPointer(bank_ext, 0, NULL, NULL);
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_k_cache_1[i] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * 800 * sizeof(fixed32_14), &bank_ext, &errCode));
+	}
+	setBankExtensionPointer(bank_ext, 1, NULL, NULL);
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_v_cache_1[i] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * 800 * sizeof(fixed32_14), &bank_ext, &errCode));
+	}
 	setBankExtensionPointer(bank_ext, 2, NULL, NULL);
-	OCL_CHECK(errCode, buffer_3 = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_k_cache_2[i] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * 32 * sizeof(fixed32_14), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_v_cache_2[i] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * 32 * sizeof(fixed32_14), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_decoder_layer_layernorm_weight[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_decoder_layer_layernorm_bias[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+	}
+
+	OCL_CHECK(errCode, buffer_layernorm_in = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_q_proj_in    = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_k_proj_in    = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_v_proj_in    = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_residual_in  = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_mlp_in       = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_q_embed_in   = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_k_embed_in   = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_q            = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_attn_out     = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_dense_out    = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_mlp_out      = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+
+	OCL_CHECK(errCode, buffer_final_layernorm_weight = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+	OCL_CHECK(errCode, buffer_final_layernorm_bias   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+
 	setBankExtensionPointer(bank_ext, 3, NULL, NULL);
-	OCL_CHECK(errCode, buffer_q = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_q_proj_weight[0][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_q_proj_bias[0][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+	}
 	setBankExtensionPointer(bank_ext, 4, NULL, NULL);
-	OCL_CHECK(errCode, buffer_k = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_q_proj_weight[1][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_q_proj_bias[1][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+	}
+
 	setBankExtensionPointer(bank_ext, 5, NULL, NULL);
-	OCL_CHECK(errCode, buffer_v = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-
-	setBankExtensionPointer(bank_ext, 6, PHI_2560, NULL);
 	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_decoder_layer_layernorm_weight[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-		OCL_CHECK(errCode, )
+		OCL_CHECK(errCode, buffer_k_proj_weight[0][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_k_proj_bias[0][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+	}
+	setBankExtensionPointer(bank_ext, 6, NULL, NULL);
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_k_proj_weight[1][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_k_proj_bias[1][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
 	}
 
-	setBankExtensionPointer(bank_ext, 7, PHI_2560, NULL);
+	setBankExtensionPointer(bank_ext, 7, NULL, NULL);
 	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_decoder_layer_layernorm_bias[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_v_proj_weight[0][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_v_proj_bias[0][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+	}
+	setBankExtensionPointer(bank_ext, 8, NULL, NULL);
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_v_proj_weight[1][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_v_proj_bias[1][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
 	}
 
-	setBankExtensionPointer(bank_ext, 6, PHI_2560_2560_1, NULL);
-	OCL_CHECK(errCode, buffer_2560_2560_1 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	setBankExtensionPointer(bank_ext, 7, PHI_2560_2560_2, NULL);
-	OCL_CHECK(errCode, buffer_2560_2560_2 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	setBankExtensionPointer(bank_ext, 8, PHI_2560_1, NULL);
-	OCL_CHECK(errCode, buffer_2560_1 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	setBankExtensionPointer(bank_ext, 9, PHI_2560_2, NULL);
-	OCL_CHECK(errCode, buffer_2560_2 = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+	setBankExtensionPointer(bank_ext, 9, NULL, NULL);
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_dense_weight[0][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_dense_bias[0][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+	}
+	setBankExtensionPointer(bank_ext, 10, NULL, NULL);
+	for (int i = 0; i < 32; i++) {
+		OCL_CHECK(errCode, buffer_dense_weight[1][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		OCL_CHECK(errCode, buffer_dense_bias[1][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+	}
+
+	for (int i = 0; i < 8; i++) {
+		setBankExtensionPointer(bank_ext, i + 11, NULL, NULL);
+		for (int j = 0; j < 32; j++) {
+			OCL_CHECK(errCode, buffer_mlp_fc1_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+			OCL_CHECK(errCode, buffer_mlp_fc1_bias[i][j]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		}
+	}
+
+	for (int i = 0; i < 8; i++) {
+		setBankExtensionPointer(bank_ext, i + 19, NULL, NULL);
+		for (int j = 0; j < 32; j++) {
+			OCL_CHECK(errCode, buffer_mlp_fc2_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+			OCL_CHECK(errCode, buffer_mlp_fc2_bias[i][j]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		}
+	}
 
 	// ============================================================================
 	// Step 5: Set Kernel Arguments and Run the Application
