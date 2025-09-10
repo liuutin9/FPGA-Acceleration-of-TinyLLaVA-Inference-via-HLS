@@ -149,6 +149,14 @@ int binaryToFloat(float* out, const vector<char>& binary) {
     return 0;
 }
 
+int loadData_uint16(uint16* out, int len_offset, int length, const char *filename) {
+	vector<char> binary;
+	if (readBinaryFile(filename, binary, len_offset * 2, length * 2) != 0) {
+		return -1;
+	}
+	return binaryToUint16(out, binary);
+}
+
 // =========================================
 // Helper Function: Load data from binary file
 // =========================================
