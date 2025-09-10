@@ -12,7 +12,7 @@ typedef ap_fixed<32,14> fixed32_14;
 typedef ap_uint<16> uint16;
 
 fixed32_14 uint16ToFixed32_14(uint16 in) {
-    hls::half h;
+    half h;
     *((uint16*)&h) = in;
     float f = (float)h;
     return fixed32_14(f);
@@ -85,25 +85,19 @@ extern "C" {
             #pragma HLS UNROLL factor=2
 			mean += local_in[i];
 		}
-//		mean = mean >> 4;
-//		mean = mean / 10;
 		mean /= HIDDEN_SIZE;
-        printf("mean: %f\n", float(mean));
+        // printf("mean: %f\n", float(mean));
 
         variance_loop:
         for (int i = 0; i < HIDDEN_SIZE; i++) {
 			#pragma HLS PIPELINE II=1
 			#pragma HLS UNROLL factor=2
-//			variance += ((local_in[i] - mean) >> 2) * ((local_in[i] - mean) >> 2);
         	variance += (local_in[i] - mean) * (local_in[i] - mean);
 		}
-//        variance = variance >> 4;
-//        variance = variance / 10;
         variance /= HIDDEN_SIZE;
-        printf("variance: %f\n", float(variance));
+        // printf("variance: %f\n", float(variance));
 
         // 計算標準差
-//        float tmp = variance + eps;
         fixed32_14 inv_stddev = 1 / hls::sqrt(variance + eps);
 
         normalization_loop:
