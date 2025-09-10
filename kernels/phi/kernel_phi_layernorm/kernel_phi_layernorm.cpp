@@ -1,6 +1,7 @@
 #include <ap_fixed.h>
 #include <hls_math.h>
-#include <stdio.h>
+#include <hls_half.h>
+#include <ap_int.h>
 
 #define HIDDEN_SIZE 2560
 #define DIVIDE_SIZE 512
@@ -8,13 +9,49 @@
 #define LAYER_NORM_EPS 0.00001
 
 typedef ap_fixed<32,14> fixed32_14;
+typedef ap_uint<16> uint16;
+
+fixed32_14 uint16ToFixed32_14(uint16 in) {
+    hls::half h;
+    *((uint16*)&h) = in;
+    float f = (float)h;
+    return fixed32_14(f);
+}
+
+void loadToLocal(fixed32_14* local, fixed32_14* global) {
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        #pragma HLS PIPELINE II=1
+    	local[i] = global[i];
+    }
+}
+
+void loadUint16ToLocal(fixed32_14* local, uint16* global) {
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        #pragma HLS PIPELINE II=1
+    	local[i] = uint16ToFixed32_14(global[i]);
+    }
+}
+
+inline void initLocal(
+    fixed32_14 local_in[HIDDEN_SIZE],
+    fixed32_14 local_out[HIDDEN_SIZE],
+    fixed32_14 local_weight[HIDDEN_SIZE],
+    fixed32_14 in[HIDDEN_SIZE],
+    uint16 bias[HIDDEN_SIZE],
+    uint16 weight[HIDDEN_SIZE]
+) {
+    #pragma HLS DATAFLOW
+    loadToLocal(local_in, in);
+    loadUint16ToLocal(local_out, bias);
+    loadUint16ToLocal(local_weight, weight);
+}
 
 extern "C" {
     void kernel_phi_layernorm(
         fixed32_14 out[HIDDEN_SIZE],
         fixed32_14 in[HIDDEN_SIZE],
-        fixed32_14 weight[HIDDEN_SIZE],
-        fixed32_14 bias[HIDDEN_SIZE]
+        uint16 weight[HIDDEN_SIZE],
+        uint16 bias[HIDDEN_SIZE]
     ) {
 
         #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
@@ -40,26 +77,9 @@ extern "C" {
         fixed32_14 variance = fixed32_14(0.0f);
         fixed32_14 eps = fixed32_14(LAYER_NORM_EPS);
 
-        init:
-        for (int i = 0; i < HIDDEN_SIZE; i++) {
-            #pragma HLS PIPELINE II=1
-            #pragma HLS UNROLL factor=2
-            local_out[i] = fixed32_14(bias[i]);
-            local_in[i] = fixed32_14(in[i]);
-            local_weight[i] = fixed32_14(weight[i]);
-        }
+        initLocal(local_in, local_out, local_weight, in, bias, weight);
 
         mean_loop:
-//		for (int i = 0; i < DIVIDE_BLOCK; i++) {
-//			fixed32_14 sum = fixed32_14(0.0f);
-//			for (int j = 0; j < DIVIDE_SIZE; j++) {
-//				#pragma HLS PIPELINE II=1
-//            	#pragma HLS UNROLL factor=2
-//				sum += local_in[i * DIVIDE_SIZE + j];
-//			}
-////			mean += (sum >> 4);
-//			mean += sum;
-//		}
 		for (int i = 0; i < HIDDEN_SIZE; i++) {
 			#pragma HLS PIPELINE II=1
             #pragma HLS UNROLL factor=2
@@ -93,7 +113,7 @@ extern "C" {
             local_out[i] += local_weight[i] * (local_in[i] - mean) * inv_stddev;
         }
 
-        load_out:
+        store_out:
         for (int i = 0; i < HIDDEN_SIZE; i++) {
             #pragma HLS PIPELINE II=1
             #pragma HLS UNROLL factor=2
