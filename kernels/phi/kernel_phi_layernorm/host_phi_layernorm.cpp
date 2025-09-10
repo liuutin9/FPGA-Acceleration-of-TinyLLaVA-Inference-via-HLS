@@ -16,6 +16,7 @@
 #include <cmath>
 #include <ap_fixed.h>
 #include <ap_int.h>
+#include <vector>
 //#include <hls_math.h>
 
 typedef ap_fixed<32,14> fixed32_14;
@@ -40,6 +41,59 @@ using namespace std;
             exit(EXIT_FAILURE);                                                                      \
         }                                                                                            \
     } while (0)
+
+// =========================================
+// Helper Function: Read binary file
+// =========================================
+int readBinaryFile(
+	const char *filename,
+    std::vector<char> &buffer,
+	std::streampos byte_offset,
+	std::size_t byte_size
+) {
+    std::ifstream file(filename, std::ios::binary);
+    if (!file) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return 1;
+    }
+
+    // 移動到指定位置
+    file.seekg(byte_offset);
+    if (!file) {
+        std::cerr << "Error seeking file: " << filename << std::endl;
+        return 2;
+    }
+
+    // 調整 buffer 大小，準備讀取
+    buffer.resize(byte_size);
+
+    // 讀取 byte_size bytes
+    file.read(buffer.data(), byte_size);
+    if (!file) {
+        std::cerr << "Error reading file: " << filename << std::endl;
+        return 3;
+    }
+
+    return 0;
+}
+
+int binaryToUint16(uint16* out, const vector<char>& binary) {
+	char buf[2];
+	for (size_t i = 0; i < binary.size(); i += 2) {
+		buf[0] = binary[i];
+		buf[1] = binary[i + 1];
+		memcpy(&out[i / 2], &buf, sizeof(uint16));
+	}
+	return 0;
+}
+
+int loadData_uint16(uint16* out, int len_offset, int length, const char *filename) {
+	vector<char> binary;
+	if (readBinaryFile(filename, binary, len_offset * 2, length * 2) != 0) {
+		return -1;
+	}
+	return binaryToUint16(out, binary);
+}
 
 // =========================================
 // Helper Function: Loads program to memory
@@ -563,14 +617,14 @@ int main(int argc, char* argv[])
 	void *ptr=nullptr;
 
 	cout << "HOST-Info: Allocating memory for IN ... ";
-	if (posix_memalign(&ptr,4096,SIZE_IN*sizeof(fixed32_14))) {
+	if (posix_memalign(&ptr, 4096, SIZE_IN * sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for IN array" << endl << endl;
 		return EXIT_FAILURE;
 	}
 	IN = reinterpret_cast<fixed32_14*>(ptr);
 	// use for loop to generate random fixed32_14 values
 	for (int i = 0; i < SIZE_IN; i++) {
-		IN[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
+		IN[i] = fixed32_14(i); // Example: generating fixed32_14 values from 0.0 to 255.9
 	}
 	cout << "Generated " << SIZE_IN << " values" << endl;
 
@@ -580,10 +634,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 	WEIGHT = reinterpret_cast<uint16*>(ptr);
-	// use for loop to generate random uint16 values
-	for (int i = 0; i < SIZE_WEIGHT; i++) {
-		WEIGHT[i] = uint16(i); // Example: generating uint16 values from 0.0 to 255.9
-	}
+	loadData_uint16(WEIGHT, 0, SIZE_WEIGHT, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_weight.bin");
 	cout << "Generated " << SIZE_WEIGHT << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for BIAS ... ";
@@ -592,10 +643,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 	BIAS = reinterpret_cast<uint16*>(ptr);
-	// use for loop to generate random uint16 values
-	for (int i = 0; i < SIZE_BIAS; i++) {
-		BIAS[i] = uint16(i); // Example: generating uint16 values from 0.0 to 255.9
-	}
+	loadData_uint16(BIAS, 0, SIZE_BIAS, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_bias.bin");
 	cout << "Generated " << SIZE_BIAS << " values" << endl;
 
 	cout << "HOST-Info: Allocating memory for OUT ... ";

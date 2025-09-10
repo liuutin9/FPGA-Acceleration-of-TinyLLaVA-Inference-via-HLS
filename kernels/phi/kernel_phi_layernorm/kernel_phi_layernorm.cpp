@@ -2,6 +2,7 @@
 #include <hls_math.h>
 #include <hls_half.h>
 #include <ap_int.h>
+//#include <iostream>
 
 #define HIDDEN_SIZE 2560
 #define DIVIDE_SIZE 512
@@ -79,6 +80,11 @@ extern "C" {
 
         initLocal(local_in, local_out, local_weight, in, bias, weight);
 
+//        for (int i = 0; i < 5; i++) {
+//        	printf("%f ", float(local_weight[i]));
+//        }
+//        printf("\n");
+
         mean_loop:
 		for (int i = 0; i < HIDDEN_SIZE; i++) {
 			#pragma HLS PIPELINE II=1
@@ -86,7 +92,11 @@ extern "C" {
 			mean += local_in[i];
 		}
 		mean /= HIDDEN_SIZE;
-        // printf("mean: %f\n", float(mean));
+//        printf("mean: %f\n", float(mean));
+//        for (int i = 0; i < HIDDEN_SIZE; i++) {
+//        	printf("%f ", float(local_in[i]));
+//        }
+//        printf("\n");
 
         variance_loop:
         for (int i = 0; i < HIDDEN_SIZE; i++) {
@@ -95,7 +105,7 @@ extern "C" {
         	variance += (local_in[i] - mean) * (local_in[i] - mean);
 		}
         variance /= HIDDEN_SIZE;
-        // printf("variance: %f\n", float(variance));
+//        printf("variance: %f\n", float(variance));
 
         // 計算標準差
         fixed32_14 inv_stddev = 1 / hls::sqrt(variance + eps);
