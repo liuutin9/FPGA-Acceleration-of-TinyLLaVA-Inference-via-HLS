@@ -14,7 +14,7 @@ typedef ap_fixed<32,14> fixed32_14;
 typedef ap_uint<16> uint16;
 
 fixed32_14 uint16ToFixed32_14(uint16 in) {
-    hls::half h;
+    half h;
     *((uint16*)&h) = in;
     float f = (float)h;
     return fixed32_14(f);
@@ -78,6 +78,20 @@ inline void init_fc2_out(
     load_fc2_bias(&out[7 * HIDDEN_SIZE / 8], bias_7);
 }
 
+inline void load_fc1_weight(fixed32_14* out, uint16* weight) {
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        #pragma HLS PIPELINE II=1
+    	out[i] = uint16ToFixed32_14(weight[i]);
+    }
+}
+
+inline void load_fc2_weight(fixed32_14* out, uint16* weight) {
+    for (int i = 0; i < INTERMEDIATE_SIZE; i++) {
+        #pragma HLS PIPELINE II=1
+    	out[i] = uint16ToFixed32_14(weight[i]);
+    }
+}
+
 inline void loadToLocal(fixed32_14 local[HIDDEN_SIZE], fixed32_14 global[HIDDEN_SIZE]) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
         #pragma HLS PIPELINE II=1
@@ -85,10 +99,17 @@ inline void loadToLocal(fixed32_14 local[HIDDEN_SIZE], fixed32_14 global[HIDDEN_
     }
 }
 
-void compute_gelu(fixed32_14 out[INTERMEDIATE_SIZE], fixed32_14 in[INTERMEDIATE_SIZE]) {
+inline void compute_fc1(fixed32_14* out, fixed32_14 in[HIDDEN_SIZE], fixed32_14 weight[HIDDEN_SIZE]) {
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        #pragma HLS PIPELINE II=1
+        *out += in[i] * weight[i];
+    }
+}
+
+inline void compute_fc2(fixed32_14* out, fixed32_14 in[INTERMEDIATE_SIZE], fixed32_14 weight[INTERMEDIATE_SIZE]) {
     for (int i = 0; i < INTERMEDIATE_SIZE; i++) {
         #pragma HLS PIPELINE II=1
-        out[i] = fixed32_14(new_gelu((float)in[i]));
+        *out += in[i] * weight[i];
     }
 }
 
@@ -98,6 +119,21 @@ float new_gelu(float x) {
     float inner = sqrt_2_over_pi * (x + 0.044715f * x3);
     float tanh_inner = hls::tanh(inner);
     return 0.5f * x * (1.0f + tanh_inner);
+}
+
+void compute_gelu(fixed32_14 out[INTERMEDIATE_SIZE], fixed32_14 in[INTERMEDIATE_SIZE]) {
+    for (int i = 0; i < INTERMEDIATE_SIZE; i++) {
+        #pragma HLS PIPELINE II=1
+        out[i] = fixed32_14(new_gelu((float)in[i]));
+    }
+}
+
+inline void storeOutput(fixed32_14 out[HIDDEN_SIZE], fixed32_14 local_out[HIDDEN_SIZE]) {
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        #pragma HLS PIPELINE II=1
+        #pragma HLS UNROLL factor=4
+    	out[i] = local_out[i];
+    }
 }
 
 extern "C" {
@@ -138,18 +174,74 @@ extern "C" {
         uint16 bias_fc2_7[HIDDEN_SIZE / 8]
     ) {
         #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=weight_1 offset=slave bundle=gmem2 depth=26214400 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=bias_1 offset=slave bundle=gmem3 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=weight_2 offset=slave bundle=gmem4 depth=26214400 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=bias_2 offset=slave bundle=gmem5 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc1_0 offset=slave bundle=gmem1 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc1_0 offset=slave bundle=gmem1 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc1_1 offset=slave bundle=gmem2 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc1_1 offset=slave bundle=gmem2 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc1_2 offset=slave bundle=gmem3 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc1_2 offset=slave bundle=gmem3 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc1_3 offset=slave bundle=gmem4 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc1_3 offset=slave bundle=gmem4 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc1_4 offset=slave bundle=gmem5 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc1_4 offset=slave bundle=gmem5 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc1_5 offset=slave bundle=gmem6 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc1_5 offset=slave bundle=gmem6 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc1_6 offset=slave bundle=gmem7 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc1_6 offset=slave bundle=gmem7 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc1_7 offset=slave bundle=gmem8 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc1_7 offset=slave bundle=gmem8 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc2_0 offset=slave bundle=gmem9 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc2_0 offset=slave bundle=gmem9 depth=320 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc2_1 offset=slave bundle=gmem10 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc2_1 offset=slave bundle=gmem10 depth=320 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc2_2 offset=slave bundle=gmem11 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc2_2 offset=slave bundle=gmem11 depth=320 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc2_3 offset=slave bundle=gmem12 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc2_3 offset=slave bundle=gmem12 depth=320 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc2_4 offset=slave bundle=gmem13 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc2_4 offset=slave bundle=gmem13 depth=320 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc2_5 offset=slave bundle=gmem14 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc2_5 offset=slave bundle=gmem14 depth=320 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc2_6 offset=slave bundle=gmem15 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc2_6 offset=slave bundle=gmem15 depth=320 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_fc2_7 offset=slave bundle=gmem16 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_fc2_7 offset=slave bundle=gmem16 depth=320 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out bundle=control
         #pragma HLS INTERFACE s_axilite port=in bundle=control
-        #pragma HLS INTERFACE s_axilite port=weight_1 bundle=control
-        #pragma HLS INTERFACE s_axilite port=bias_1 bundle=control
-        #pragma HLS INTERFACE s_axilite port=weight_2 bundle=control
-        #pragma HLS INTERFACE s_axilite port=bias_2 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc1_0 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc1_1 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc1_2 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc1_3 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc1_4 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc1_5 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc1_6 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc1_7 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc1_0 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc1_1 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc1_2 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc1_3 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc1_4 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc1_5 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc1_6 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc1_7 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc2_0 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc2_1 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc2_2 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc2_3 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc2_4 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc2_5 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc2_6 bundle=control
+        #pragma HLS INTERFACE s_axilite port=weight_fc2_7 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc2_0 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc2_1 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc2_2 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc2_3 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc2_4 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc2_5 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc2_6 bundle=control
+        #pragma HLS INTERFACE s_axilite port=bias_fc2_7 bundle=control
         #pragma HLS INTERFACE s_axilite port=return bundle=control
 
         // 壓縮並存放到 local buffer
@@ -157,13 +249,15 @@ extern "C" {
         fixed32_14 local_linear_1_in[HIDDEN_SIZE];
         fixed32_14 local_linear_2_out[HIDDEN_SIZE];
         fixed32_14 local_linear_2_in[INTERMEDIATE_SIZE];
-        fixed32_14 local_w[INTERMEDIATE_SIZE];
+        fixed32_14 local_weight_1[HIDDEN_SIZE];
+        fixed32_14 local_weight_2[INTERMEDIATE_SIZE];
 
 		#pragma HLS bind_storage variable=local_linear_1_in type=RAM_T2P impl=bram
 		#pragma HLS bind_storage variable=local_linear_1_out type=RAM_T2P impl=bram
 		#pragma HLS bind_storage variable=local_linear_2_in type=RAM_T2P impl=bram
 		#pragma HLS bind_storage variable=local_linear_2_out type=RAM_T2P impl=bram
-        #pragma HLS bind_storage variable=local_w type=RAM_T2P impl=uram
+        #pragma HLS bind_storage variable=local_weight_1 type=RAM_T2P impl=uram
+        #pragma HLS bind_storage variable=local_weight_2 type=RAM_T2P impl=uram
 
         init_fc1_out(
             local_linear_1_out,
@@ -191,80 +285,74 @@ extern "C" {
 
         loadToLocal(local_linear_1_in, in);
 
-        // 初始化 output = bias
-        init_linear_1_out:
-        for (int i = 0; i < HIDDEN_SIZE; i++) {
-            #pragma HLS PIPELINE II=1
-        	local_linear_1_out[i] = bias_1[i];
+        for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
+            load_fc1_weight(local_weight_1, &weight_fc1_0[i * HIDDEN_SIZE]);
+            compute_fc1(&local_linear_1_out[i], local_linear_1_in, local_weight_1);
+        }
+        for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
+            load_fc1_weight(local_weight_1, &weight_fc1_1[i * HIDDEN_SIZE]);
+            compute_fc1(&local_linear_1_out[i + INTERMEDIATE_SIZE / 8], local_linear_1_in, local_weight_1);
+        }
+        for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
+            load_fc1_weight(local_weight_1, &weight_fc1_2[i * HIDDEN_SIZE]);
+            compute_fc1(&local_linear_1_out[i + 2 * INTERMEDIATE_SIZE / 8], local_linear_1_in, local_weight_1);
+        }
+        for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
+            load_fc1_weight(local_weight_1, &weight_fc1_3[i * HIDDEN_SIZE]);
+            compute_fc1(&local_linear_1_out[i + 3 * INTERMEDIATE_SIZE / 8], local_linear_1_in, local_weight_1);
+        }
+        for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
+            load_fc1_weight(local_weight_1, &weight_fc1_4[i * HIDDEN_SIZE]);
+            compute_fc1(&local_linear_1_out[i + 4 * INTERMEDIATE_SIZE / 8], local_linear_1_in, local_weight_1);
+        }
+        for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
+            load_fc1_weight(local_weight_1, &weight_fc1_5[i * HIDDEN_SIZE]);
+            compute_fc1(&local_linear_1_out[i + 5 * INTERMEDIATE_SIZE / 8], local_linear_1_in, local_weight_1);
+        }
+        for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
+            load_fc1_weight(local_weight_1, &weight_fc1_6[i * HIDDEN_SIZE]);
+            compute_fc1(&local_linear_1_out[i + 6 * INTERMEDIATE_SIZE / 8], local_linear_1_in, local_weight_1);
+        }
+        for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
+            load_fc1_weight(local_weight_1, &weight_fc1_7[i * HIDDEN_SIZE]);
+            compute_fc1(&local_linear_1_out[i + 7 * INTERMEDIATE_SIZE / 8], local_linear_1_in, local_weight_1);
         }
 
-        load_in:
-        for (int i = 0; i < HIDDEN_SIZE; i++) {
-            #pragma HLS PIPELINE II=1
-            local_linear_1_in[i] = in[i];
+        compute_gelu(local_linear_2_in, local_linear_1_out);
+
+        for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
+            load_fc2_weight(local_weight_2, &weight_fc2_0[i * INTERMEDIATE_SIZE]);
+            compute_fc2(&local_linear_2_out[i], local_linear_2_in, local_weight_2);
+        }
+        for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
+            load_fc2_weight(local_weight_2, &weight_fc2_1[i * INTERMEDIATE_SIZE]);
+            compute_fc2(&local_linear_2_out[i + HIDDEN_SIZE / 8], local_linear_2_in, local_weight_2);
+        }
+        for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
+            load_fc2_weight(local_weight_2, &weight_fc2_2[i * INTERMEDIATE_SIZE]);
+            compute_fc2(&local_linear_2_out[i + 2 * HIDDEN_SIZE / 8], local_linear_2_in, local_weight_2);
+        }
+        for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
+            load_fc2_weight(local_weight_2, &weight_fc2_3[i * INTERMEDIATE_SIZE]);
+            compute_fc2(&local_linear_2_out[i + 3 * HIDDEN_SIZE / 8], local_linear_2_in, local_weight_2);
+        }
+        for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
+            load_fc2_weight(local_weight_2, &weight_fc2_4[i * INTERMEDIATE_SIZE]);
+            compute_fc2(&local_linear_2_out[i + 4 * HIDDEN_SIZE / 8], local_linear_2_in, local_weight_2);
+        }
+        for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
+            load_fc2_weight(local_weight_2, &weight_fc2_5[i * INTERMEDIATE_SIZE]);
+            compute_fc2(&local_linear_2_out[i + 5 * HIDDEN_SIZE / 8], local_linear_2_in, local_weight_2);
+        }
+        for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
+            load_fc2_weight(local_weight_2, &weight_fc2_6[i * INTERMEDIATE_SIZE]);
+            compute_fc2(&local_linear_2_out[i + 6 * HIDDEN_SIZE / 8], local_linear_2_in, local_weight_2);
+        }
+        for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
+            load_fc2_weight(local_weight_2, &weight_fc2_7[i * INTERMEDIATE_SIZE]);
+            compute_fc2(&local_linear_2_out[i + 7 * HIDDEN_SIZE / 8], local_linear_2_in, local_weight_2);
         }
 
-        // 分批次計算
-        block_loop_1:
-        for (int block = 0; block < FIRST_NUM_BLOCKS; block++) {
-
-            // Load weight block
-            load_w:
-            for (int i = 0; i < FIRST_BLOCK_SIZE; i++) {
-                for (int j = 0; j < HIDDEN_SIZE; j++) {
-                    #pragma HLS PIPELINE II=1
-                    #pragma HLS UNROLL factor=4
-                    local_w[i * HIDDEN_SIZE + j] = weight_1[(block * FIRST_BLOCK_SIZE + i) * HIDDEN_SIZE + j];
-                }
-            }
-
-            // 計算並累加結果
-            compute:
-            for (int i = 0; i < FIRST_BLOCK_SIZE; i++) {
-                for (int j = 0; j < HIDDEN_SIZE; j++) {
-                    #pragma HLS PIPELINE II=1
-                    #pragma HLS UNROLL factor=4
-                	local_linear_1_out[block * FIRST_BLOCK_SIZE + i] += local_linear_1_in[j] * local_w[i * HIDDEN_SIZE + j];
-                }
-            }
-        }
-
-        gelu_loop:
-        for (int i = 0; i < INTERMEDIATE_SIZE; i++) {
-            local_linear_2_in[i] = fixed32_14(new_gelu(float(local_linear_1_out[i]))) + bias_2[i];
-        }
-
-        // 分批次計算
-        block_loop_2:
-        for (int block = 0; block < SECOND_NUM_BLOCKS; block++) {
-
-            // Load weight block
-            load_w:
-            for (int i = 0; i < SECOND_BLOCK_SIZE; i++) {
-                for (int j = 0; j < HIDDEN_SIZE; j++) {
-                    #pragma HLS PIPELINE II=1
-                    #pragma HLS UNROLL factor=4
-                    local_w[i * HIDDEN_SIZE + j] = weight_2[(block * SECOND_BLOCK_SIZE + i) * HIDDEN_SIZE + j];
-                }
-            }
-
-            // 計算並累加結果
-            compute:
-            for (int i = 0; i < SECOND_BLOCK_SIZE; i++) {
-                for (int j = 0; j < HIDDEN_SIZE; j++) {
-                    #pragma HLS PIPELINE II=1
-                    #pragma HLS UNROLL factor=4
-                	local_linear_2_out[block * SECOND_BLOCK_SIZE + i] += local_linear_2_in[j] * local_w[i * HIDDEN_SIZE + j];
-                }
-            }
-        }
-
-        // output
-        load_out:
-        for (int i = 0; i < HIDDEN_SIZE; i++) {
-            #pragma HLS PIPELINE II=1
-            out[i] = local_linear_2_out[i];
-        }
-
+        storeOutput(out, local_linear_2_out);
     }
 }
