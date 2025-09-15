@@ -30,7 +30,10 @@ using namespace std;
 
 #define ALL_MESSAGES
 
-#define HIDDEN_SIZE 2560
+#define PHI_HIDDEN_SIZE 2560
+#define PHI_INTERMEDIATE_SIZE 10240
+#define PHI_NUM_DECODER_LAYERS 32
+#define PHI_VOCAB_SIZE 51200
 #define SIZE_OUT HIDDEN_SIZE
 #define SIZE_IN HIDDEN_SIZE
 #define SIZE_WEIGHT (HIDDEN_SIZE * HIDDEN_SIZE)
@@ -48,6 +51,8 @@ using namespace std;
     } while (0)
 
 string weight_path;
+string weight_path_pre;
+string weight_path_post;
 string weight_folder_path = "/home/undergraduate/ytliu24/vitis_workspace/weights/";
 string phi_embed_tokens_weight = "language_model_model_embed_tokens_weight.bin";
 string phi_decoder_layer_filename_prefix = "language_model_model_layers_";
@@ -728,21 +733,26 @@ int main(int argc, char* argv[])
 	// -------------------------------------------------------------
 	// Step 3.4: Create a Kernels
 	// -------------------------------------------------------------
-	cl_kernel kernel_phi_linear_1, kernel_phi_linear_2;
-	cl_kernel kernel_phi_layernorm, kernel_phi_mlp, kernel_phi_attention;
-	cl_kernel kernel_phi_residual_add, kernel_phi_copy, kernel_phi_rotary_embed;
+	cl_kernel kernel_phi_q_proj, kernel_phi_k_proj, kernel_phi_v_proj, kernel_phi_dense;
+	cl_kernel kernel_phi_layernorm, kernel_phi_rotary_embed, kernel_phi_attention, kernel_phi_mlp;
+	cl_kernel kernel_phi_residual_add, kernel_phi_copy_q, kernel_phi_copy_k, kernel_phi_copy_v, kernel_phi_copy_mlp;
 
 	#ifdef ALL_MESSAGES
 	cout << "HOST-Info: Creating Kernels ..." << endl;
 	#endif
-	OCL_CHECK(errCode, kernel_phi_linear_1 = clCreateKernel(Program, "kernel_phi_linear_1", &errCode));
-	OCL_CHECK(errCode, kernel_phi_linear_2 = clCreateKernel(Program, "kernel_phi_linear_2", &errCode));
+	OCL_CHECK(errCode, kernel_phi_q_proj = clCreateKernel(Program, "kernel_phi_q_proj", &errCode));
+	OCL_CHECK(errCode, kernel_phi_k_proj = clCreateKernel(Program, "kernel_phi_k_proj", &errCode));
+	OCL_CHECK(errCode, kernel_phi_v_proj = clCreateKernel(Program, "kernel_phi_v_proj", &errCode));
+	OCL_CHECK(errCode, kernel_phi_dense = clCreateKernel(Program, "kernel_phi_dense", &errCode));
 	OCL_CHECK(errCode, kernel_phi_layernorm = clCreateKernel(Program, "kernel_phi_layernorm", &errCode));
-	OCL_CHECK(errCode, kernel_phi_mlp = clCreateKernel(Program, "kernel_phi_mlp", &errCode));
-	OCL_CHECK(errCode, kernel_phi_attention = clCreateKernel(Program, "kernel_phi_attention", &errCode));
-	OCL_CHECK(errCode, kernel_phi_residual_add = clCreateKernel(Program, "kernel_phi_residual_add", &errCode));
-	OCL_CHECK(errCode, kernel_phi_copy = clCreateKernel(Program, "kernel_phi_copy", &errCode));
 	OCL_CHECK(errCode, kernel_phi_rotary_embed = clCreateKernel(Program, "kernel_phi_rotary_embed", &errCode));
+	OCL_CHECK(errCode, kernel_phi_attention = clCreateKernel(Program, "kernel_phi_attention", &errCode));
+	OCL_CHECK(errCode, kernel_phi_mlp = clCreateKernel(Program, "kernel_phi_mlp", &errCode));
+	OCL_CHECK(errCode, kernel_phi_residual_add = clCreateKernel(Program, "kernel_phi_residual_add", &errCode));
+	OCL_CHECK(errCode, kernel_phi_copy_q = clCreateKernel(Program, "kernel_phi_copy_q", &errCode));
+	OCL_CHECK(errCode, kernel_phi_copy_k = clCreateKernel(Program, "kernel_phi_copy_k", &errCode));
+	OCL_CHECK(errCode, kernel_phi_copy_v = clCreateKernel(Program, "kernel_phi_copy_v", &errCode));
+	OCL_CHECK(errCode, kernel_phi_copy_mlp = clCreateKernel(Program, "kernel_phi_copy_mlp", &errCode));
 
 	// TODO
 	// ================================================================
@@ -754,13 +764,18 @@ int main(int argc, char* argv[])
 	//   o) Allocate Memory to store the results: RES array
 	//   o) Create Buffers in Global Memory to store data
 	// ================================================================
-	fixed32_14 *IN, *WEIGHT, *BIAS, *OUT;
-	fixed32_14 *PHI_IN, *PHI_OUT, *PHI_2560_2560_1, *PHI_2560_2560_2, *PHI_2560_1, *PHI_2560_2;
-	fixed32_14 *PHI_DECODER_LAYER_LAYERNORM_WEIGHT, *PHI_DECODER_LAYER_LAYERNORM_BIAS;
-	fixed32_14 *PHI_DECODER_LAYER_Q_PROJ_WEIGHT, *PHI_DECODER_LAYER_Q_PROJ_BIAS;
-	fixed32_14 *PHI_DECODER_LAYER_K_PROJ_WEIGHT, *PHI_DECODER_LAYER_K_PROJ_BIAS;
-	fixed32_14 *PHI_DECODER_LAYER_V_PROJ_WEIGHT, *PHI_DECODER_LAYER_V_PROJ_BIAS;
-	fixed32_14 *PHI_2560_2560, *PHI_2560;
+	fixed32_14 *PHI_OUT;
+	uint16 *PHI_IN;
+	uint16 *PHI_PRE_LAYERNORM_WEIGHT[PHI_NUM_DECODER_LAYERS], *PHI_PRE_LAYERNORM_BIAS[PHI_NUM_DECODER_LAYERS];
+	uint16 *PHI_Q_PROJ_WEIGHT[PHI_NUM_DECODER_LAYERS][2], *PHI_Q_PROJ_BIAS[PHI_NUM_DECODER_LAYERS][2];
+	uint16 *PHI_K_PROJ_WEIGHT[PHI_NUM_DECODER_LAYERS][2], *PHI_K_PROJ_BIAS[PHI_NUM_DECODER_LAYERS][2];
+	uint16 *PHI_V_PROJ_WEIGHT[PHI_NUM_DECODER_LAYERS][2], *PHI_V_PROJ_BIAS[PHI_NUM_DECODER_LAYERS][2];
+	uint16 *PHI_DENSE_WEIGHT[PHI_NUM_DECODER_LAYERS][2], *PHI_DENSE_BIAS[PHI_NUM_DECODER_LAYERS][2];
+	uint16 *PHI_MLP_FC1_WEIGHT[PHI_NUM_DECODER_LAYERS][8], *PHI_MLP_FC1_BIAS[PHI_NUM_DECODER_LAYERS][8];
+	uint16 *PHI_MLP_FC2_WEIGHT[PHI_NUM_DECODER_LAYERS][8], *PHI_MLP_FC2_BIAS[PHI_NUM_DECODER_LAYERS][8];
+	uint16 *PHI_LAST_LAYERNORM_WEIGHT, *PHI_LAST_LAYERNORM_BIAS;
+	uint16 *PHI_LM_HEAD_WEIGHT, *PHI_LM_HEAD_BIAS;
+	uint16 *PHI_EMBED_TOKENS_WEIGHT, *PHI_EMBED_TOKENS_BIAS;
 
 	#ifdef ALL_MESSAGES
 	cout << endl;
@@ -778,84 +793,289 @@ int main(int argc, char* argv[])
 
 	void *ptr=nullptr;
 
-	cout << "HOST-Info: Allocating memory for IN ... ";
-	if (posix_memalign(&ptr,4096,SIZE_IN*sizeof(fixed32_14))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for IN array" << endl << endl;
-		return EXIT_FAILURE;
-	}
-	IN = reinterpret_cast<fixed32_14*>(ptr);
-	// use for loop to generate random fixed32_14 values
-	//	for (int i = 0; i < SIZE_IN; i++) {
-	//		IN[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
-	//	}
-	loadData_fixed32_14(IN, 526 * SIZE_IN, SIZE_IN, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_embed_tokens_weight.bin");
-	cout << "Generated " << SIZE_IN << " values" << endl;
-
-	cout << "HOST-Info: Allocating memory for WEIGHT ... ";
-	if (posix_memalign(&ptr,4096,SIZE_WEIGHT*sizeof(fixed32_14))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for WEIGHT array" << endl << endl;
-		return EXIT_FAILURE;
-	}
-	WEIGHT = reinterpret_cast<fixed32_14*>(ptr);
-	// use for loop to generate random fixed32_14 values
-	//	for (int i = 0; i < SIZE_WEIGHT; i++) {
-	//		WEIGHT[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
-	//	}
-	loadData_fixed32_14(WEIGHT, 0, SIZE_WEIGHT, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_weight.bin");
-	cout << "Generated " << SIZE_WEIGHT << " values" << endl;
-
-	cout << "HOST-Info: Allocating memory for BIAS ... ";
-	if (posix_memalign(&ptr,4096,SIZE_BIAS*sizeof(fixed32_14))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for BIAS array" << endl << endl;
-		return EXIT_FAILURE;
-	}
-	BIAS = reinterpret_cast<fixed32_14*>(ptr);
-	// use for loop to generate random fixed32_14 values
-	//	for (int i = 0; i < SIZE_BIAS; i++) {
-	//		BIAS[i] = fixed32_14(i / 1000.0f); // Example: generating fixed32_14 values from 0.0 to 255.9
-	//	}
-	loadData_fixed32_14(BIAS, 0, SIZE_BIAS, "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_bias.bin");
-	cout << "Generated " << SIZE_BIAS << " values" << endl;
-
 	cout << "HOST-Info: Allocating memory for PHI_IN ... ";
-	if (posix_memalign(&ptr, 4096, HIDDEN_SIZE * sizeof(fixed32_14))) {
+	if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_IN array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	PHI_IN = reinterpret_cast<fixed32_14*>(ptr);
-	cout << "PHI_IN has been allocated!" << endl;
+	PHI_IN = reinterpret_cast<uint16*>(ptr);
+	cout << "HOST_Info: Memory allocated for PHI_IN!" << endl;
 
 	cout << "HOST-Info: Allocating memory for PHI_OUT ... ";
-	if (posix_memalign(&ptr, 4096, HIDDEN_SIZE * sizeof(fixed32_14))) {
+	if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_OUT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
 	PHI_OUT = reinterpret_cast<fixed32_14*>(ptr);
-	cout << "PHI_OUT has been allocated!" << endl;
+	cout << "HOST_Info: Memory allocated for PHI_OUT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_2560_2560 ... ";
-	if (posix_memalign(&ptr, 4096, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(fixed32_14))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_2560_2560 array" << endl << endl;
+	cout << "HOST-Info: Allocating memory for PHI_PRE_LAYERNORM_WEIGHT ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
+			cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_PRE_LAYERNORM_WEIGHT[" << i << "] array" << endl << endl;
+			return EXIT_FAILURE;
+		}
+		PHI_PRE_LAYERNORM_WEIGHT[i] = reinterpret_cast<uint16*>(ptr);
+		weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+		weight_path_post = "_input_layernorm_weight.bin";
+		weight_path = weight_path_pre + to_string(i) + weight_path_post;
+		loadData_uint16(PHI_PRE_LAYERNORM_WEIGHT[i], 0, PHI_HIDDEN_SIZE, weight_path.c_str());
+	}
+	cout << "HOST_Info: Memory allocated for PHI_PRE_LAYERNORM_WEIGHT!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_PRE_LAYERNORM_BIAS ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
+			cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_PRE_LAYERNORM_BIAS[" << i << "] array" << endl << endl;
+			return EXIT_FAILURE;
+		}
+		PHI_PRE_LAYERNORM_BIAS[i] = reinterpret_cast<uint16*>(ptr);
+		weight_path = weight_path_pre + to_string(i) + weight_path_post;
+		loadData_uint16(PHI_PRE_LAYERNORM_BIAS[i], 0, PHI_HIDDEN_SIZE, weight_path.c_str());
+	}
+	cout << "HOST_Info: Memory allocated for PHI_PRE_LAYERNORM_BIAS!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_Q_PROJ_WEIGHT ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 2; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_Q_PROJ_WEIGHT[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_Q_PROJ_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_self_attn_q_proj_weight.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_Q_PROJ_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_Q_PROJ_WEIGHT!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_Q_PROJ_BIAS ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 2; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_Q_PROJ_BIAS[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_Q_PROJ_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_self_attn_q_proj_bias.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_Q_PROJ_BIAS[i][j], j * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE / 2, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_Q_PROJ_BIAS!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_K_PROJ_WEIGHT ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 2; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_K_PROJ_WEIGHT[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_K_PROJ_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_self_attn_k_proj_weight.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_K_PROJ_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_K_PROJ_WEIGHT!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_K_PROJ_BIAS ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 2; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_K_PROJ_BIAS[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_K_PROJ_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_self_attn_k_proj_bias.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_K_PROJ_BIAS[i][j], j * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE / 2, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_K_PROJ_BIAS!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_V_PROJ_WEIGHT ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 2; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_V_PROJ_WEIGHT[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_V_PROJ_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_self_attn_v_proj_weight.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_V_PROJ_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_V_PROJ_WEIGHT!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_V_PROJ_BIAS ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 2; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_V_PROJ_BIAS[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_V_PROJ_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_self_attn_v_proj_bias.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_V_PROJ_BIAS[i][j], j * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE / 2, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_V_PROJ_BIAS!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_DENSE_WEIGHT ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 2; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_DENSE_WEIGHT[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_DENSE_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_self_attn_dense_weight.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_DENSE_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_DENSE_WEIGHT!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_DENSE_BIAS ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 2; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_DENSE_BIAS[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_DENSE_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_self_attn_dense_bias.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_DENSE_BIAS[i][j], j * PHI_HIDDEN_SIZE, PHI_HIDDEN_SIZE, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_DENSE_BIAS!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_MLP_FC1_WEIGHT ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_INTERMEDIATE_SIZE / 8 * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_MLP_FC1_WEIGHT[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_MLP_FC1_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_mlp_fc1_weight.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_MLP_FC1_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_INTERMEDIATE_SIZE / 8, PHI_HIDDEN_SIZE * PHI_INTERMEDIATE_SIZE / 8, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_MLP_FC1_WEIGHT!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_MLP_FC1_BIAS ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_INTERMEDIATE_SIZE / 8 * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_MLP_FC1_BIAS[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_MLP_FC1_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_mlp_fc1_bias.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_MLP_FC1_BIAS[i][j], j * PHI_INTERMEDIATE_SIZE / 8, PHI_INTERMEDIATE_SIZE / 8, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_MLP_FC1_BIAS!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_MLP_FC2_WEIGHT ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_INTERMEDIATE_SIZE / 8 * PHI_HIDDEN_SIZE * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_MLP_FC2_WEIGHT[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_MLP_FC2_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_mlp_fc2_weight.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_MLP_FC2_WEIGHT[i][j], j * PHI_INTERMEDIATE_SIZE / 8 * PHI_HIDDEN_SIZE, PHI_INTERMEDIATE_SIZE / 8 * PHI_HIDDEN_SIZE, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_MLP_FC2_WEIGHT!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_MLP_FC2_BIAS ... ";
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
+				cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_MLP_FC2_BIAS[" << i << "][" << j << "] array" << endl << endl;
+				return EXIT_FAILURE;
+			}
+			PHI_MLP_FC2_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
+			weight_path_pre = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_layers_";
+			weight_path_post = "_mlp_fc2_bias.bin";
+			weight_path = weight_path_pre + to_string(i) + weight_path_post;
+			loadData_uint16(PHI_MLP_FC2_BIAS[i][j], j * PHI_HIDDEN_SIZE, PHI_HIDDEN_SIZE, weight_path.c_str());
+		}
+	}
+	cout << "HOST_Info: Memory allocated for PHI_MLP_FC2_BIAS!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_LAST_LAYERNORM_WEIGHT ... ";
+	if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LAST_LAYERNORM_WEIGHT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	PHI_2560_2560 = reinterpret_cast<fixed32_14*>(ptr);
-	cout << "PHI_2560_2560 has been allocated!" << endl;
+	PHI_LAST_LAYERNORM_WEIGHT = reinterpret_cast<uint16*>(ptr);
+	weight_path = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_weight.bin";
+	loadData_uint16(PHI_LAST_LAYERNORM_WEIGHT, 0, PHI_HIDDEN_SIZE, weight_path.c_str());
+	cout << "HOST_Info: Memory allocated for PHI_LAST_LAYERNORM_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_2560 ... ";
-	if (posix_memalign(&ptr, 4096, HIDDEN_SIZE * sizeof(fixed32_14))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_2560 array" << endl << endl;
+	cout << "HOST-Info: Allocating memory for PHI_LAST_LAYERNORM_BIAS ... ";
+	if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LAST_LAYERNORM_BIAS array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	PHI_2560 = reinterpret_cast<fixed32_14*>(ptr);
-	cout << "PHI_2560 has been allocated!" << endl;
+	PHI_LAST_LAYERNORM_BIAS = reinterpret_cast<uint16*>(ptr);
+	weight_path = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_final_layernorm_bias.bin";
+	loadData_uint16(PHI_LAST_LAYERNORM_BIAS, 0, PHI_HIDDEN_SIZE, weight_path.c_str());
+	cout << "HOST_Info: Memory allocated for PHI_LAST_LAYERNORM_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for OUT ... ";
-	if (posix_memalign(&ptr,4096,SIZE_OUT*sizeof(fixed32_14))) {
-		cout << endl << "HOST-Error: Out of Memory during memory allocation for OUT array" << endl << endl;
+	cout << "HOST-Info: Allocating memory for PHI_LM_HEAD_WEIGHT ... ";
+	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE * sizeof(uint16))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LM_HEAD_WEIGHT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	OUT = reinterpret_cast<fixed32_14*>(ptr);
-	cout << "Allocated" << endl;
+	PHI_LM_HEAD_WEIGHT = reinterpret_cast<uint16*>(ptr);
+	weight_path = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_lm_head_weight.bin";
+	loadData_uint16(PHI_LM_HEAD_WEIGHT, 0, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE, weight_path.c_str());
+	cout << "HOST_Info: Memory allocated for PHI_LM_HEAD_WEIGHT!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_LM_HEAD_BIAS ... ";
+	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * sizeof(uint16))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LM_HEAD_BIAS array" << endl << endl;
+		return EXIT_FAILURE;
+	}
+	PHI_LM_HEAD_BIAS = reinterpret_cast<uint16*>(ptr);
+	weight_path = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_lm_head_bias.bin";
+	loadData_uint16(PHI_LM_HEAD_BIAS, 0, PHI_VOCAB_SIZE, weight_path.c_str());
+	cout << "HOST_Info: Memory allocated for PHI_LM_HEAD_BIAS!" << endl;
+
+	cout << "HOST-Info: Allocating memory for PHI_EMBED_TOKENS_WEIGHT ... ";
+	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE * sizeof(uint16))) {
+		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_EMBED_TOKENS_WEIGHT array" << endl << endl;
+		return EXIT_FAILURE;
+	}
+	PHI_EMBED_TOKENS_WEIGHT = reinterpret_cast<uint16*>(ptr);
+	weight_path = "/home/undergraduate/ytliu24/vitis_workspace/weights/language_model_model_embed_tokens_weight.bin";
+	loadData_uint16(PHI_EMBED_TOKENS_WEIGHT, 0, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE, weight_path.c_str());
+	cout << "HOST_Info: Memory allocated for PHI_EMBED_TOKENS_WEIGHT!" << endl;
 
 	cout << endl;
 
@@ -869,123 +1089,72 @@ int main(int argc, char* argv[])
 	#ifdef ALL_MESSAGES
 	cout << "HOST-Info: Allocating buffers ..." << endl;
 	#endif
-	cl_mem_ext_ptr_t bank_ext;
+	cl_mem buffer_phi_input, buffer_phi_output;
+	cl_mem buffer_phi_layernorm_in, buffer_phi_residual, buffer_phi_mlp_in;
+	cl_mem buffer_phi_q_proj_in, buffer_phi_k_proj_in, buffer_phi_v_proj_in;
+	cl_mem buffer_phi_q_embed_in, buffer_phi_k_embed_in, buffer_phi_q;
+	cl_mem buffer_phi_attention_out, buffer_phi_dense_out, buffer_phi_mlp_out;
+	cl_mem buffer_phi_q, buffer_phi_attn_out, buffer_phi_dense_out, buffer_phi_mlp_out;
+	cl_mem buffer_phi_last_layernorm_weight, buffer_phi_last_layernorm_bias;
 
-	cl_mem buffer_k_cache_1[32]; // length = 800, 250 MB
-	cl_mem buffer_v_cache_1[32]; // length = 800, 250 MB
-	cl_mem buffer_k_cache_2[32]; // length = 32, 10 MB
-	cl_mem buffer_v_cache_2[32]; // length = 32, 10 MB
+	cl_mem buffer_phi_k_cache[32][2], buffer_phi_v_cache[32][2]; // length = 800, 250 MB, length = 32, 10 MB
 
-	// 0.77 MB
-	cl_mem buffer_layernorm_in, buffer_q_proj_in, buffer_k_proj_in, buffer_v_proj_in;
-	cl_mem buffer_residual_in, buffer_mlp_in, buffer_q_embed_in, buffer_k_embed_in;
-	cl_mem buffer_q, buffer_attn_out, buffer_dense_out, buffer_mlp_out;
-	cl_mem buffer_decoder_layer_layernorm_weight[32], buffer_decoder_layer_layernorm_bias[32];
-	cl_mem buffer_final_layernorm_weight, buffer_final_layernorm_bias;
+	cl_mem buffer_phi_pre_layernorm_weight[32], buffer_phi_pre_layernorm_bias[32];
+	cl_mem buffer_phi_q_proj_weight[32][2], buffer_phi_q_proj_bias[32][2];
+	cl_mem buffer_phi_k_proj_weight[32][2], buffer_phi_k_proj_bias[32][2];
+	cl_mem buffer_phi_v_proj_weight[32][2], buffer_phi_v_proj_bias[32][2];
+	cl_mem buffer_phi_dense_weight[32][2], buffer_phi_dense_bias[32][2];
+	cl_mem buffer_phi_mlp_fc1_weight[32][8], buffer_phi_mlp_fc1_bias[32][8];
+	cl_mem buffer_phi_mlp_fc2_weight[32][8], buffer_phi_mlp_fc2_bias[32][8];
 
 	fixed32_14 fixed32_14_value;
 
-	cl_mem buffer_q_proj_weight[2][32], buffer_q_proj_bias[2][32];
-	cl_mem buffer_k_proj_weight[2][32], buffer_k_proj_bias[2][32];
-	cl_mem buffer_v_proj_weight[2][32], buffer_v_proj_bias[2][32];
-	cl_mem buffer_dense_weight[2][32], buffer_dense_bias[2][32];
+	OCL_CHECK(errCode, buffer_phi_input = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(uint16), PHI_IN, &errCode));
+	OCL_CHECK(errCode, buffer_phi_output = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), PHI_OUT, &errCode));
 
-	cl_mem buffer_mlp_fc1_weight[8][32], buffer_mlp_fc1_bias[8][32];
-	cl_mem buffer_mlp_fc2_weight[8][32], buffer_mlp_fc2_bias[8][32];
+	OCL_CHECK(errCode, buffer_phi_layernorm_in = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_residual = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_mlp_in = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_q_proj_in = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_k_proj_in = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_v_proj_in = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_q_embed_in = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_k_embed_in = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_q = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_attention_out = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_dense_out = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_mlp_out = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), NULL, &errCode));
+	OCL_CHECK(errCode, buffer_phi_last_layernorm_weight = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(uint16), PHI_LAST_LAYERNORM_WEIGHT, &errCode));
+	OCL_CHECK(errCode, buffer_phi_last_layernorm_bias = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(uint16), PHI_LAST_LAYERNORM_BIAS, &errCode));
 
-	// size 和 read / write 權限要再修正
+	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+		OCL_CHECK(errCode, buffer_phi_k_cache[i][0] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * 800 * sizeof(fixed32_14), NULL, &errCode));
+		OCL_CHECK(errCode, buffer_phi_k_cache[i][1] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * 32 * sizeof(fixed32_14), NULL, &errCode));
+		OCL_CHECK(errCode, buffer_phi_v_cache[i][0] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * 800 * sizeof(fixed32_14), NULL, &errCode));
+		OCL_CHECK(errCode, buffer_phi_v_cache[i][1] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * 32 * sizeof(fixed32_14), NULL, &errCode));
 
-	setBankExtensionPointer(bank_ext, 0, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_k_cache_1[i] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * 800 * sizeof(fixed32_14), &bank_ext, &errCode));
-	}
-	setBankExtensionPointer(bank_ext, 1, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_v_cache_1[i] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * 800 * sizeof(fixed32_14), &bank_ext, &errCode));
-	}
-	setBankExtensionPointer(bank_ext, 2, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_k_cache_2[i] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * 32 * sizeof(fixed32_14), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_v_cache_2[i] = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * 32 * sizeof(fixed32_14), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_decoder_layer_layernorm_weight[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_decoder_layer_layernorm_bias[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	}
+		OCL_CHECK(errCode, buffer_phi_pre_layernorm_weight[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(uint16), PHI_PRE_LAYERNORM_WEIGHT[i], &errCode));
+		OCL_CHECK(errCode, buffer_phi_pre_layernorm_bias[i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(uint16), PHI_PRE_LAYERNORM_BIAS[i], &errCode));
 
-	OCL_CHECK(errCode, buffer_layernorm_in = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_q_proj_in    = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_k_proj_in    = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_v_proj_in    = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_residual_in  = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_mlp_in       = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_q_embed_in   = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_k_embed_in   = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_q            = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_attn_out     = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_dense_out    = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_mlp_out      = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_EXT_PTR_XILINX, HIDDEN_SIZE * sizeof(fixed32_14), &bank_ext, &errCode));
+		for (int j = 0; j < 2; j++) {
+			OCL_CHECK(errCode, buffer_phi_q_proj_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2 * sizeof(uint16), PHI_Q_PROJ_WEIGHT[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_q_proj_bias[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE / 2 * sizeof(uint16), PHI_Q_PROJ_BIAS[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_k_proj_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2 * sizeof(uint16), PHI_K_PROJ_WEIGHT[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_k_proj_bias[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE / 2 * sizeof(uint16), PHI_K_PROJ_BIAS[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_v_proj_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2 * sizeof(uint16), PHI_V_PROJ_WEIGHT[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_v_proj_bias[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE / 2 * sizeof(uint16), PHI_V_PROJ_BIAS[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_dense_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE * sizeof(uint16), PHI_DENSE_WEIGHT[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_dense_bias[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(uint16), PHI_DENSE_BIAS[i][j], &errCode));
+		}
 
-	OCL_CHECK(errCode, buffer_final_layernorm_weight = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	OCL_CHECK(errCode, buffer_final_layernorm_bias   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-
-	setBankExtensionPointer(bank_ext, 3, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_q_proj_weight[0][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_q_proj_bias[0][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	}
-	setBankExtensionPointer(bank_ext, 4, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_q_proj_weight[1][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_q_proj_bias[1][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	}
-
-	setBankExtensionPointer(bank_ext, 5, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_k_proj_weight[0][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_k_proj_bias[0][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	}
-	setBankExtensionPointer(bank_ext, 6, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_k_proj_weight[1][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_k_proj_bias[1][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	}
-
-	setBankExtensionPointer(bank_ext, 7, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_v_proj_weight[0][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_v_proj_bias[0][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	}
-	setBankExtensionPointer(bank_ext, 8, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_v_proj_weight[1][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_v_proj_bias[1][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	}
-
-	setBankExtensionPointer(bank_ext, 9, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_dense_weight[0][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_dense_bias[0][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	}
-	setBankExtensionPointer(bank_ext, 10, NULL, NULL);
-	for (int i = 0; i < 32; i++) {
-		OCL_CHECK(errCode, buffer_dense_weight[1][i] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		OCL_CHECK(errCode, buffer_dense_bias[1][i]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-	}
-
-	for (int i = 0; i < 8; i++) {
-		setBankExtensionPointer(bank_ext, i + 11, NULL, NULL);
-		for (int j = 0; j < 32; j++) {
-			OCL_CHECK(errCode, buffer_mlp_fc1_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-			OCL_CHECK(errCode, buffer_mlp_fc1_bias[i][j]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
+		for (int j = 0; j < 8; j++) {
+			OCL_CHECK(errCode, buffer_phi_mlp_fc1_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * PHI_INTERMEDIATE_SIZE / 8 * sizeof(uint16), PHI_MLP_FC1_WEIGHT[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_mlp_fc1_bias[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_INTERMEDIATE_SIZE / 8 * sizeof(uint16), PHI_MLP_FC1_BIAS[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_mlp_fc2_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_INTERMEDIATE_SIZE / 8 * PHI_HIDDEN_SIZE * sizeof(uint16), PHI_MLP_FC2_WEIGHT[i][j], &errCode));
+			OCL_CHECK(errCode, buffer_phi_mlp_fc2_bias[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(uint16), PHI_MLP_FC2_BIAS[i][j], &errCode));
 		}
 	}
 
-	for (int i = 0; i < 8; i++) {
-		setBankExtensionPointer(bank_ext, i + 19, NULL, NULL);
-		for (int j = 0; j < 32; j++) {
-			OCL_CHECK(errCode, buffer_mlp_fc2_weight[i][j] = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-			OCL_CHECK(errCode, buffer_mlp_fc2_bias[i][j]   = clCreateBuffer(Context, CL_MEM_READ_ONLY | CL_MEM_EXT_PTR_XILINX | CL_MEM_USE_HOST_PTR, HIDDEN_SIZE * sizeof(uint16), &bank_ext, &errCode));
-		}
-	}
 
 	// ============================================================================
 	// Step 5: Set Kernel Arguments and Run the Application
