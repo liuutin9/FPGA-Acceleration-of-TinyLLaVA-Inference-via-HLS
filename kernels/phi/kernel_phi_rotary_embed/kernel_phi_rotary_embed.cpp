@@ -15,7 +15,7 @@ extern "C" {
         fixed32_14 out_k[HIDDEN_SIZE],
         fixed32_14 in_q[HIDDEN_SIZE],
         fixed32_14 in_k[HIDDEN_SIZE],
-        fixed32_14* position_idx
+        int position_idx
     ) {
 
         #pragma HLS INTERFACE m_axi port=out_q offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
@@ -67,8 +67,8 @@ extern "C" {
         for (int i = 0; i < HALF_ROTARY_DIM; i++) {
             #pragma HLS PIPELINE II=1
             #pragma HLS UNROLL factor=4
-            local_cosine[i] = hls::cosf(position_idx[0] * local_base[i]);
-            local_sine[i] = hls::sinf(position_idx[0] * local_base[i]);
+            local_cosine[i] = hls::cosf(position_idx * local_base[i]);
+            local_sine[i] = hls::sinf(position_idx * local_base[i]);
         }
 
         rotary_embed_loop:

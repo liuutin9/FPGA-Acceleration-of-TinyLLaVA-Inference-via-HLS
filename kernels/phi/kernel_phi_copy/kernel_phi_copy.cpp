@@ -32,7 +32,7 @@ inline void storeOutput(fixed32_14 out[HIDDEN_SIZE], fixed32_14 local_out[HIDDEN
 }
 
 extern "C" {
-    void kernel_phi_add_residual(
+    void kernel_phi_copy(
         fixed32_14 out[HIDDEN_SIZE],
         fixed32_14 in[HIDDEN_SIZE]
     ) {

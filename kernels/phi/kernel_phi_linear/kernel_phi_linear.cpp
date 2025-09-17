@@ -9,7 +9,7 @@ typedef ap_fixed<32,14> fixed32_14;
 typedef ap_uint<16> uint16;
 
 fixed32_14 uint16ToFixed32_14(uint16 in) {
-    hls::half h;
+    half h;
     *((uint16*)&h) = in;
     float f = (float)h;
     return fixed32_14(f);
@@ -32,16 +32,6 @@ inline void load_in(fixed32_14 in[HIDDEN_SIZE], fixed32_14 local_in[HIDDEN_SIZE]
     for (int i = 0; i < HIDDEN_SIZE; i++) {
         #pragma HLS PIPELINE II=1
     	local_in[i] = in[i];
-    }
-}
-
-void compute(fixed32_14 local_w[BLOCK_SIZE / 2 * HIDDEN_SIZE], fixed32_14 weight[HIDDEN_SIZE * HIDDEN_SIZE], int block) {
-    for (int i = 0; i < BLOCK_SIZE; i++) {
-        for (int j = 0; j < HIDDEN_SIZE; j++) {
-            #pragma HLS PIPELINE II=1
-            #pragma HLS UNROLL factor=4
-            local_w[i * HIDDEN_SIZE + j] = weight[(block * BLOCK_SIZE + i) * HIDDEN_SIZE + j];
-        }
     }
 }
 
@@ -87,7 +77,7 @@ extern "C" {
         uint16* weight_1,
         uint16* weight_2,
         uint16* bias_1,
-        uint16* bias_2,
+        uint16* bias_2
     ) {
         #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256

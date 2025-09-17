@@ -10,13 +10,13 @@ typedef ap_fixed<32,14> fixed32_14;
 
 extern "C" {
     void kernel_phi_attention(
-        fixed32_14 out_attention[NUM_ATTENTION_HEADS * HEAD_DIM],
+        fixed32_14 out_attention[NUM_KEY_VALUE_HEADS * HEAD_DIM],
         fixed32_14 in_q[NUM_KEY_VALUE_HEADS * HEAD_DIM],
         fixed32_14 in_k_1[800 * NUM_KEY_VALUE_HEADS * HEAD_DIM],
         fixed32_14 in_v_1[800 * NUM_KEY_VALUE_HEADS * HEAD_DIM],
         fixed32_14 in_k_2[32 * NUM_KEY_VALUE_HEADS * HEAD_DIM],
         fixed32_14 in_v_2[32 * NUM_KEY_VALUE_HEADS * HEAD_DIM],
-        int* position_idx
+        int position_idx
     ) {
 
         #pragma HLS INTERFACE m_axi port=out_attention offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
@@ -41,7 +41,7 @@ extern "C" {
         fixed32_14 local_k_per_head[SLEN * HEAD_DIM];
         fixed32_14 local_v_per_head[SLEN * HEAD_DIM];
         fixed32_14 qkt[SLEN];
-        int curr_len = position_idx[0] + 1;
+        int curr_len = position_idx + 1;
 
         #pragma HLS bind_storage variable=local_out_attention type=RAM_T2P impl=bram
         #pragma HLS bind_storage variable=local_q_per_head type=RAM_T2P impl=bram
@@ -49,7 +49,7 @@ extern "C" {
         #pragma HLS bind_storage variable=local_v_per_head type=RAM_T2P impl=uram
         #pragma HLS bind_storage variable=qkt type=RAM_T2P impl=bram
 
-        float scaling = 0.1118033989f; // 1 / sqrt(HEAD_DIM)
+        fixed32_14 scaling = fixed32_14(0.1118033989f); // 1 / sqrt(HEAD_DIM)
 
         head_loop:
         for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
