@@ -15,7 +15,7 @@ inline void loadToLocal(fixed32_14 local[HIDDEN_SIZE], fixed32_14 global[HIDDEN_
     }
 }
 
-void initLocal(
+inline void initLocal(
     fixed32_14 local_in[HIDDEN_SIZE],
     fixed32_14 in[HIDDEN_SIZE]
 ) {

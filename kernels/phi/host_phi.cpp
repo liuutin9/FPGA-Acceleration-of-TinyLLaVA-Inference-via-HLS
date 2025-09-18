@@ -120,12 +120,29 @@ int binaryToUint16(uint16* out, const vector<char>& binary) {
 	return 0;
 }
 
+int binaryToFixed32_14(fixed32_14* out, const vector<char>& binary) {
+	for (int i = 0; i < binary.size() / 2; i++) {
+		half_float::half h;
+		memcpy(&h, &(binary.data()[i * 2]), sizeof(uint16));
+		out[i] = fixed32_14(float(h));
+	}
+	return 0;
+}
+
 int loadData_uint16(uint16* out, int len_offset, int length, const char *filename) {
 	vector<char> binary;
 	if (readBinaryFile(filename, binary, len_offset * 2, length * 2) != 0) {
 		return -1;
 	}
 	return binaryToUint16(out, binary);
+}
+
+int loadData_fixed32_14(fixed32_14* out, int len_offset, int length, const char *filename) {
+	vector<char> binary;
+	if (readBinaryFile(filename, binary, len_offset * 2, length * 2) != 0) {
+		return -1;
+	}
+	return binaryToFixed32_14(out, binary);
 }
 
 int wordEmbed(fixed32_14* out, uint16* in) {
@@ -685,7 +702,7 @@ int main(int argc, char* argv[])
 	uint16 *PHI_MLP_FC1_WEIGHT[PHI_NUM_DECODER_LAYERS][8], *PHI_MLP_FC1_BIAS[PHI_NUM_DECODER_LAYERS][8];
 	uint16 *PHI_MLP_FC2_WEIGHT[PHI_NUM_DECODER_LAYERS][8], *PHI_MLP_FC2_BIAS[PHI_NUM_DECODER_LAYERS][8];
 	uint16 *PHI_LAST_LAYERNORM_WEIGHT, *PHI_LAST_LAYERNORM_BIAS;
-	uint16 *PHI_LM_HEAD_WEIGHT, *PHI_LM_HEAD_BIAS;
+	fixed32_14 *PHI_LM_HEAD_WEIGHT, *PHI_LM_HEAD_BIAS;
 	uint16 *PHI_EMBED_TOKENS_WEIGHT;
 
 	#ifdef ALL_MESSAGES
@@ -959,23 +976,23 @@ int main(int argc, char* argv[])
 	cout << "HOST_Info: Memory allocated for PHI_LAST_LAYERNORM_BIAS!" << endl;
 
 	cout << "HOST-Info: Allocating memory for PHI_LM_HEAD_WEIGHT ... ";
-	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE * sizeof(uint16))) {
+	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE * sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LM_HEAD_WEIGHT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	PHI_LM_HEAD_WEIGHT = reinterpret_cast<uint16*>(ptr);
+	PHI_LM_HEAD_WEIGHT = reinterpret_cast<fixed32_14*>(ptr);
 	weight_path = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_lm_head_weight.bin";
-	loadData_uint16(PHI_LM_HEAD_WEIGHT, 0, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE, weight_path.c_str());
+	loadData_fixed32_14(PHI_LM_HEAD_WEIGHT, 0, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LM_HEAD_WEIGHT!" << endl;
 
 	cout << "HOST-Info: Allocating memory for PHI_LM_HEAD_BIAS ... ";
-	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * sizeof(uint16))) {
+	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LM_HEAD_BIAS array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	PHI_LM_HEAD_BIAS = reinterpret_cast<uint16*>(ptr);
+	PHI_LM_HEAD_BIAS = reinterpret_cast<fixed32_14*>(ptr);
 	weight_path = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_lm_head_bias.bin";
-	loadData_uint16(PHI_LM_HEAD_BIAS, 0, PHI_VOCAB_SIZE, weight_path.c_str());
+	loadData_fixed32_14(PHI_LM_HEAD_BIAS, 0, PHI_VOCAB_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LM_HEAD_BIAS!" << endl;
 
 	cout << "HOST-Info: Allocating memory for PHI_EMBED_TOKENS_WEIGHT ... ";
@@ -1304,19 +1321,21 @@ int main(int argc, char* argv[])
 		OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 3, sizeof(cl_mem), &buffer_phi_last_layernorm_bias));
 		OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, 0, NULL, NULL));
 		OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
+		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_in, CL_MIGRATE_MEM_OBJECT_HOST, 0, NULL, NULL));
+		OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
 
 		if (i < input_length - 1) continue; // Only need to count key and value for the input tokens
 
 		// lm and argmax
-		fixed32_14 maxval = 0;
+		fixed32_14 maxval = PHI_LM_HEAD_BIAS[0];
 		int max_index = 0;
 		for (int j = 0; j < PHI_HIDDEN_SIZE; j++) {
-			maxval += PHI_IN[j] * PHI_LM_HEAD_WEIGHT[j] + PHI_LM_HEAD_BIAS[0];
+			maxval += PHI_IN[j] * PHI_LM_HEAD_WEIGHT[j];
 		}
 		for (int j = 1; j < PHI_VOCAB_SIZE; j++) {
-			fixed32_14 val = 0;
+			fixed32_14 val = PHI_LM_HEAD_BIAS[j];
 			for (int k = 0; k < PHI_HIDDEN_SIZE; k++) {
-				val += PHI_IN[k] * PHI_LM_HEAD_WEIGHT[j * PHI_HIDDEN_SIZE + k] + PHI_LM_HEAD_BIAS[j];
+				val += PHI_IN[k] * PHI_LM_HEAD_WEIGHT[j * PHI_HIDDEN_SIZE + k];
 			}
 			if (val > maxval) {
 				maxval = val;
@@ -1324,6 +1343,8 @@ int main(int argc, char* argv[])
 			}
 		}
 		cout << "Generated token ID: " << max_index << endl;
+		cout << "Generated token: " << tokenizer->IdToToken(max_index) << endl;
+		cout << tokenizer->Decode(output_tokens) << endl;
 		tokenized_input.push_back(max_index);
 		output_tokens.push_back(max_index);
 	}

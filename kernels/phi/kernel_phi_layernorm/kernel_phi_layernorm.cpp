@@ -19,14 +19,14 @@ inline fixed32_14 uint16ToFixed32_14(uint16 in) {
     return fixed32_14(f);
 }
 
-void loadToLocal(fixed32_14* local, fixed32_14* global) {
+inline void loadToLocal(fixed32_14* local, fixed32_14* global) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
         #pragma HLS PIPELINE II=1
     	local[i] = global[i];
     }
 }
 
-void loadUint16ToLocal(fixed32_14* local, uint16* global) {
+inline void loadUint16ToLocal(fixed32_14* local, uint16* global) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
         #pragma HLS PIPELINE II=1
     	local[i] = uint16ToFixed32_14(global[i]);

@@ -15,7 +15,7 @@ inline fixed32_14 uint16ToFixed32_14(uint16 in) {
     return fixed32_14(f);
 }
 
-void load_bias(fixed32_14* out, uint16* bias) {
+inline void load_bias(fixed32_14* out, uint16* bias) {
     for (int i = 0; i < HIDDEN_SIZE / 2; i++) {
         #pragma HLS PIPELINE II=1
     	out[i] = uint16ToFixed32_14(bias[i]);
@@ -35,7 +35,7 @@ inline void load_in(fixed32_14 in[HIDDEN_SIZE], fixed32_14 local_in[HIDDEN_SIZE]
     }
 }
 
-void load_w(fixed32_14 local_w[HIDDEN_SIZE], uint16 weight[HIDDEN_SIZE]) {
+inline void load_w(fixed32_14 local_w[HIDDEN_SIZE], uint16 weight[HIDDEN_SIZE]) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
         #pragma HLS PIPELINE II=1
         local_w[i] = uint16ToFixed32_14(weight[i]);
@@ -48,7 +48,7 @@ inline void load_weight(fixed32_14 local_w_1[HIDDEN_SIZE], fixed32_14 local_w_2[
     load_w(local_w_2, weight_2);
 }
 
-void multiply_accumulate(fixed32_14* local_out, fixed32_14 local_in[HIDDEN_SIZE], fixed32_14 local_w[HIDDEN_SIZE]) {
+inline void multiply_accumulate(fixed32_14* local_out, fixed32_14 local_in[HIDDEN_SIZE], fixed32_14 local_w[HIDDEN_SIZE]) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
         #pragma HLS PIPELINE II=1
         #pragma HLS UNROLL factor=2

@@ -20,7 +20,7 @@ inline fixed32_14 uint16ToFixed32_14(uint16 in) {
     return fixed32_14(f);
 }
 
-void load_fc1_bias(fixed32_14* out, uint16* bias) {
+inline void load_fc1_bias(fixed32_14* out, uint16* bias) {
     for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
         #pragma HLS PIPELINE II=1
     	out[i] = uint16ToFixed32_14(bias[i]);
@@ -49,7 +49,7 @@ inline void init_fc1_out(
     load_fc1_bias(&out[7 * INTERMEDIATE_SIZE / 8], bias_7);
 }
 
-void load_fc2_bias(fixed32_14* out, uint16* bias) {
+inline void load_fc2_bias(fixed32_14* out, uint16* bias) {
     for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
         #pragma HLS PIPELINE II=1
     	out[i] = uint16ToFixed32_14(bias[i]);
@@ -113,7 +113,7 @@ inline void compute_fc2(fixed32_14* out, fixed32_14 in[INTERMEDIATE_SIZE], fixed
     }
 }
 
-float new_gelu(float x) {
+inline float new_gelu(float x) {
     const float sqrt_2_over_pi = 0.7978845608f; // √(2/π)
     float x3 = x * x * x;
     float inner = sqrt_2_over_pi * (x + 0.044715f * x3);
@@ -121,7 +121,7 @@ float new_gelu(float x) {
     return 0.5f * x * (1.0f + tanh_inner);
 }
 
-void compute_gelu(fixed32_14 out[INTERMEDIATE_SIZE], fixed32_14 in[INTERMEDIATE_SIZE]) {
+inline void compute_gelu(fixed32_14 out[INTERMEDIATE_SIZE], fixed32_14 in[INTERMEDIATE_SIZE]) {
     for (int i = 0; i < INTERMEDIATE_SIZE; i++) {
         #pragma HLS PIPELINE II=1
         out[i] = fixed32_14(new_gelu((float)in[i]));
