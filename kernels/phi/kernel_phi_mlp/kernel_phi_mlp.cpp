@@ -13,7 +13,7 @@
 typedef ap_fixed<32,14> fixed32_14;
 typedef ap_uint<16> uint16;
 
-fixed32_14 uint16ToFixed32_14(uint16 in) {
+inline fixed32_14 uint16ToFixed32_14(uint16 in) {
     half h;
     *((uint16*)&h) = in;
     float f = (float)h;

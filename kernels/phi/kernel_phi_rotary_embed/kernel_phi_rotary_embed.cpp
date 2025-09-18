@@ -12,20 +12,23 @@ typedef ap_fixed<32,14> fixed32_14;
 extern "C" {
     void kernel_phi_rotary_embed(
         fixed32_14 out_q[HIDDEN_SIZE],
-        fixed32_14 out_k[HIDDEN_SIZE],
+        fixed32_14 out_k_cache_1[800 * HIDDEN_SIZE],
+        fixed32_14 out_k_cache_2[32 * HIDDEN_SIZE],
         fixed32_14 in_q[HIDDEN_SIZE],
         fixed32_14 in_k[HIDDEN_SIZE],
         int position_idx
     ) {
 
         #pragma HLS INTERFACE m_axi port=out_q offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=out_k offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_q offset=slave bundle=gmem2 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_k offset=slave bundle=gmem3 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=position_idx offset=slave bundle=gmem4 depth=1 max_read_burst_length=1
+        #pragma HLS INTERFACE m_axi port=out_k_cache_1 offset=slave bundle=gmem1 depth=2048000 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=out_k_cache_2 offset=slave bundle=gmem2 depth=81920 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_q offset=slave bundle=gmem3 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_k offset=slave bundle=gmem4 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=position_idx offset=slave bundle=gmem5 depth=1 max_read_burst_length=1
 
         #pragma HLS INTERFACE s_axilite port=out_q bundle=control
-        #pragma HLS INTERFACE s_axilite port=out_k bundle=control
+        #pragma HLS INTERFACE s_axilite port=out_k_cache_1 bundle=control
+        #pragma HLS INTERFACE s_axilite port=out_k_cache_2 bundle=control
         #pragma HLS INTERFACE s_axilite port=in_q bundle=control
         #pragma HLS INTERFACE s_axilite port=in_k bundle=control
         #pragma HLS INTERFACE s_axilite port=position_idx bundle=control
@@ -93,11 +96,16 @@ extern "C" {
 
 
         load_out:
+        int idx = position_idx < 800 ? position_idx : position_idx - 800;
         for (int i = 0; i < HIDDEN_SIZE; i++) {
             #pragma HLS PIPELINE II=1
             #pragma HLS UNROLL factor=4
             out_q[i] = local_out_q[i];
-            out_k[i] = local_out_k[i];
+            if (position_idx < 800) {
+                out_k_cache_1[idx * HIDDEN_SIZE + i] = local_out_k[i];
+            } else {
+                out_k_cache_2[idx * HIDDEN_SIZE + i] = local_out_k[i];
+            }
         }
     }
 }

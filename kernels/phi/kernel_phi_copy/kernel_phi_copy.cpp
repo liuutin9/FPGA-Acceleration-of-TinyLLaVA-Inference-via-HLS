@@ -32,7 +32,109 @@ inline void storeOutput(fixed32_14 out[HIDDEN_SIZE], fixed32_14 local_out[HIDDEN
 }
 
 extern "C" {
-    void kernel_phi_copy(
+    void kernel_phi_copy_q(
+        fixed32_14 out[HIDDEN_SIZE],
+        fixed32_14 in[HIDDEN_SIZE]
+    ) {
+
+        #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
+
+        #pragma HLS INTERFACE s_axilite port=out bundle=control
+        #pragma HLS INTERFACE s_axilite port=in bundle=control
+        #pragma HLS INTERFACE s_axilite port=return bundle=control
+
+        fixed32_14 local_out[HIDDEN_SIZE];
+        fixed32_14 local_in[HIDDEN_SIZE];
+
+        #pragma HLS BIND_STORAGE variable=local_out type=RAM_1P impl=BRAM
+        #pragma HLS BIND_STORAGE variable=local_in type=RAM_1P impl=BRAM
+
+        #pragma HLS ARRAY_PARTITION variable=local_out cyclic factor=8 dim=1
+        #pragma HLS ARRAY_PARTITION variable=local_in cyclic factor=8 dim=1
+
+        initLocal(local_in, in);
+
+        for (int i = 0; i < HIDDEN_SIZE; i++) {
+            #pragma HLS PIPELINE II=1
+            #pragma HLS UNROLL factor=8
+            local_out[i] = local_in[i];
+        }
+
+        storeOutput(out, local_out);
+    }
+}
+
+extern "C" {
+    void kernel_phi_copy_k(
+        fixed32_14 out[HIDDEN_SIZE],
+        fixed32_14 in[HIDDEN_SIZE]
+    ) {
+
+        #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
+
+        #pragma HLS INTERFACE s_axilite port=out bundle=control
+        #pragma HLS INTERFACE s_axilite port=in bundle=control
+        #pragma HLS INTERFACE s_axilite port=return bundle=control
+
+        fixed32_14 local_out[HIDDEN_SIZE];
+        fixed32_14 local_in[HIDDEN_SIZE];
+
+        #pragma HLS BIND_STORAGE variable=local_out type=RAM_1P impl=BRAM
+        #pragma HLS BIND_STORAGE variable=local_in type=RAM_1P impl=BRAM
+
+        #pragma HLS ARRAY_PARTITION variable=local_out cyclic factor=8 dim=1
+        #pragma HLS ARRAY_PARTITION variable=local_in cyclic factor=8 dim=1
+
+        initLocal(local_in, in);
+
+        for (int i = 0; i < HIDDEN_SIZE; i++) {
+            #pragma HLS PIPELINE II=1
+            #pragma HLS UNROLL factor=8
+            local_out[i] = local_in[i];
+        }
+
+        storeOutput(out, local_out);
+    }
+}
+
+extern "C" {
+    void kernel_phi_copy_v(
+        fixed32_14 out[HIDDEN_SIZE],
+        fixed32_14 in[HIDDEN_SIZE]
+    ) {
+
+        #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
+
+        #pragma HLS INTERFACE s_axilite port=out bundle=control
+        #pragma HLS INTERFACE s_axilite port=in bundle=control
+        #pragma HLS INTERFACE s_axilite port=return bundle=control
+
+        fixed32_14 local_out[HIDDEN_SIZE];
+        fixed32_14 local_in[HIDDEN_SIZE];
+
+        #pragma HLS BIND_STORAGE variable=local_out type=RAM_1P impl=BRAM
+        #pragma HLS BIND_STORAGE variable=local_in type=RAM_1P impl=BRAM
+
+        #pragma HLS ARRAY_PARTITION variable=local_out cyclic factor=8 dim=1
+        #pragma HLS ARRAY_PARTITION variable=local_in cyclic factor=8 dim=1
+
+        initLocal(local_in, in);
+
+        for (int i = 0; i < HIDDEN_SIZE; i++) {
+            #pragma HLS PIPELINE II=1
+            #pragma HLS UNROLL factor=8
+            local_out[i] = local_in[i];
+        }
+
+        storeOutput(out, local_out);
+    }
+}
+
+extern "C" {
+    void kernel_phi_copy_residual(
         fixed32_14 out[HIDDEN_SIZE],
         fixed32_14 in[HIDDEN_SIZE]
     ) {
