@@ -1428,7 +1428,7 @@ int main(int argc, char* argv[])
 	clReleaseMemObject(buffer_phi_v_proj_in);
 	clReleaseMemObject(buffer_phi_q_embed_in);
 	clReleaseMemObject(buffer_phi_k_embed_in);
-	clReleaseMemObject(buffer_phi_v_q);
+	clReleaseMemObject(buffer_phi_q);
 	clReleaseMemObject(buffer_phi_attention_out);
 	clReleaseMemObject(buffer_phi_dense_out);
 	clReleaseMemObject(buffer_phi_mlp_out);
