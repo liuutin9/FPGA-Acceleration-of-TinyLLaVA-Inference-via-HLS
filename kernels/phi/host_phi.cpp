@@ -678,9 +678,9 @@ int main(int argc, char* argv[])
 	OCL_CHECK(errCode, kernel_phi_attention = clCreateKernel(Program, "kernel_phi_attention", &errCode));
 	OCL_CHECK(errCode, kernel_phi_mlp = clCreateKernel(Program, "kernel_phi_mlp", &errCode));
 	OCL_CHECK(errCode, kernel_phi_add_residual = clCreateKernel(Program, "kernel_phi_add_residual", &errCode));
-	OCL_CHECK(errCode, kernel_phi_copy_q = clCreateKernel(Program, "kernel_phi_copy_q", &errCode));
-	OCL_CHECK(errCode, kernel_phi_copy_k = clCreateKernel(Program, "kernel_phi_copy_k", &errCode));
-	OCL_CHECK(errCode, kernel_phi_copy_v = clCreateKernel(Program, "kernel_phi_copy_v", &errCode));
+	// OCL_CHECK(errCode, kernel_phi_copy_q = clCreateKernel(Program, "kernel_phi_copy_q", &errCode));
+	// OCL_CHECK(errCode, kernel_phi_copy_k = clCreateKernel(Program, "kernel_phi_copy_k", &errCode));
+	// OCL_CHECK(errCode, kernel_phi_copy_v = clCreateKernel(Program, "kernel_phi_copy_v", &errCode));
 	OCL_CHECK(errCode, kernel_phi_copy_residual = clCreateKernel(Program, "kernel_phi_copy_residual", &errCode));
 
 	// TODO
@@ -1123,24 +1123,24 @@ int main(int argc, char* argv[])
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 0, sizeof(cl_mem), &buffer_phi_mlp_in));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 1, sizeof(cl_mem), &buffer_phi_layernorm_in));
 
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_q, 0, sizeof(cl_mem), &buffer_phi_q_proj_in));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_q, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
+	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_q, 0, sizeof(cl_mem), &buffer_phi_q_proj_in));
+	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_q, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
 
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_k, 0, sizeof(cl_mem), &buffer_phi_k_proj_in));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_k, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
+	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_k, 0, sizeof(cl_mem), &buffer_phi_k_proj_in));
+	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_k, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
 
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_v, 0, sizeof(cl_mem), &buffer_phi_v_proj_in));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_v, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
+	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_v, 0, sizeof(cl_mem), &buffer_phi_v_proj_in));
+	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_v, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
 
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 0, sizeof(cl_mem), &buffer_phi_q_embed_in));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 1, sizeof(cl_mem), &buffer_phi_q_proj_in));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
 
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_k_proj, 0, sizeof(cl_mem), &buffer_phi_k_embed_in));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_k_proj, 1, sizeof(cl_mem), &buffer_phi_k_proj_in));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_k_proj, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
 
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 0, sizeof(cl_mem), &buffer_phi_v_cache[0]));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 1, sizeof(cl_mem), &buffer_phi_v_cache[1]));
-	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 2, sizeof(cl_mem), &buffer_phi_v_proj_in));
+	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 2, sizeof(cl_mem), &buffer_phi_mlp_in));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 7, sizeof(int), &position_id));
 
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_rotary_embed, 0, sizeof(cl_mem), &buffer_phi_q));
@@ -1208,7 +1208,7 @@ int main(int argc, char* argv[])
 	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_in, CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED, 0, NULL, NULL));
 
 	// Wait for pre-load to finish
-	OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
+	OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
 
 	cout << "HOST_Info: Pre-load completed!" << endl;
 
@@ -1248,26 +1248,27 @@ int main(int argc, char* argv[])
 		}
 		wordEmbed(PHI_IN, &PHI_EMBED_TOKENS_WEIGHT[tokenized_input[i] * PHI_HIDDEN_SIZE]);
 		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_layernorm_in, 0, 0, NULL, NULL));
-		OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
+		// OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
+		OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
 		position_id = i;
 		for (int j = 0; j < PHI_NUM_DECODER_LAYERS; j++) {
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 2, sizeof(cl_mem), &buffer_phi_pre_layernorm_weight[j]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 3, sizeof(cl_mem), &buffer_phi_pre_layernorm_bias[j]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 2, sizeof(cl_mem), &buffer_phi_q_proj_weight[j][0]));
-			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 3, sizeof(cl_mem), &buffer_phi_q_proj_weight[j][0]));
-			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 4, sizeof(cl_mem), &buffer_phi_q_proj_bias[j][1]));
+			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 3, sizeof(cl_mem), &buffer_phi_q_proj_weight[j][1]));
+			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 4, sizeof(cl_mem), &buffer_phi_q_proj_bias[j][0]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 5, sizeof(cl_mem), &buffer_phi_q_proj_bias[j][1]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_k_proj, 2, sizeof(cl_mem), &buffer_phi_k_proj_weight[j][0]));
-			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_k_proj, 3, sizeof(cl_mem), &buffer_phi_k_proj_weight[j][0]));
-			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_k_proj, 4, sizeof(cl_mem), &buffer_phi_k_proj_bias[j][1]));
+			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_k_proj, 3, sizeof(cl_mem), &buffer_phi_k_proj_weight[j][1]));
+			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_k_proj, 4, sizeof(cl_mem), &buffer_phi_k_proj_bias[j][0]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_k_proj, 5, sizeof(cl_mem), &buffer_phi_k_proj_bias[j][1]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 3, sizeof(cl_mem), &buffer_phi_v_proj_weight[j][0]));
-			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 4, sizeof(cl_mem), &buffer_phi_v_proj_weight[j][0]));
-			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 5, sizeof(cl_mem), &buffer_phi_v_proj_bias[j][1]));
+			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 4, sizeof(cl_mem), &buffer_phi_v_proj_weight[j][1]));
+			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 5, sizeof(cl_mem), &buffer_phi_v_proj_bias[j][0]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_v_proj, 6, sizeof(cl_mem), &buffer_phi_v_proj_bias[j][1]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_dense, 2, sizeof(cl_mem), &buffer_phi_dense_weight[j][0]));
-			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_dense, 3, sizeof(cl_mem), &buffer_phi_dense_weight[j][0]));
-			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_dense, 4, sizeof(cl_mem), &buffer_phi_dense_bias[j][1]));
+			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_dense, 3, sizeof(cl_mem), &buffer_phi_dense_weight[j][1]));
+			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_dense, 4, sizeof(cl_mem), &buffer_phi_dense_bias[j][0]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_dense, 5, sizeof(cl_mem), &buffer_phi_dense_bias[j][1]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp, 2, sizeof(cl_mem), &buffer_phi_mlp_fc1_weight[j][0]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp, 3, sizeof(cl_mem), &buffer_phi_mlp_fc1_weight[j][1]));
@@ -1304,18 +1305,17 @@ int main(int argc, char* argv[])
 
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_copy_residual, 0, NULL, &event[i][0]));
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, 1, &event[i][0], &event[i][1]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_copy_q, 1, &event[i][1], &event[i][2]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_copy_k, 1, &event[i][1], &event[i][3]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_copy_v, 1, &event[i][1], &event[i][4]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_q_proj, 1, &event[i][2], &event[i][5]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_k_proj, 1, &event[i][3], &event[i][6]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_v_proj, 1, &event[i][4], &event[i][7]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_q_proj, 1, &event[i][1], &event[i][5]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_k_proj, 1, &event[i][1], &event[i][6]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_v_proj, 1, &event[i][1], &event[i][7]));
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_rotary_embed, 2, &event[i][5], &event[i][8]));
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_attention, 2, &event[i][7], &event[i][9]));
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_dense, 1, &event[i][9], &event[i][10]));
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_mlp, 1, &event[i][1], &event[i][11]));
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_add_residual, 1, &event[i][11], &event[i][12]));
-			OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
+			// OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
+			OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
+			cout << "Layer " << j << " done." << endl;
 		}
 		OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 2, sizeof(cl_mem), &buffer_phi_last_layernorm_weight));
 		OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 3, sizeof(cl_mem), &buffer_phi_last_layernorm_bias));
@@ -1323,6 +1323,12 @@ int main(int argc, char* argv[])
 		OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
 		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_in, CL_MIGRATE_MEM_OBJECT_HOST, 0, NULL, NULL));
 		OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
+
+		for (int j = 0; j < 32; j++) {
+			for (int k = 0; k < 13; k++) {
+				clReleaseEvent(event[j][k]);
+			}
+		}
 
 		if (i < input_length - 1) continue; // Only need to count key and value for the input tokens
 
@@ -1430,12 +1436,6 @@ int main(int argc, char* argv[])
 	// Step 8: Release Allocated Resources
 	// ============================================================================
 	clReleaseDevice(Target_Device_ID); // Only available in OpenCL >= 1.2
-
-	for (int i = 0; i < 32; i++) {
-		for (int j = 0; j < 13; j++) {
-			clReleaseEvent(event[i][j]);
-		}
-	}
 
 	// clReleaseMemObject(buffer_phi_linear_out);
 	// clReleaseMemObject(buffer_phi_linear_in);

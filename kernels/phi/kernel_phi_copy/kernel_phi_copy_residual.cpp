@@ -19,7 +19,6 @@ inline void initLocal(
     fixed32_14 local_in[HIDDEN_SIZE],
     fixed32_14 in[HIDDEN_SIZE]
 ) {
-    #pragma HLS DATAFLOW
     loadToLocal(local_in, in);
 }
 

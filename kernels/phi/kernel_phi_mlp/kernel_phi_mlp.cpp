@@ -38,7 +38,6 @@ inline void init_fc1_out(
     uint16 bias_6[INTERMEDIATE_SIZE / 8],
     uint16 bias_7[INTERMEDIATE_SIZE / 8]
 ) {
-    #pragma HLS DATAFLOW
     load_fc1_bias(&out[0 * INTERMEDIATE_SIZE / 8], bias_0);
     load_fc1_bias(&out[1 * INTERMEDIATE_SIZE / 8], bias_1);
     load_fc1_bias(&out[2 * INTERMEDIATE_SIZE / 8], bias_2);
@@ -67,7 +66,6 @@ inline void init_fc2_out(
     uint16 bias_6[HIDDEN_SIZE / 8],
     uint16 bias_7[HIDDEN_SIZE / 8]
 ) {
-    #pragma HLS DATAFLOW
     load_fc2_bias(&out[0 * HIDDEN_SIZE / 8], bias_0);
     load_fc2_bias(&out[1 * HIDDEN_SIZE / 8], bias_1);
     load_fc2_bias(&out[2 * HIDDEN_SIZE / 8], bias_2);

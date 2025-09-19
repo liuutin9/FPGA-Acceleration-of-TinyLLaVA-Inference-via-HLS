@@ -23,7 +23,6 @@ inline void load_bias(fixed32_14* out, uint16* bias) {
 }
 
 inline void init_out(fixed32_14 out[HIDDEN_SIZE], uint16 bias_1[HIDDEN_SIZE / 2], uint16 bias_2[HIDDEN_SIZE / 2]) {
-    #pragma HLS DATAFLOW
     load_bias(out, bias_1);
     load_bias(&out[HIDDEN_SIZE / 2], bias_2);
 }
@@ -43,7 +42,6 @@ inline void load_w(fixed32_14 local_w[HIDDEN_SIZE], uint16 weight[HIDDEN_SIZE]) 
 }
 
 inline void load_weight(fixed32_14 local_w_1[HIDDEN_SIZE], fixed32_14 local_w_2[HIDDEN_SIZE], uint16 weight_1[HIDDEN_SIZE], uint16 weight_2[HIDDEN_SIZE]) {
-    #pragma HLS DATAFLOW
     load_w(local_w_1, weight_1);
     load_w(local_w_2, weight_2);
 }
@@ -57,7 +55,6 @@ inline void multiply_accumulate(fixed32_14* local_out, fixed32_14 local_in[HIDDE
 }
 
 inline void compute(fixed32_14* local_out_1, fixed32_14* local_out_2, fixed32_14 local_in[HIDDEN_SIZE], fixed32_14 local_w_1[HIDDEN_SIZE], fixed32_14 local_w_2[HIDDEN_SIZE]) {
-    #pragma HLS DATAFLOW
     multiply_accumulate(local_out_1, local_in, local_w_1);
     multiply_accumulate(local_out_2, local_in, local_w_2);
 }

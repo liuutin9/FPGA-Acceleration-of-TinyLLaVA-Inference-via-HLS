@@ -41,7 +41,6 @@ inline void initLocal(
     uint16 bias[HIDDEN_SIZE],
     uint16 weight[HIDDEN_SIZE]
 ) {
-    #pragma HLS DATAFLOW
     loadToLocal(local_in, in);
     loadUint16ToLocal(local_out, bias);
     loadUint16ToLocal(local_weight, weight);

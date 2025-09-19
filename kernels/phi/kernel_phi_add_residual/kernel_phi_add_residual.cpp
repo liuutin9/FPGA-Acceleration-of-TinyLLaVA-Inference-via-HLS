@@ -22,7 +22,6 @@ void initLocal(
     fixed32_14 after_attention[HIDDEN_SIZE],
     fixed32_14 after_mlp[HIDDEN_SIZE]
 ) {
-    #pragma HLS DATAFLOW
     loadToLocal(local_before_layernorm, before_layernorm);
     loadToLocal(local_after_attention, after_attention);
     loadToLocal(local_after_mlp, after_mlp);

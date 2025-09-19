@@ -94,7 +94,7 @@ extern "C" {
                 max_qkt = hls::max(max_qkt, qkt[j]);
             }
             float sum_exp = 0.0f;
-            float exp_qkt[curr_len];
+            float exp_qkt[SLEN];
             for (int j = 0; j < curr_len; j++) {
                 exp_qkt[j] = hls::exp(qkt[j] - max_qkt);
                 sum_exp += exp_qkt[j];
