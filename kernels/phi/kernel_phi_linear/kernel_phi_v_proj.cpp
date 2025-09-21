@@ -6,23 +6,15 @@
 #define HIDDEN_SIZE 2560
 
 typedef ap_fixed<32,14> fixed32_14;
-typedef ap_uint<16> uint16;
 
-inline fixed32_14 uint16ToFixed32_14(uint16 in) {
-    half h;
-    *((uint16*)&h) = in;
-    float f = (float)h;
-    return fixed32_14(f);
-}
-
-inline void load_bias(fixed32_14* out, uint16* bias) {
+inline void load_bias(fixed32_14* out, half* bias) {
     for (int i = 0; i < HIDDEN_SIZE / 2; i++) {
         #pragma HLS PIPELINE II=1
-    	out[i] = uint16ToFixed32_14(bias[i]);
+    	out[i] = fixed32_14(bias[i]);
     }
 }
 
-inline void init_out(fixed32_14 out[HIDDEN_SIZE], uint16 bias_1[HIDDEN_SIZE / 2], uint16 bias_2[HIDDEN_SIZE / 2]) {
+inline void init_out(fixed32_14 out[HIDDEN_SIZE], half bias_1[HIDDEN_SIZE / 2], half bias_2[HIDDEN_SIZE / 2]) {
     load_bias(out, bias_1);
     load_bias(&out[HIDDEN_SIZE / 2], bias_2);
 }
@@ -34,14 +26,14 @@ inline void load_in(fixed32_14 in[HIDDEN_SIZE], fixed32_14 local_in[HIDDEN_SIZE]
     }
 }
 
-inline void load_w(fixed32_14 local_w[HIDDEN_SIZE], uint16 weight[HIDDEN_SIZE]) {
+inline void load_w(fixed32_14 local_w[HIDDEN_SIZE], half weight[HIDDEN_SIZE]) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
         #pragma HLS PIPELINE II=1
-        local_w[i] = uint16ToFixed32_14(weight[i]);
+        local_w[i] = fixed32_14(weight[i]);
     }
 }
 
-inline void load_weight(fixed32_14 local_w_1[HIDDEN_SIZE], fixed32_14 local_w_2[HIDDEN_SIZE], uint16 weight_1[HIDDEN_SIZE], uint16 weight_2[HIDDEN_SIZE]) {
+inline void load_weight(fixed32_14 local_w_1[HIDDEN_SIZE], fixed32_14 local_w_2[HIDDEN_SIZE], half weight_1[HIDDEN_SIZE], half weight_2[HIDDEN_SIZE]) {
     load_w(local_w_1, weight_1);
     load_w(local_w_2, weight_2);
 }
@@ -64,20 +56,19 @@ extern "C" {
         fixed32_14* out_v_cache_1,
         fixed32_14* out_v_cache_2,
         fixed32_14* in,
-        uint16* weight_1,
-        uint16* weight_2,
-        uint16* bias_1,
-        uint16* bias_2,
+        half* weight_1,
+        half* weight_2,
+        half* bias_1,
+        half* bias_2,
         int position_idx
     ) {
         #pragma HLS INTERFACE m_axi port=out_v_cache_1 offset=slave bundle=gmem0 depth=2048000 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=out_v_cache_2 offset=slave bundle=gmem1 depth=81920 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem2 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=weight_1 offset=slave bundle=gmem3 depth=3276800 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=weight_2 offset=slave bundle=gmem4 depth=3276800 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=bias_1 offset=slave bundle=gmem5 depth=1280 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=bias_2 offset=slave bundle=gmem6 depth=1280 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=position_idx offset=slave bundle=gmem7 depth=1 max_read_burst_length=1
+        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_1 offset=slave bundle=gmem2 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_2 offset=slave bundle=gmem3 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_1 offset=slave bundle=gmem2 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_2 offset=slave bundle=gmem3 depth=1280 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out_v_cache_1 bundle=control
         #pragma HLS INTERFACE s_axilite port=out_v_cache_2 bundle=control
@@ -96,10 +87,10 @@ extern "C" {
         fixed32_14 local_w_2[HIDDEN_SIZE];
         fixed32_14 local_out[HIDDEN_SIZE];
 
-		#pragma HLS bind_storage variable=local_in type=RAM_T2P impl=bram
+		#pragma HLS bind_storage variable=local_in type=RAM_T2P impl=uram
 		#pragma HLS bind_storage variable=local_w_1 type=RAM_T2P impl=uram
 		#pragma HLS bind_storage variable=local_w_2 type=RAM_T2P impl=uram
-		#pragma HLS bind_storage variable=local_out type=RAM_T2P impl=bram
+		#pragma HLS bind_storage variable=local_out type=RAM_T2P impl=uram
 
         // 初始化 output = bias
         init_out(local_out, bias_1, bias_2);

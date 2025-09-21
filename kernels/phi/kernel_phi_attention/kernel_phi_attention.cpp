@@ -20,12 +20,11 @@ extern "C" {
     ) {
 
         #pragma HLS INTERFACE m_axi port=out_attention offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_q offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_k_1 offset=slave bundle=gmem2 depth=204800 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_v_1 offset=slave bundle=gmem3 depth=204800 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_k_2 offset=slave bundle=gmem4 depth=81920 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_v_2 offset=slave bundle=gmem5 depth=81920 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=position_idx offset=slave bundle=gmem6 depth=1 max_read_burst_length=1
+        #pragma HLS INTERFACE m_axi port=in_q offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_k_1 offset=slave bundle=gmem1 depth=204800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_v_1 offset=slave bundle=gmem2 depth=204800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_k_2 offset=slave bundle=gmem1 depth=81920 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_v_2 offset=slave bundle=gmem2 depth=81920 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out_attention bundle=control
         #pragma HLS INTERFACE s_axilite port=in_q bundle=control
@@ -43,11 +42,11 @@ extern "C" {
         fixed32_14 qkt[SLEN];
         int curr_len = position_idx + 1;
 
-        #pragma HLS bind_storage variable=local_out_attention type=RAM_T2P impl=bram
-        #pragma HLS bind_storage variable=local_q_per_head type=RAM_T2P impl=bram
+        #pragma HLS bind_storage variable=local_out_attention type=RAM_T2P impl=uram
+        #pragma HLS bind_storage variable=local_q_per_head type=RAM_T2P impl=uram
         #pragma HLS bind_storage variable=local_k_per_head type=RAM_T2P impl=uram
         #pragma HLS bind_storage variable=local_v_per_head type=RAM_T2P impl=uram
-        #pragma HLS bind_storage variable=qkt type=RAM_T2P impl=bram
+        #pragma HLS bind_storage variable=qkt type=RAM_T2P impl=uram
 
         fixed32_14 scaling = fixed32_14(0.1118033989f); // 1 / sqrt(HEAD_DIM)
 

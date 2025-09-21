@@ -37,7 +37,7 @@ extern "C" {
     ) {
 
         #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out bundle=control
         #pragma HLS INTERFACE s_axilite port=in bundle=control
@@ -46,8 +46,8 @@ extern "C" {
         fixed32_14 local_out[HIDDEN_SIZE];
         fixed32_14 local_in[HIDDEN_SIZE];
 
-        #pragma HLS BIND_STORAGE variable=local_out type=RAM_1P impl=BRAM
-        #pragma HLS BIND_STORAGE variable=local_in type=RAM_1P impl=BRAM
+        #pragma HLS BIND_STORAGE variable=local_out type=RAM_1P impl=uram
+        #pragma HLS BIND_STORAGE variable=local_in type=RAM_1P impl=uram
 
         #pragma HLS ARRAY_PARTITION variable=local_out cyclic factor=8 dim=1
         #pragma HLS ARRAY_PARTITION variable=local_in cyclic factor=8 dim=1

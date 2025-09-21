@@ -702,7 +702,7 @@ int main(int argc, char* argv[])
 	uint16 *PHI_MLP_FC1_WEIGHT[PHI_NUM_DECODER_LAYERS][8], *PHI_MLP_FC1_BIAS[PHI_NUM_DECODER_LAYERS][8];
 	uint16 *PHI_MLP_FC2_WEIGHT[PHI_NUM_DECODER_LAYERS][8], *PHI_MLP_FC2_BIAS[PHI_NUM_DECODER_LAYERS][8];
 	uint16 *PHI_LAST_LAYERNORM_WEIGHT, *PHI_LAST_LAYERNORM_BIAS;
-	fixed32_14 *PHI_LM_HEAD_WEIGHT, *PHI_LM_HEAD_BIAS;
+	half_float::half *PHI_LM_HEAD_WEIGHT, *PHI_LM_HEAD_BIAS;
 	uint16 *PHI_EMBED_TOKENS_WEIGHT;
 
 	#ifdef ALL_MESSAGES
@@ -721,7 +721,7 @@ int main(int argc, char* argv[])
 
 	void *ptr=nullptr;
 
-	cout << "HOST-Info: Allocating memory for PHI_IN ... ";
+	cout << "HOST-Info: Allocating memory for PHI_IN ... " << endl;
 	if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_IN array" << endl << endl;
 		return EXIT_FAILURE;
@@ -729,7 +729,7 @@ int main(int argc, char* argv[])
 	PHI_IN = reinterpret_cast<fixed32_14*>(ptr);
 	cout << "HOST_Info: Memory allocated for PHI_IN!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_OUT ... ";
+	cout << "HOST-Info: Allocating memory for PHI_OUT ... " << endl;
 	if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(fixed32_14))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_OUT array" << endl << endl;
 		return EXIT_FAILURE;
@@ -748,10 +748,15 @@ int main(int argc, char* argv[])
 		weight_path_post = "_input_layernorm_weight.bin";
 		weight_path = weight_path_pre + to_string(i) + weight_path_post;
 		loadData_uint16(PHI_PRE_LAYERNORM_WEIGHT[i], 0, PHI_HIDDEN_SIZE, weight_path.c_str());
+		cout << "HOST-Info: The first 10 values:";
+		for (int j = 0; j < 10; j++) {
+			cout << ' ' << *((half_float::half*)(&PHI_PRE_LAYERNORM_WEIGHT[i][j]));
+		}
+		cout << endl;
 	}
 	cout << "HOST_Info: Memory allocated for PHI_PRE_LAYERNORM_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_PRE_LAYERNORM_BIAS ... ";
+	cout << "HOST-Info: Allocating memory for PHI_PRE_LAYERNORM_BIAS ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
 			cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_PRE_LAYERNORM_BIAS[" << i << "] array" << endl << endl;
@@ -763,7 +768,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_PRE_LAYERNORM_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_Q_PROJ_WEIGHT ... ";
+	cout << "HOST-Info: Allocating memory for PHI_Q_PROJ_WEIGHT ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
@@ -779,7 +784,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_Q_PROJ_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_Q_PROJ_BIAS ... ";
+	cout << "HOST-Info: Allocating memory for PHI_Q_PROJ_BIAS ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
@@ -795,7 +800,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_Q_PROJ_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_K_PROJ_WEIGHT ... ";
+	cout << "HOST-Info: Allocating memory for PHI_K_PROJ_WEIGHT ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
@@ -811,7 +816,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_K_PROJ_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_K_PROJ_BIAS ... ";
+	cout << "HOST-Info: Allocating memory for PHI_K_PROJ_BIAS ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
@@ -827,7 +832,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_K_PROJ_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_V_PROJ_WEIGHT ... ";
+	cout << "HOST-Info: Allocating memory for PHI_V_PROJ_WEIGHT ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
@@ -843,7 +848,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_V_PROJ_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_V_PROJ_BIAS ... ";
+	cout << "HOST-Info: Allocating memory for PHI_V_PROJ_BIAS ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE / 2 * sizeof(uint16))) {
@@ -859,7 +864,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_V_PROJ_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_DENSE_WEIGHT ... ";
+	cout << "HOST-Info: Allocating memory for PHI_DENSE_WEIGHT ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE * sizeof(uint16))) {
@@ -875,7 +880,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_DENSE_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_DENSE_BIAS ... ";
+	cout << "HOST-Info: Allocating memory for PHI_DENSE_BIAS ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 2; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
@@ -891,7 +896,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_DENSE_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_MLP_FC1_WEIGHT ... ";
+	cout << "HOST-Info: Allocating memory for PHI_MLP_FC1_WEIGHT ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * PHI_INTERMEDIATE_SIZE / 8 * sizeof(uint16))) {
@@ -907,7 +912,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_MLP_FC1_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_MLP_FC1_BIAS ... ";
+	cout << "HOST-Info: Allocating memory for PHI_MLP_FC1_BIAS ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_INTERMEDIATE_SIZE / 8 * sizeof(uint16))) {
@@ -923,7 +928,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_MLP_FC1_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_MLP_FC2_WEIGHT ... ";
+	cout << "HOST-Info: Allocating memory for PHI_MLP_FC2_WEIGHT ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_INTERMEDIATE_SIZE / 8 * PHI_HIDDEN_SIZE * sizeof(uint16))) {
@@ -939,7 +944,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_MLP_FC2_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_MLP_FC2_BIAS ... ";
+	cout << "HOST-Info: Allocating memory for PHI_MLP_FC2_BIAS ... " << endl;
 	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
@@ -955,7 +960,7 @@ int main(int argc, char* argv[])
 	}
 	cout << "HOST_Info: Memory allocated for PHI_MLP_FC2_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_LAST_LAYERNORM_WEIGHT ... ";
+	cout << "HOST-Info: Allocating memory for PHI_LAST_LAYERNORM_WEIGHT ... " << endl;
 	if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LAST_LAYERNORM_WEIGHT array" << endl << endl;
 		return EXIT_FAILURE;
@@ -965,7 +970,7 @@ int main(int argc, char* argv[])
 	loadData_uint16(PHI_LAST_LAYERNORM_WEIGHT, 0, PHI_HIDDEN_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LAST_LAYERNORM_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_LAST_LAYERNORM_BIAS ... ";
+	cout << "HOST-Info: Allocating memory for PHI_LAST_LAYERNORM_BIAS ... " << endl;
 	if (posix_memalign(&ptr, 4096, PHI_HIDDEN_SIZE * sizeof(uint16))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LAST_LAYERNORM_BIAS array" << endl << endl;
 		return EXIT_FAILURE;
@@ -975,27 +980,27 @@ int main(int argc, char* argv[])
 	loadData_uint16(PHI_LAST_LAYERNORM_BIAS, 0, PHI_HIDDEN_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LAST_LAYERNORM_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_LM_HEAD_WEIGHT ... ";
-	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE * sizeof(fixed32_14))) {
+	cout << "HOST-Info: Allocating memory for PHI_LM_HEAD_WEIGHT ... " << endl;
+	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE * sizeof(half_float::half))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LM_HEAD_WEIGHT array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	PHI_LM_HEAD_WEIGHT = reinterpret_cast<fixed32_14*>(ptr);
+	PHI_LM_HEAD_WEIGHT = reinterpret_cast<half_float::half*>(ptr);
 	weight_path = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_lm_head_weight.bin";
-	loadData_fixed32_14(PHI_LM_HEAD_WEIGHT, 0, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE, weight_path.c_str());
+	loadData_uint16(reinterpret_cast<uint16*>(PHI_LM_HEAD_WEIGHT), 0, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LM_HEAD_WEIGHT!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_LM_HEAD_BIAS ... ";
-	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * sizeof(fixed32_14))) {
+	cout << "HOST-Info: Allocating memory for PHI_LM_HEAD_BIAS ... " << endl;
+	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * sizeof(half_float::half))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_LM_HEAD_BIAS array" << endl << endl;
 		return EXIT_FAILURE;
 	}
-	PHI_LM_HEAD_BIAS = reinterpret_cast<fixed32_14*>(ptr);
+	PHI_LM_HEAD_BIAS = reinterpret_cast<half_float::half*>(ptr);
 	weight_path = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_lm_head_bias.bin";
-	loadData_fixed32_14(PHI_LM_HEAD_BIAS, 0, PHI_VOCAB_SIZE, weight_path.c_str());
+	loadData_uint16(reinterpret_cast<uint16*>(PHI_LM_HEAD_BIAS), 0, PHI_VOCAB_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LM_HEAD_BIAS!" << endl;
 
-	cout << "HOST-Info: Allocating memory for PHI_EMBED_TOKENS_WEIGHT ... ";
+	cout << "HOST-Info: Allocating memory for PHI_EMBED_TOKENS_WEIGHT ... " << endl;
 	if (posix_memalign(&ptr, 4096, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE * sizeof(uint16))) {
 		cout << endl << "HOST-Error: Out of Memory during memory allocation for PHI_EMBED_TOKENS_WEIGHT array" << endl << endl;
 		return EXIT_FAILURE;
@@ -1036,6 +1041,12 @@ int main(int argc, char* argv[])
 
 	fixed32_14 fixed32_14_value;
 	int position_id;
+
+	cout << "HOST-Info: The first 10 values:";
+	for (int j = 0; j < 10; j++) {
+		cout << ' ' << *((half_float::half*)(&PHI_PRE_LAYERNORM_WEIGHT[0][j]));
+	}
+	cout << endl;
 
 	// OCL_CHECK(errCode, buffer_phi_input = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(uint16), PHI_IN, &errCode));
 	// OCL_CHECK(errCode, buffer_phi_output = clCreateBuffer(Context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, PHI_HIDDEN_SIZE * sizeof(fixed32_14), PHI_OUT, &errCode));
@@ -1123,15 +1134,6 @@ int main(int argc, char* argv[])
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 0, sizeof(cl_mem), &buffer_phi_mlp_in));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 1, sizeof(cl_mem), &buffer_phi_layernorm_in));
 
-	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_q, 0, sizeof(cl_mem), &buffer_phi_q_proj_in));
-	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_q, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
-
-	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_k, 0, sizeof(cl_mem), &buffer_phi_k_proj_in));
-	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_k, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
-
-	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_v, 0, sizeof(cl_mem), &buffer_phi_v_proj_in));
-	// OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_copy_v, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
-
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 0, sizeof(cl_mem), &buffer_phi_q_embed_in));
 	OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 1, sizeof(cl_mem), &buffer_phi_mlp_in));
 
@@ -1183,28 +1185,31 @@ int main(int argc, char* argv[])
 	#ifdef ALL_MESSAGES
 	cout << "HOST_Info: Pre-loading weights to FPGA..." << endl;
 	#endif
-	clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_last_layernorm_weight, 0, 0, NULL, NULL);
-	clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_last_layernorm_bias, 0, 0, NULL, NULL);
-	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
-		clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_pre_layernorm_weight[i], 0, 0, NULL, NULL);
-		clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_pre_layernorm_bias[i], 0, 0, NULL, NULL);
-		for (int j = 0; j < 2; j++) {
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_q_proj_weight[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_q_proj_bias[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_k_proj_weight[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_k_proj_bias[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_v_proj_weight[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_v_proj_bias[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_dense_weight[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_dense_bias[i][j], 0, 0, NULL, NULL);
-		}
-		for (int j = 0; j < 8; j++) {
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc1_weight[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc1_bias[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc2_weight[i][j], 0, 0, NULL, NULL);
-			clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc2_bias[i][j], 0, 0, NULL, NULL);
-		}
-	}
+
+	cl_event tmp_event;
+
+//	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_last_layernorm_weight, 0, 0, NULL, &tmp_event));
+//	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_last_layernorm_bias, 0, 0, NULL, NULL));
+//	for (int i = 0; i < PHI_NUM_DECODER_LAYERS; i++) {
+//		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_pre_layernorm_weight[i], 0, 0, NULL, NULL));
+//		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_pre_layernorm_bias[i], 0, 0, NULL, NULL));
+//		for (int j = 0; j < 2; j++) {
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_q_proj_weight[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_q_proj_bias[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_k_proj_weight[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_k_proj_bias[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_v_proj_weight[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_v_proj_bias[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_dense_weight[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_dense_bias[i][j], 0, 0, NULL, NULL));
+//		}
+//		for (int j = 0; j < 8; j++) {
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc1_weight[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc1_bias[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc2_weight[i][j], 0, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc2_bias[i][j], 0, 0, NULL, NULL));
+//		}
+//	}
 	OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_in, CL_MIGRATE_MEM_OBJECT_CONTENT_UNDEFINED, 0, NULL, NULL));
 
 	// Wait for pre-load to finish
@@ -1252,6 +1257,9 @@ int main(int argc, char* argv[])
 		OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
 		position_id = i;
 		for (int j = 0; j < PHI_NUM_DECODER_LAYERS; j++) {
+//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_layernorm_in, 0, 0, NULL, NULL));
+			// OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
+//			OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 2, sizeof(cl_mem), &buffer_phi_pre_layernorm_weight[j]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 3, sizeof(cl_mem), &buffer_phi_pre_layernorm_bias[j]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 2, sizeof(cl_mem), &buffer_phi_q_proj_weight[j][0]));
@@ -1303,6 +1311,26 @@ int main(int argc, char* argv[])
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp,	32, sizeof(cl_mem), &buffer_phi_mlp_fc2_bias[j][6]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_mlp,	33, sizeof(cl_mem), &buffer_phi_mlp_fc2_bias[j][7]));
 
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_pre_layernorm_weight[j], 0, 0, NULL, NULL));
+			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_pre_layernorm_bias[j], 0, 0, NULL, NULL));
+			for (int k = 0; k < 2; k++) {
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_q_proj_weight[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_q_proj_bias[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_k_proj_weight[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_k_proj_bias[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_v_proj_weight[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_v_proj_bias[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_dense_weight[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_dense_bias[j][k], 0, 0, NULL, NULL));
+			}
+			for (int k = 0; k < 8; k++) {
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc1_weight[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc1_bias[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc2_weight[j][k], 0, 0, NULL, NULL));
+				OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_fc2_bias[j][k], 0, 0, NULL, NULL));
+			}
+			OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
+
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_copy_residual, 0, NULL, &event[i][0]));
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, 1, &event[i][0], &event[i][1]));
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_q_proj, 1, &event[i][1], &event[i][5]));
@@ -1315,10 +1343,12 @@ int main(int argc, char* argv[])
 			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_add_residual, 1, &event[i][11], &event[i][12]));
 			// OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
 			OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
-			cout << "Layer " << j << " done." << endl;
 		}
 		OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 2, sizeof(cl_mem), &buffer_phi_last_layernorm_weight));
 		OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 3, sizeof(cl_mem), &buffer_phi_last_layernorm_bias));
+		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_last_layernorm_weight, 0, 0, NULL, &tmp_event));
+		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_last_layernorm_bias, 0, 0, NULL, NULL));
+		OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
 		OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, 0, NULL, NULL));
 		OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
 		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_in, CL_MIGRATE_MEM_OBJECT_HOST, 0, NULL, NULL));
@@ -1333,15 +1363,15 @@ int main(int argc, char* argv[])
 		if (i < input_length - 1) continue; // Only need to count key and value for the input tokens
 
 		// lm and argmax
-		fixed32_14 maxval = PHI_LM_HEAD_BIAS[0];
+		half_float::half maxval = PHI_LM_HEAD_BIAS[0];
 		int max_index = 0;
 		for (int j = 0; j < PHI_HIDDEN_SIZE; j++) {
-			maxval += PHI_IN[j] * PHI_LM_HEAD_WEIGHT[j];
+			maxval += half_float::half(PHI_OUT[j]) * PHI_LM_HEAD_WEIGHT[j];
 		}
 		for (int j = 1; j < PHI_VOCAB_SIZE; j++) {
-			fixed32_14 val = PHI_LM_HEAD_BIAS[j];
+			half_float::half val = PHI_LM_HEAD_BIAS[j];
 			for (int k = 0; k < PHI_HIDDEN_SIZE; k++) {
-				val += PHI_IN[k] * PHI_LM_HEAD_WEIGHT[j * PHI_HIDDEN_SIZE + k];
+				val += half_float::half(PHI_OUT[k]) * PHI_LM_HEAD_WEIGHT[j * PHI_HIDDEN_SIZE + k];
 			}
 			if (val > maxval) {
 				maxval = val;

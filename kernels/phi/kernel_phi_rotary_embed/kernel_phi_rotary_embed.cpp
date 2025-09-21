@@ -21,10 +21,9 @@ extern "C" {
 
         #pragma HLS INTERFACE m_axi port=out_q offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=out_k_cache_1 offset=slave bundle=gmem1 depth=2048000 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=out_k_cache_2 offset=slave bundle=gmem2 depth=81920 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_q offset=slave bundle=gmem3 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_k offset=slave bundle=gmem4 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=position_idx offset=slave bundle=gmem5 depth=1 max_read_burst_length=1
+        #pragma HLS INTERFACE m_axi port=out_k_cache_2 offset=slave bundle=gmem1 depth=81920 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_q offset=slave bundle=gmem2 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_k offset=slave bundle=gmem2 depth=2560 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out_q bundle=control
         #pragma HLS INTERFACE s_axilite port=out_k_cache_1 bundle=control
@@ -42,26 +41,17 @@ extern "C" {
         fixed32_14 local_cosine[HALF_ROTARY_DIM];
         fixed32_14 local_sine[HALF_ROTARY_DIM];
 
-        #pragma HLS bind_storage variable=local_out_q type=RAM_T2P impl=bram
-        #pragma HLS bind_storage variable=local_out_k type=RAM_T2P impl=bram
-        #pragma HLS bind_storage variable=local_in_q type=RAM_T2P impl=bram
-        #pragma HLS bind_storage variable=local_in_k type=RAM_T2P impl=bram
-        #pragma HLS bind_storage variable=local_base type=RAM_T2P impl=bram
-		#pragma HLS bind_storage variable=local_cosine type=RAM_T2P impl=bram
-		#pragma HLS bind_storage variable=local_sine type=RAM_T2P impl=bram
-
-        #pragma HLS ARRAY_PARTITION variable=local_out_q cyclic factor=4 dim=1
-        #pragma HLS ARRAY_PARTITION variable=local_out_k cyclic factor=4 dim=1
-        #pragma HLS ARRAY_PARTITION variable=local_in_q cyclic factor=4 dim=1
-        #pragma HLS ARRAY_PARTITION variable=local_in_k cyclic factor=4 dim=1
-        #pragma HLS ARRAY_PARTITION variable=local_base cyclic factor=4 dim=1
-        #pragma HLS ARRAY_PARTITION variable=local_cosine cyclic factor=4 dim=1
-        #pragma HLS ARRAY_PARTITION variable=local_sine cyclic factor=4 dim=1
+        #pragma HLS bind_storage variable=local_out_q type=RAM_T2P impl=uram
+        #pragma HLS bind_storage variable=local_out_k type=RAM_T2P impl=uram
+        #pragma HLS bind_storage variable=local_in_q type=RAM_T2P impl=uram
+        #pragma HLS bind_storage variable=local_in_k type=RAM_T2P impl=uram
+        #pragma HLS bind_storage variable=local_base type=RAM_T2P impl=uram
+		#pragma HLS bind_storage variable=local_cosine type=RAM_T2P impl=uram
+		#pragma HLS bind_storage variable=local_sine type=RAM_T2P impl=uram
 
         load_in:
         for (int i = 0; i < HIDDEN_SIZE; i++) {
-            #pragma HLS PIPELINE II=1
-            #pragma HLS UNROLL factor=4
+            #pragma HLS UNROLL factor=2
             local_in_q[i] = in_q[i];
             local_in_k[i] = in_k[i];
         }
@@ -69,7 +59,7 @@ extern "C" {
         load_cosine_sine:
         for (int i = 0; i < HALF_ROTARY_DIM; i++) {
             #pragma HLS PIPELINE II=1
-            #pragma HLS UNROLL factor=4
+            #pragma HLS UNROLL factor=2
             local_cosine[i] = hls::cosf(position_idx * local_base[i]);
             local_sine[i] = hls::sinf(position_idx * local_base[i]);
         }
@@ -77,8 +67,7 @@ extern "C" {
         rotary_embed_loop:
         for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
             for (int j = 0; j < HALF_ROTARY_DIM; j++) {
-                #pragma HLS PIPELINE II=1
-                #pragma HLS UNROLL factor=4
+                #pragma HLS UNROLL factor=2
                 int idx1 = i * ROTARY_DIM + j;
                 int idx2 = idx1 + HALF_ROTARY_DIM;
 
@@ -99,7 +88,7 @@ extern "C" {
         int idx = position_idx < 800 ? position_idx : position_idx - 800;
         for (int i = 0; i < HIDDEN_SIZE; i++) {
             #pragma HLS PIPELINE II=1
-            #pragma HLS UNROLL factor=4
+            #pragma HLS UNROLL factor=2
             out_q[i] = local_out_q[i];
             if (position_idx < 800) {
                 out_k_cache_1[idx * HIDDEN_SIZE + i] = local_out_k[i];
