@@ -25,6 +25,7 @@
 typedef ap_fixed<32,14> fixed32_14;
 typedef ap_fixed<24,10> fixed24_10;
 typedef ap_fixed<16,10> fixed16_10;
+typedef ap_fixed<40,22> fixed40_22;
 typedef ap_uint<16>  uint16;
 
 using namespace std;
@@ -145,11 +146,9 @@ int loadData_fixed32_14(fixed32_14* out, int len_offset, int length, const char 
 	return binaryToFixed32_14(out, binary);
 }
 
-int wordEmbed(fixed32_14* out, uint16* in) {
-	half_float::half h;
+void wordEmbed(fixed32_14* out, uint16* in) {
 	for (int i = 0; i < PHI_HIDDEN_SIZE; i++) {
-		memcpy(&h, &in[i], sizeof(uint16));
-		out[i] = float(h);
+		out[i] = fixed32_14(float(*(half_float::half*)(&in[i])));
 	}
 }
 
@@ -693,7 +692,8 @@ int main(int argc, char* argv[])
 	//   o) Allocate Memory to store the results: RES array
 	//   o) Create Buffers in Global Memory to store data
 	// ================================================================
-	fixed32_14 *PHI_OUT, *PHI_IN;
+	fixed32_14 *PHI_OUT;
+	fixed32_14 *PHI_IN;
 	uint16 *PHI_PRE_LAYERNORM_WEIGHT[PHI_NUM_DECODER_LAYERS], *PHI_PRE_LAYERNORM_BIAS[PHI_NUM_DECODER_LAYERS];
 	uint16 *PHI_Q_PROJ_WEIGHT[PHI_NUM_DECODER_LAYERS][2], *PHI_Q_PROJ_BIAS[PHI_NUM_DECODER_LAYERS][2];
 	uint16 *PHI_K_PROJ_WEIGHT[PHI_NUM_DECODER_LAYERS][2], *PHI_K_PROJ_BIAS[PHI_NUM_DECODER_LAYERS][2];
@@ -1245,21 +1245,21 @@ int main(int argc, char* argv[])
 
 	int input_length = tokenized_input.size();
 
-	cl_event event[32][13];
-
 	for (int i = 0; i < PHI_SLEN; i++) {
+		cl_event event[32][10];
 		if (tokenized_input[i] == PHI_EOS_TOKEN_ID) {
 			break;
 		}
 		wordEmbed(PHI_IN, &PHI_EMBED_TOKENS_WEIGHT[tokenized_input[i] * PHI_HIDDEN_SIZE]);
+		cout << "HOST-Info: Word is Embeded!" << endl;
 		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_layernorm_in, 0, 0, NULL, NULL));
-		// OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
 		OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
+		for (int j = 0; j < 10 ;j++) cout << float(PHI_IN[j]) << ' ';
+		cout << endl;
+		cout << "HOST-Info: Token " << i << " is loaded!" << endl;
 		position_id = i;
+		cout << "HOST-Info: Input length: " << input_length << ", Token: " << i << endl;
 		for (int j = 0; j < PHI_NUM_DECODER_LAYERS; j++) {
-//			OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_layernorm_in, 0, 0, NULL, NULL));
-			// OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
-//			OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 2, sizeof(cl_mem), &buffer_phi_pre_layernorm_weight[j]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 3, sizeof(cl_mem), &buffer_phi_pre_layernorm_bias[j]));
 			OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_q_proj, 2, sizeof(cl_mem), &buffer_phi_q_proj_weight[j][0]));
@@ -1331,19 +1331,20 @@ int main(int argc, char* argv[])
 			}
 			OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
 
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_copy_residual, 0, NULL, &event[i][0]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, 1, &event[i][0], &event[i][1]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_q_proj, 1, &event[i][1], &event[i][5]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_k_proj, 1, &event[i][1], &event[i][6]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_v_proj, 1, &event[i][1], &event[i][7]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_rotary_embed, 2, &event[i][5], &event[i][8]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_attention, 2, &event[i][7], &event[i][9]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_dense, 1, &event[i][9], &event[i][10]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_mlp, 1, &event[i][1], &event[i][11]));
-			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_add_residual, 1, &event[i][11], &event[i][12]));
-			// OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_copy_residual, 0, NULL, &event[j][0]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_layernorm, 1, &event[j][0], &event[j][1]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_q_proj, 1, &event[j][1], &event[j][2]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_k_proj, 1, &event[j][1], &event[j][3]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_v_proj, 1, &event[j][1], &event[j][4]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_rotary_embed, 2, &event[j][2], &event[j][5]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_attention, 2, &event[j][4], &event[j][6]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_dense, 1, &event[j][6], &event[j][7]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_mlp, 1, &event[j][1], &event[j][8]));
+			OCL_CHECK(errCode, errCode = clEnqueueTask(Command_Queue, kernel_phi_add_residual, 1, &event[j][8], &event[j][9]));
+			OCL_CHECK(errCode, errCode = clEnqueueBarrierWithWaitList(Command_Queue, 0, NULL, NULL));
 			OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
 		}
+		cout << endl;
 		OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 2, sizeof(cl_mem), &buffer_phi_last_layernorm_weight));
 		OCL_CHECK(errCode, errCode = clSetKernelArg(kernel_phi_layernorm, 3, sizeof(cl_mem), &buffer_phi_last_layernorm_bias));
 		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_last_layernorm_weight, 0, 0, NULL, &tmp_event));
@@ -1354,11 +1355,13 @@ int main(int argc, char* argv[])
 		OCL_CHECK(errCode, errCode = clEnqueueMigrateMemObjects(Command_Queue, 1, &buffer_phi_mlp_in, CL_MIGRATE_MEM_OBJECT_HOST, 0, NULL, NULL));
 		OCL_CHECK(errCode, errCode = clFinish(Command_Queue));
 
+		cout << "HOST-Info: Release events..." << endl;
 		for (int j = 0; j < 32; j++) {
-			for (int k = 0; k < 13; k++) {
+			for (int k = 0; k < 10; k++) {
 				clReleaseEvent(event[j][k]);
 			}
 		}
+		cout << "HOST-Info: All events are released!" << endl;
 
 		if (i < input_length - 1) continue; // Only need to count key and value for the input tokens
 
@@ -1379,10 +1382,10 @@ int main(int argc, char* argv[])
 			}
 		}
 		cout << "Generated token ID: " << max_index << endl;
-		cout << "Generated token: " << tokenizer->IdToToken(max_index) << endl;
-		cout << tokenizer->Decode(output_tokens) << endl;
 		tokenized_input.push_back(max_index);
 		output_tokens.push_back(max_index);
+		cout << "HOST-Info: Input: " << tokenizer->Decode(tokenized_input) << endl;
+		cout << "HOST-Info: Output: " << tokenizer->Decode(output_tokens) << endl;
 	}
 	cout << "HOST-Info: Finish generation!" << endl;
 

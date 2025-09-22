@@ -14,7 +14,7 @@ typedef ap_fixed<32,14> fixed32_14;
 
 inline void load_fc1_bias(fixed32_14* out, half* bias) {
     for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
-        #pragma HLS PIPELINE II=1
+        // #pragma HLS PIPELINE II=1
     	out[i] = fixed32_14(bias[i]);
     }
 }
@@ -42,7 +42,7 @@ inline void init_fc1_out(
 
 void load_fc2_bias(fixed32_14* out, half* bias) {
     for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
-        #pragma HLS PIPELINE II=1
+        // #pragma HLS PIPELINE II=1
     	out[i] = fixed32_14(bias[i]);
     }
 }
@@ -70,7 +70,7 @@ inline void init_fc2_out(
 
 inline void load_weight(fixed32_14* out, half* weight, int len) {
 	for (int i = 0; i < len; i++) {
-		#pragma HLS PIPELINE II=1
+		// #pragma HLS PIPELINE II=1
 		out[i] = fixed32_14(weight[i]);
 	}
 }
@@ -91,14 +91,14 @@ inline void load_weight(fixed32_14* out, half* weight, int len) {
 
 inline void loadToLocal(fixed32_14 local[HIDDEN_SIZE], fixed32_14 global[HIDDEN_SIZE]) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
-        #pragma HLS PIPELINE II=1
+        // #pragma HLS PIPELINE II=1
     	local[i] = global[i];
     }
 }
 
 inline void compute(fixed32_14* out, fixed32_14* in, fixed32_14* weight, int len) {
     for (int i = 0; i < len; i++) {
-        #pragma HLS PIPELINE II=1
+        // #pragma HLS PIPELINE II=1
         *out += in[i] * weight[i];
     }
 }
@@ -125,16 +125,16 @@ float new_gelu(float x) {
     return 0.5f * x * (1.0f + tanh_inner);
 }
 
-void compute_gelu(fixed32_14* out, fixed32_14* in, int len) {
-    for (int i = 0; i < len; i++) {
-        #pragma HLS PIPELINE II=1
+void compute_gelu(fixed32_14 out[INTERMEDIATE_SIZE], fixed32_14 in[INTERMEDIATE_SIZE]) {
+    for (int i = 0; i < INTERMEDIATE_SIZE; i++) {
+        // #pragma HLS PIPELINE II=1
         out[i] = fixed32_14(new_gelu((float)in[i]));
     }
 }
 
 inline void storeOutput(fixed32_14 out[HIDDEN_SIZE], fixed32_14 local_out[HIDDEN_SIZE]) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
-        #pragma HLS PIPELINE II=1
+        // #pragma HLS PIPELINE II=1
     	out[i] = local_out[i];
     }
 }
@@ -248,11 +248,11 @@ extern "C" {
         #pragma HLS INTERFACE s_axilite port=return bundle=control
 
         // 壓縮並存放到 local buffer
-        fixed32_14 local_linear_1_out[INTERMEDIATE_SIZE / 8];
+        fixed32_14 local_linear_1_out[INTERMEDIATE_SIZE];
         fixed32_14 local_linear_1_in[HIDDEN_SIZE];
         fixed32_14 local_linear_2_out[HIDDEN_SIZE];
-        fixed32_14 local_linear_2_in[INTERMEDIATE_SIZE / 8];
-        fixed32_14 local_weight_1[HIDDEN_SIZE * INTERMEDIATE_SIZE / 8];
+        fixed32_14 local_linear_2_in[INTERMEDIATE_SIZE];
+        fixed32_14 local_weight_1[HIDDEN_SIZE];
         fixed32_14 local_weight_2[INTERMEDIATE_SIZE];
 
 		#pragma HLS bind_storage variable=local_linear_1_in type=RAM_T2P impl=uram
@@ -261,16 +261,6 @@ extern "C" {
 		#pragma HLS bind_storage variable=local_linear_2_out type=RAM_T2P impl=uram
         #pragma HLS bind_storage variable=local_weight_1 type=RAM_T2P impl=uram
         #pragma HLS bind_storage variable=local_weight_2 type=RAM_T2P impl=uram
-
-        // loadToLocal(local_linear_1_in, in);
-
-        // load_weight(local_linear_1_out, bias_fc1_0, INTERMEDIATE_SIZE / 8);
-        // load_weight(local_weight_1, weight_fc1_0, HIDDEN_SIZE * INTERMEDIATE_SIZE / 8);
-        // for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
-        //     compute(&local_linear_1_out[i], local_linear_1_in, &local_weight_1[i * HIDDEN_SIZE], HIDDEN_SIZE);
-        //     local_linear_2_in[i] = fixed32_14(new_gelu((float)local_linear_1_out[i]));
-        // }
-        // load_weight(&local_linear_2_out[0], bias_fc2_0, HIDDEN_SIZE / 8);
 
         init_fc1_out(
             local_linear_1_out,
