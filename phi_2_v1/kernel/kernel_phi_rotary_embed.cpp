@@ -68,7 +68,7 @@ extern "C" {
         for (int i = 0; i < NUM_KEY_VALUE_HEADS; i++) {
             for (int j = 0; j < HALF_ROTARY_DIM; j++) {
                 #pragma HLS UNROLL factor=2
-                int idx1 = i * ROTARY_DIM + j;
+                int idx1 = i * HEAD_DIM + j;
                 int idx2 = idx1 + HALF_ROTARY_DIM;
 
                 fixed32_14 r1 = local_in_q[idx2];

@@ -63,12 +63,12 @@ extern "C" {
         int position_idx
     ) {
         #pragma HLS INTERFACE m_axi port=out_v_cache_1 offset=slave bundle=gmem0 depth=2048000 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=out_v_cache_2 offset=slave bundle=gmem1 depth=81920 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=weight_1 offset=slave bundle=gmem2 depth=3276800 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=weight_2 offset=slave bundle=gmem3 depth=3276800 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=bias_1 offset=slave bundle=gmem2 depth=1280 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=bias_2 offset=slave bundle=gmem3 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=out_v_cache_2 offset=slave bundle=gmem0 depth=81920 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_1 offset=slave bundle=gmem0 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight_2 offset=slave bundle=gmem1 depth=3276800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_1 offset=slave bundle=gmem0 depth=1280 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias_2 offset=slave bundle=gmem1 depth=1280 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out_v_cache_1 bundle=control
         #pragma HLS INTERFACE s_axilite port=out_v_cache_2 bundle=control

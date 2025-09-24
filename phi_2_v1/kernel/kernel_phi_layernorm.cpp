@@ -48,9 +48,9 @@ extern "C" {
     ) {
 
         #pragma HLS INTERFACE m_axi port=out offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=weight offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=bias offset=slave bundle=gmem1 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=weight offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=bias offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out bundle=control
         #pragma HLS INTERFACE s_axilite port=in bundle=control

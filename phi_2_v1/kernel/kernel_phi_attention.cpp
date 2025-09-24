@@ -21,10 +21,10 @@ extern "C" {
 
         #pragma HLS INTERFACE m_axi port=out_attention offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=in_q offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_k_1 offset=slave bundle=gmem1 depth=204800 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_v_1 offset=slave bundle=gmem2 depth=204800 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_k_2 offset=slave bundle=gmem1 depth=81920 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_v_2 offset=slave bundle=gmem2 depth=81920 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_k_1 offset=slave bundle=gmem0 depth=204800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_v_1 offset=slave bundle=gmem1 depth=204800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_k_2 offset=slave bundle=gmem0 depth=81920 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_v_2 offset=slave bundle=gmem1 depth=81920 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out_attention bundle=control
         #pragma HLS INTERFACE s_axilite port=in_q bundle=control

@@ -51,7 +51,7 @@ using namespace std;
 string weight_path;
 string weight_path_pre;
 string weight_path_post;
-string weight_folder_path = "/user/undergraduate/ytliu24/phi_workspace/weights/";
+string weight_folder_path = "/home/undergraduate/ytliu24/phi_workspace/weights/";
 string phi_embed_tokens_weight = "language_model_model_embed_tokens_weight.bin";
 string phi_decoder_layer_filename_prefix = "language_model_model_layers_";
 string phi_input_layernorm_weight_filename_postfix = "_input_layernorm_weight.bin";
@@ -744,7 +744,7 @@ int main(int argc, char* argv[])
 			return EXIT_FAILURE;
 		}
 		PHI_PRE_LAYERNORM_WEIGHT[i] = reinterpret_cast<uint16*>(ptr);
-		weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+		weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 		weight_path_post = "_input_layernorm_weight.bin";
 		weight_path = weight_path_pre + to_string(i) + weight_path_post;
 		loadData_uint16(PHI_PRE_LAYERNORM_WEIGHT[i], 0, PHI_HIDDEN_SIZE, weight_path.c_str());
@@ -776,7 +776,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_Q_PROJ_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_self_attn_q_proj_weight.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_Q_PROJ_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, weight_path.c_str());
@@ -792,7 +792,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_Q_PROJ_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_self_attn_q_proj_bias.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_Q_PROJ_BIAS[i][j], j * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE / 2, weight_path.c_str());
@@ -808,7 +808,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_K_PROJ_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_self_attn_k_proj_weight.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_K_PROJ_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, weight_path.c_str());
@@ -824,7 +824,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_K_PROJ_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_self_attn_k_proj_bias.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_K_PROJ_BIAS[i][j], j * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE / 2, weight_path.c_str());
@@ -840,7 +840,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_V_PROJ_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_self_attn_v_proj_weight.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_V_PROJ_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, weight_path.c_str());
@@ -856,7 +856,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_V_PROJ_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_self_attn_v_proj_bias.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_V_PROJ_BIAS[i][j], j * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE / 2, weight_path.c_str());
@@ -872,7 +872,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_DENSE_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_self_attn_dense_weight.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_DENSE_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE * PHI_HIDDEN_SIZE / 2, weight_path.c_str());
@@ -888,7 +888,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_DENSE_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_self_attn_dense_bias.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_DENSE_BIAS[i][j], j * PHI_HIDDEN_SIZE / 2, PHI_HIDDEN_SIZE / 2, weight_path.c_str());
@@ -904,7 +904,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_MLP_FC1_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_mlp_fc1_weight.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_MLP_FC1_WEIGHT[i][j], j * PHI_HIDDEN_SIZE * PHI_INTERMEDIATE_SIZE / 8, PHI_HIDDEN_SIZE * PHI_INTERMEDIATE_SIZE / 8, weight_path.c_str());
@@ -920,7 +920,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_MLP_FC1_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_mlp_fc1_bias.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_MLP_FC1_BIAS[i][j], j * PHI_INTERMEDIATE_SIZE / 8, PHI_INTERMEDIATE_SIZE / 8, weight_path.c_str());
@@ -936,7 +936,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_MLP_FC2_WEIGHT[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_mlp_fc2_weight.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_MLP_FC2_WEIGHT[i][j], j * PHI_INTERMEDIATE_SIZE / 8 * PHI_HIDDEN_SIZE, PHI_INTERMEDIATE_SIZE / 8 * PHI_HIDDEN_SIZE, weight_path.c_str());
@@ -952,7 +952,7 @@ int main(int argc, char* argv[])
 				return EXIT_FAILURE;
 			}
 			PHI_MLP_FC2_BIAS[i][j] = reinterpret_cast<uint16*>(ptr);
-			weight_path_pre = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
+			weight_path_pre = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_layers_";
 			weight_path_post = "_mlp_fc2_bias.bin";
 			weight_path = weight_path_pre + to_string(i) + weight_path_post;
 			loadData_uint16(PHI_MLP_FC2_BIAS[i][j], j * PHI_HIDDEN_SIZE / 8, PHI_HIDDEN_SIZE / 8, weight_path.c_str());
@@ -966,7 +966,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 	PHI_LAST_LAYERNORM_WEIGHT = reinterpret_cast<uint16*>(ptr);
-	weight_path = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_final_layernorm_weight.bin";
+	weight_path = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_final_layernorm_weight.bin";
 	loadData_uint16(PHI_LAST_LAYERNORM_WEIGHT, 0, PHI_HIDDEN_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LAST_LAYERNORM_WEIGHT!" << endl;
 
@@ -976,7 +976,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 	PHI_LAST_LAYERNORM_BIAS = reinterpret_cast<uint16*>(ptr);
-	weight_path = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_final_layernorm_bias.bin";
+	weight_path = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_final_layernorm_bias.bin";
 	loadData_uint16(PHI_LAST_LAYERNORM_BIAS, 0, PHI_HIDDEN_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LAST_LAYERNORM_BIAS!" << endl;
 
@@ -986,7 +986,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 	PHI_LM_HEAD_WEIGHT = reinterpret_cast<half_float::half*>(ptr);
-	weight_path = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_lm_head_weight.bin";
+	weight_path = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_lm_head_weight.bin";
 	loadData_uint16(reinterpret_cast<uint16*>(PHI_LM_HEAD_WEIGHT), 0, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LM_HEAD_WEIGHT!" << endl;
 
@@ -996,7 +996,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 	PHI_LM_HEAD_BIAS = reinterpret_cast<half_float::half*>(ptr);
-	weight_path = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_lm_head_bias.bin";
+	weight_path = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_lm_head_bias.bin";
 	loadData_uint16(reinterpret_cast<uint16*>(PHI_LM_HEAD_BIAS), 0, PHI_VOCAB_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_LM_HEAD_BIAS!" << endl;
 
@@ -1006,7 +1006,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 	PHI_EMBED_TOKENS_WEIGHT = reinterpret_cast<uint16*>(ptr);
-	weight_path = "/user/undergraduate/ytliu24/phi_workspace/weights/language_model_model_embed_tokens_weight.bin";
+	weight_path = "/home/undergraduate/ytliu24/phi_workspace/weights/language_model_model_embed_tokens_weight.bin";
 	loadData_uint16(PHI_EMBED_TOKENS_WEIGHT, 0, PHI_VOCAB_SIZE * PHI_HIDDEN_SIZE, weight_path.c_str());
 	cout << "HOST_Info: Memory allocated for PHI_EMBED_TOKENS_WEIGHT!" << endl;
 
@@ -1176,7 +1176,7 @@ int main(int argc, char* argv[])
 	cout << "HOST_Info: Initializing tokenizer..." << endl;
 	#endif
     unique_ptr<tokenizers::Tokenizer> tokenizer;
-    if (initTokenizer("/user/undergraduate/ytliu24/phi_workspace/tokenizer/src/tokenizer.json", tokenizer) != 0) {
+    if (initTokenizer("/home/undergraduate/ytliu24/phi_workspace/tokenizer/src/tokenizer.json", tokenizer) != 0) {
         cerr << "Failed to initialize tokenizer." << endl;
         return EXIT_FAILURE;
     }
@@ -1224,7 +1224,7 @@ int main(int argc, char* argv[])
 	cout << "HOST_Info: Reading input string..." << endl;
 	#endif
     string input_string;
-    if (readTxtFile("/user/undergraduate/ytliu24/phi_workspace/input/input_string.txt", input_string) == 0) {
+    if (readTxtFile("/home/undergraduate/ytliu24/phi_workspace/input/input_string.txt", input_string) == 0) {
         cout << "File content:\n" << input_string << endl;
     } else {
         cout << "Failed to read the file." << endl;
@@ -1397,7 +1397,7 @@ int main(int argc, char* argv[])
 	cout << endl;
 
 	FILE *fp;
-	fp = fopen("/user/undergraduate/ytliu24/phi_workspace/output/output_string.txt", "w");
+	fp = fopen("/home/undergraduate/ytliu24/phi_workspace/output/output_string.txt", "w");
 	if (fp == NULL) {
 		cerr << "Error opening file for writing." << endl;
 		return EXIT_FAILURE;
