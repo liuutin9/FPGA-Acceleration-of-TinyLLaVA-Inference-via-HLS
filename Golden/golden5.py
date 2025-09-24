@@ -38,11 +38,11 @@ def tokenizer_image_token(prompt, tokenizer, image_token_index, return_tensors=N
     return input_ids
 
 # Loading model
-model = AutoModelForCausalLM.from_pretrained("tinyllava/TinyLLaVA-Phi-2-SigLIP-3.1B", trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained("tinyllava/TinyLLaVA-Phi-2-SigLIP-3.1B", trust_remote_code=True, attn_implementation="eager")
 tokenizer = AutoTokenizer.from_pretrained("tinyllava/TinyLLaVA-Phi-2-SigLIP-3.1B")
-model.cuda()
+# model.cuda()
 config = model.config
-prompt="What are these?"
+prompt="What are these? a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a"
 image = "test.jpg"
 
 # TinyLlavaForConditionalGeneration.chat
@@ -68,7 +68,38 @@ for i in range(5):
     cache_position = torch.arange(past_seen_tokens, past_seen_tokens + inputs_embeds.shape[1], device=inputs_embeds.device)
     position_ids = cache_position.unsqueeze(0)
     hidden_states = model.language_model.model.embed_dropout(inputs_embeds) # diff with Llama
-    position_embeddings = model.language_model.model.rotary_emb(hidden_states, position_ids)
+    
+    print(hidden_states[0, 0])  # print first 5 values of the last token's embedding
+    test_hidden = torch.zeros(size=(1, 832, 2560))
+    print(hidden_states.shape)
+    print(test_hidden.shape)
+    # Rotary position embeddings
+    position_embeddings = model.language_model.model.rotary_emb(test_hidden, position_ids)
+    cosine, sine = position_embeddings
+    cosine = cosine.squeeze(0)
+    sine = sine.squeeze(0)
+    cosine = cosine[:, :16]
+    sine = sine[:, :16]
+    print(cosine)  # print first 5 values of the last token's position embedding
+    print(cosine.shape)
+    
+    cosine = cosine.flatten()
+    sine = sine.flatten()
+    
+    # 轉成 float16
+    cosine_fp16 = cosine.to(torch.float16)
+    sine_fp16 = sine.to(torch.float16)
+
+    # 存成 .bin 檔 (raw binary data)
+    cosine_fp16.numpy().tofile("cosine.bin")
+    sine_fp16.numpy().tofile("sine.bin")
+    
+    for j in range(32):
+        print(f"{cosine[j]:.6f}", end=", ")
+    print()
+    for j in range(16):
+        print(f"{sine[1, j]:.6f}", end=", ")
+    print()
     
     for decoder_layer in model.language_model.model.layers[: model.language_model.model.config.num_hidden_layers]:
         layer_outputs = decoder_layer(
