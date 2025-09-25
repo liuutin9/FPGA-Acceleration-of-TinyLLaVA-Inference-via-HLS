@@ -94,7 +94,10 @@ for i in range(5):
     cosine_fp16.numpy().tofile("cosine.bin")
     sine_fp16.numpy().tofile("sine.bin")
     
-    for j in range(32):
+    for j in range(16):
+        print(f"{cosine[j]:.6f}", end=", ")
+    print()
+    for j in range(16, 32):
         print(f"{cosine[j]:.6f}", end=", ")
     print()
     for j in range(16):
