@@ -8,7 +8,8 @@
 #define M_SQRT2 1.41421356237309504880
 #define M_2_SQRTPI 1.12837916709551257390
 
-typedef ap_fixed<32,14> fixed32_14;
+//typedef ap_fixed<32,14> fixed32_14;
+typedef float fixed32_14;
 
 const float kGeluBeta = M_SQRT2 * M_2_SQRTPI * 0.5;
 const float kGeluKappa = 0.044715;
@@ -168,10 +169,10 @@ extern "C" {
         for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
 			for (int j = 0; j < HIDDEN_SIZE; j++) {
 				#pragma HLS PIPELINE II=1
-				local_linear_1_out[i + 0 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_0[i]);
-				local_linear_1_out[i + 1 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_1[i]);
-				local_linear_1_out[i + 2 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_2[i]);
-				local_linear_1_out[i + 3 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_3[i]);
+				local_linear_1_out[i + 0 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_0[i * HIDDEN_SIZE + j]);
+				local_linear_1_out[i + 1 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_1[i * HIDDEN_SIZE + j]);
+				local_linear_1_out[i + 2 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_2[i * HIDDEN_SIZE + j]);
+				local_linear_1_out[i + 3 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_3[i * HIDDEN_SIZE + j]);
 			}
         }
 
@@ -179,10 +180,10 @@ extern "C" {
 		for (int i = 0; i < INTERMEDIATE_SIZE / 8; i++) {
 			for (int j = 0; j < HIDDEN_SIZE; j++) {
 				#pragma HLS PIPELINE II=1
-				local_linear_1_out[i + 4 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_4[i]);
-				local_linear_1_out[i + 5 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_5[i]);
-				local_linear_1_out[i + 6 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_6[i]);
-				local_linear_1_out[i + 7 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_7[i]);
+				local_linear_1_out[i + 4 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_4[i * HIDDEN_SIZE + j]);
+				local_linear_1_out[i + 5 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_5[i * HIDDEN_SIZE + j]);
+				local_linear_1_out[i + 6 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_6[i * HIDDEN_SIZE + j]);
+				local_linear_1_out[i + 7 * INTERMEDIATE_SIZE / 8] += local_linear_1_in[j] * fixed32_14(weight_fc1_7[i * HIDDEN_SIZE + j]);
 			}
 		}
 
@@ -214,10 +215,10 @@ extern "C" {
         for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
 			for (int j = 0; j < INTERMEDIATE_SIZE; j++) {
 				#pragma HLS PIPELINE II=1
-				local_linear_2_out[i + 0 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_0[i]);
-				local_linear_2_out[i + 1 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_1[i]);
-				local_linear_2_out[i + 2 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_2[i]);
-				local_linear_2_out[i + 3 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_3[i]);
+				local_linear_2_out[i + 0 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_0[i * INTERMEDIATE_SIZE + j]);
+				local_linear_2_out[i + 1 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_1[i * INTERMEDIATE_SIZE + j]);
+				local_linear_2_out[i + 2 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_2[i * INTERMEDIATE_SIZE + j]);
+				local_linear_2_out[i + 3 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_3[i * INTERMEDIATE_SIZE + j]);
 			}
 		}
 
@@ -225,10 +226,10 @@ extern "C" {
 		for (int i = 0; i < HIDDEN_SIZE / 8; i++) {
 			for (int j = 0; j < INTERMEDIATE_SIZE; j++) {
 				#pragma HLS PIPELINE II=1
-				local_linear_2_out[i + 4 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_4[i]);
-				local_linear_2_out[i + 5 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_5[i]);
-				local_linear_2_out[i + 6 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_6[i]);
-				local_linear_2_out[i + 7 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_7[i]);
+				local_linear_2_out[i + 4 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_4[i * INTERMEDIATE_SIZE + j]);
+				local_linear_2_out[i + 5 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_5[i * INTERMEDIATE_SIZE + j]);
+				local_linear_2_out[i + 6 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_6[i * INTERMEDIATE_SIZE + j]);
+				local_linear_2_out[i + 7 * HIDDEN_SIZE / 8] += local_linear_2_in[j] * fixed32_14(weight_fc2_7[i * INTERMEDIATE_SIZE + j]);
 			}
 		}
 

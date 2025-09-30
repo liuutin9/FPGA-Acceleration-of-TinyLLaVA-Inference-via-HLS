@@ -1,11 +1,13 @@
 #include <ap_fixed.h>
 #include <hls_math.h>
+#include <iostream>
 
 #define HIDDEN_SIZE 2560
 #define NUM_BLOCKS 10
 #define BLOCK_SIZE 256
 
-typedef ap_fixed<32,14> fixed32_14;
+//typedef ap_fixed<32,14> fixed32_14;
+typedef float fixed32_14;
 
 inline void loadToLocal(fixed32_14 local[HIDDEN_SIZE], fixed32_14 global[HIDDEN_SIZE]) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
@@ -61,5 +63,11 @@ extern "C" {
         }
 
         storeOutput(out, local_out);
+
+        std::cout << "Layer input:";
+        for (int i = 0; i < 10; i++) {
+        	std::cout << ' ' << out[i];
+        }
+        std::cout << std::endl;
     }
 }

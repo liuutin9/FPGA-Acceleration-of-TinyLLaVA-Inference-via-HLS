@@ -2,15 +2,14 @@
 #include <hls_math.h>
 #include <hls_half.h>
 #include <ap_int.h>
-//#include <iostream>
 
 #define HIDDEN_SIZE 2560
-#define DIVIDE_SIZE 512
-#define DIVIDE_BLOCK (HIDDEN_SIZE / DIVIDE_SIZE)
 #define LAYER_NORM_EPS 0.00001
 
-typedef ap_fixed<32,14> fixed32_14;
-typedef ap_fixed<40,22> fixed40_22;
+//typedef ap_fixed<32,14> fixed32_14;
+typedef float fixed32_14;
+//typedef ap_fixed<40,22> fixed40_22;
+typedef float fixed40_22;
 
 inline void loadToLocal(fixed40_22* local, fixed32_14* global) {
     for (int i = 0; i < HIDDEN_SIZE; i++) {
@@ -72,11 +71,6 @@ extern "C" {
 
         initLocal(local_in, local_out, local_weight, in, bias, weight);
 
-//        for (int i = 0; i < 5; i++) {
-//        	printf("%f ", fixed32_14(local_weight[i]));
-//        }
-//        printf("\n");
-
         mean_loop:
 		for (int i = 0; i < HIDDEN_SIZE; i++) {
 			#pragma HLS PIPELINE II=1
@@ -84,11 +78,6 @@ extern "C" {
 			mean += local_in[i];
 		}
 		mean /= HIDDEN_SIZE;
-//        printf("mean: %f\n", float(mean));
-//        for (int i = 0; i < 10; i++) {
-//        	printf("%f ", float(local_in[i]));
-//        }
-//        printf("\n");
 
         variance_loop:
         for (int i = 0; i < HIDDEN_SIZE; i++) {
@@ -97,18 +86,9 @@ extern "C" {
         	variance += (local_in[i] - mean) * (local_in[i] - mean);
 		}
         variance /= HIDDEN_SIZE;
-//        printf("variance: %f\n", float(variance));
 
         // 計算標準差
         fixed40_22 inv_stddev = 1 / hls::sqrt(variance + eps);
-
-//        printf("1 / Std Dev: %f\n", float(inv_stddev));
-
-//        printf("Weights:");
-//        for (int i = 0; i < 10; i++) {
-//        	printf(" %f", float(local_weight[i]));
-//        }
-//        printf("\n");
 
         normalization_loop:
         for (int i = 0; i < HIDDEN_SIZE; i++) {
@@ -116,13 +96,6 @@ extern "C" {
             #pragma HLS UNROLL factor=2
             local_out[i] += local_weight[i] * (local_in[i] - mean) * inv_stddev;
         }
-
-//        printf("Local out:");
-//        for (int i = 0; i < 10; i++) {
-//        	printf(" %f", float(local_out[i]));
-//        	local_out[i] == 0 ? printf("F") : printf("T");
-//        }
-//        printf("\n");
 
         store_out:
         for (int i = 0; i < HIDDEN_SIZE; i++) {

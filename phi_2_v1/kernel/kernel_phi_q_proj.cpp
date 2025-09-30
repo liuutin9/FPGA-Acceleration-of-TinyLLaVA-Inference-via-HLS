@@ -5,59 +5,8 @@
 
 #define HIDDEN_SIZE 2560
 
-typedef ap_fixed<32,14> fixed32_14;
-
-inline void load_bias(fixed32_14* out, half* bias) {
-    for (int i = 0; i < HIDDEN_SIZE / 2; i++) {
-        #pragma HLS PIPELINE II=1
-    	out[i] = fixed32_14(bias[i]);
-    }
-}
-
-inline void init_out(fixed32_14 out[HIDDEN_SIZE], half bias_1[HIDDEN_SIZE / 2], half bias_2[HIDDEN_SIZE / 2]) {
-    load_bias(out, bias_1);
-    load_bias(&out[HIDDEN_SIZE / 2], bias_2);
-}
-
-inline void load_in(fixed32_14 in[HIDDEN_SIZE], fixed32_14 local_in[HIDDEN_SIZE]) {
-    for (int i = 0; i < HIDDEN_SIZE; i++) {
-        #pragma HLS PIPELINE II=1
-    	local_in[i] = in[i];
-    }
-}
-
-inline void load_w(fixed32_14 local_w[HIDDEN_SIZE], half weight[HIDDEN_SIZE]) {
-    for (int i = 0; i < HIDDEN_SIZE; i++) {
-        #pragma HLS PIPELINE II=1
-        local_w[i] = fixed32_14(weight[i]);
-    }
-}
-
-inline void load_weight(fixed32_14 local_w_1[HIDDEN_SIZE], fixed32_14 local_w_2[HIDDEN_SIZE], half weight_1[HIDDEN_SIZE], half weight_2[HIDDEN_SIZE]) {
-    load_w(local_w_1, weight_1);
-    load_w(local_w_2, weight_2);
-}
-
-inline void multiply_accumulate(fixed32_14* local_out, fixed32_14 local_in[HIDDEN_SIZE], fixed32_14 local_w[HIDDEN_SIZE]) {
-    for (int i = 0; i < HIDDEN_SIZE; i++) {
-        #pragma HLS PIPELINE II=1
-        #pragma HLS UNROLL factor=2
-        *local_out += local_in[i] * local_w[i];
-    }
-}
-
-inline void compute(fixed32_14* local_out_1, fixed32_14* local_out_2, fixed32_14 local_in[HIDDEN_SIZE], fixed32_14 local_w_1[HIDDEN_SIZE], fixed32_14 local_w_2[HIDDEN_SIZE]) {
-    multiply_accumulate(local_out_1, local_in, local_w_1);
-    multiply_accumulate(local_out_2, local_in, local_w_2);
-}
-
-inline void storeOutput(fixed32_14 out[HIDDEN_SIZE], fixed32_14 local_out[HIDDEN_SIZE]) {
-    for (int i = 0; i < HIDDEN_SIZE; i++) {
-        #pragma HLS PIPELINE II=1
-        #pragma HLS UNROLL factor=4
-    	out[i] = local_out[i];
-    }
-}
+//typedef ap_fixed<32,14> fixed32_14;
+typedef float fixed32_14;
 
 extern "C" {
     void kernel_phi_q_proj(
@@ -86,27 +35,39 @@ extern "C" {
         // 壓縮並存放到 local buffer
         // Local buffers for input slice and weight block
         fixed32_14 local_in[HIDDEN_SIZE];
-        fixed32_14 local_w_1[HIDDEN_SIZE];
-        fixed32_14 local_w_2[HIDDEN_SIZE];
         fixed32_14 local_out[HIDDEN_SIZE];
 
 		#pragma HLS bind_storage variable=local_in type=RAM_T2P impl=uram
-		#pragma HLS bind_storage variable=local_w_1 type=RAM_T2P impl=uram
-		#pragma HLS bind_storage variable=local_w_2 type=RAM_T2P impl=uram
 		#pragma HLS bind_storage variable=local_out type=RAM_T2P impl=uram
 
-        // 初始化 output = bias
-        init_out(local_out, bias_1, bias_2);
-        // 載入 input 到 local buffer
-        load_in(in, local_in);
-
-        // 計算
+        load_bias:
         for (int i = 0; i < HIDDEN_SIZE / 2; i++) {
-            load_weight(local_w_1, local_w_2, &weight_1[i * HIDDEN_SIZE], &weight_2[i * HIDDEN_SIZE]);
-            compute(&local_out[i], &local_out[i + HIDDEN_SIZE / 2], local_in, local_w_1, local_w_2);
+			#pragma HLS PIPELINE II=1
+        	local_out[i] = float(bias_1[i]);
+        	local_out[i + HIDDEN_SIZE / 2] = float(bias_2[i]);
         }
 
-        // 存儲輸出
-        storeOutput(out, local_out);
+        load_in:
+		for (int i = 0; i < HIDDEN_SIZE; i++) {
+			#pragma HLS PIPELINE II=1
+			#pragma HLS UNROLL factor=2
+			local_in[i] = in[i];
+		}
+
+		compute:
+		for (int i = 0; i < HIDDEN_SIZE / 2; i++) {
+			for (int j = 0; j < HIDDEN_SIZE / 2; j++) {
+				#pragma HLS PIPELINE II=1
+				local_out[i] += float(weight_1[i * HIDDEN_SIZE + j]) * local_in[j] + float(weight_1[i * HIDDEN_SIZE + j + HIDDEN_SIZE / 2]) * local_in[j + HIDDEN_SIZE / 2];
+				local_out[i + HIDDEN_SIZE / 2] += float(weight_2[i * HIDDEN_SIZE + j]) * local_in[j] + float(weight_2[i * HIDDEN_SIZE + j + HIDDEN_SIZE / 2]) * local_in[j + HIDDEN_SIZE / 2];
+			}
+		}
+
+		store_output:
+		for (int i = 0; i < HIDDEN_SIZE; i++) {
+			#pragma HLS PIPELINE II=1
+			#pragma HLS UNROLL factor=2
+			out[i] = local_out[i];
+		}
     }
 }

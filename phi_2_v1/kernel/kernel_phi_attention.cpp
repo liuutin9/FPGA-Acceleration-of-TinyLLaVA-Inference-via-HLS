@@ -6,7 +6,8 @@
 #define HEAD_DIM 80
 #define SLEN 832
 
-typedef ap_fixed<32,14> fixed32_14;
+//typedef ap_fixed<32,14> fixed32_14;
+typedef float fixed32_14;
 
 extern "C" {
     void kernel_phi_attention(
@@ -16,15 +17,16 @@ extern "C" {
         fixed32_14 in_v_1[800 * NUM_KEY_VALUE_HEADS * HEAD_DIM],
         fixed32_14 in_k_2[32 * NUM_KEY_VALUE_HEADS * HEAD_DIM],
         fixed32_14 in_v_2[32 * NUM_KEY_VALUE_HEADS * HEAD_DIM],
-        int position_idx
+        int* position_idx
     ) {
 
         #pragma HLS INTERFACE m_axi port=out_attention offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=in_q offset=slave bundle=gmem0 depth=2560 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_k_1 offset=slave bundle=gmem0 depth=204800 max_read_burst_length=256
-        #pragma HLS INTERFACE m_axi port=in_v_1 offset=slave bundle=gmem1 depth=204800 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_k_1 offset=slave bundle=gmem0 depth=2048000 max_read_burst_length=256
+        #pragma HLS INTERFACE m_axi port=in_v_1 offset=slave bundle=gmem1 depth=2048000 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=in_k_2 offset=slave bundle=gmem0 depth=81920 max_read_burst_length=256
         #pragma HLS INTERFACE m_axi port=in_v_2 offset=slave bundle=gmem1 depth=81920 max_read_burst_length=256
+		#pragma HLS INTERFACE m_axi port=position_idx offset=slave bundle=gmem0 depth=1 max_read_burst_length=256
 
         #pragma HLS INTERFACE s_axilite port=out_attention bundle=control
         #pragma HLS INTERFACE s_axilite port=in_q bundle=control
@@ -35,15 +37,15 @@ extern "C" {
         #pragma HLS INTERFACE s_axilite port=position_idx bundle=control
         #pragma HLS INTERFACE s_axilite port=return bundle=control
 
-        fixed32_14 local_out_attention[NUM_KEY_VALUE_HEADS * HEAD_DIM];
+        fixed32_14 local_out_attention[HIDDEN_SIZE];
         fixed32_14 local_q_per_head[HEAD_DIM];
         fixed32_14 local_k_per_head[SLEN * HEAD_DIM];
         fixed32_14 local_v_per_head[SLEN * HEAD_DIM];
         fixed32_14 qkt[SLEN];
-        int curr_len = position_idx + 1;
+        int curr_len = position_idx[0] + 1;
 
         #pragma HLS bind_storage variable=local_out_attention type=RAM_T2P impl=uram
-        #pragma HLS bind_storage variable=local_q_per_head type=RAM_T2P impl=uram
+        #pragma HLS bind_storage variable=local_q_per_head type=RAM_T2P impl=bram
         #pragma HLS bind_storage variable=local_k_per_head type=RAM_T2P impl=uram
         #pragma HLS bind_storage variable=local_v_per_head type=RAM_T2P impl=uram
         #pragma HLS bind_storage variable=qkt type=RAM_T2P impl=uram
@@ -87,6 +89,7 @@ extern "C" {
                 }
                 qkt[j] = sum * scaling;
             }
+
             compute_softmax:
             fixed32_14 max_qkt = qkt[0];
             for (int j = 1; j < curr_len; j++) {
@@ -110,26 +113,12 @@ extern "C" {
                     local_out_attention[i * HEAD_DIM + k] += qkt[j] * local_v_per_head[j * HEAD_DIM + k];
                 }
             }
-            for (int j = 0; j < curr_len; j++) {
-                for (int k = 0; k < HEAD_DIM; k++) {
-                    #pragma HLS PIPELINE II=1
-                    #pragma HLS UNROLL factor=2
-                    local_out_attention[i * HEAD_DIM + k] = fixed32_14(0.0f);
-                }
-            }
-            for (int j = 0; j < curr_len; j++) {
-                for (int k = 0; k < HEAD_DIM; k++) {
-                    #pragma HLS PIPELINE II=1
-                    #pragma HLS UNROLL factor=2
-                    out_attention[i * HEAD_DIM + k] += qkt[j] * local_v_per_head[j * HEAD_DIM + k];
-                }
-            }
         }
         store_out:
         for (int i = 0; i < NUM_KEY_VALUE_HEADS * HEAD_DIM; i++) {
             #pragma HLS PIPELINE II=1
             #pragma HLS UNROLL factor=2
-            local_out_attention[i] = out_attention[i];
+        	out_attention[i] = local_out_attention[i];
         }
     }
 }
