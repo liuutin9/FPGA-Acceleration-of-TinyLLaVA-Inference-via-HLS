@@ -241,3 +241,47 @@ extern "C" {
         }
     }
 }
+
+
+HOST-Info: -------------------------------------------------------------------------------
+HOST-Info: Name           | type          | start        | end          | Duration(ms)
+HOST-Info: -------------------------------------------------------------------------------
+HOST-Info: kernel_phi_mlp | kernel        |   7917729679 |   8096324852 |      178.595
+HOST-Info: Transfer_1     | mem (H<->G)   |   7902676840 |   7902814043 |     0.137203
+HOST-Info: Transfer_2     | mem (H<->G)   |   7903884834 |   7905682986 |      1.79815
+HOST-Info: Transfer_3     | mem (H<->G)   |   7903891316 |   7904021360 |     0.130044
+HOST-Info: Transfer_4     | mem (H<->G)   |   7904026942 |   7905729649 |      1.70271
+HOST-Info: Transfer_5     | mem (H<->G)   |   7905688385 |   7905783716 |     0.095331
+HOST-Info: Transfer_6     | mem (H<->G)   |   7905737234 |   7907521777 |      1.78454
+HOST-Info: Transfer_7     | mem (H<->G)   |   7905789438 |   7905917347 |     0.127909
+HOST-Info: Transfer_8     | mem (H<->G)   |   7905922480 |   7907494111 |      1.57163
+HOST-Info: Transfer_9     | mem (H<->G)   |   7907499426 |   7907589321 |     0.089895
+HOST-Info: Transfer_10    | mem (H<->G)   |   7907527437 |   7909133863 |      1.60643
+HOST-Info: Transfer_11    | mem (H<->G)   |   7907594818 |   7907697407 |     0.102589
+HOST-Info: Transfer_12    | mem (H<->G)   |   7907702617 |   7909236071 |      1.53345
+HOST-Info: Transfer_13    | mem (H<->G)   |   7909139352 |   7909157956 |     0.018604
+HOST-Info: Transfer_14    | mem (H<->G)   |   7909161978 |   7910761054 |      1.59908
+HOST-Info: Transfer_15    | mem (H<->G)   |   7909241478 |   7909312818 |      0.07134
+HOST-Info: Transfer_16    | mem (H<->G)   |   7909313954 |   7910888184 |      1.57423
+HOST-Info: Transfer_17    | mem (H<->G)   |   7910766889 |   7910783208 |     0.016319
+HOST-Info: Transfer_18    | mem (H<->G)   |   7910787029 |   7912445163 |      1.65813
+HOST-Info: Transfer_19    | mem (H<->G)   |   7910889322 |   7910902123 |     0.012801
+HOST-Info: Transfer_20    | mem (H<->G)   |   7910904881 |   7912449641 |      1.54476
+HOST-Info: Transfer_21    | mem (H<->G)   |   7912450974 |   7912463389 |     0.012415
+HOST-Info: Transfer_22    | mem (H<->G)   |   7912452058 |   7914176305 |      1.72425
+HOST-Info: Transfer_23    | mem (H<->G)   |   7912464841 |   7912475066 |     0.010225
+HOST-Info: Transfer_24    | mem (H<->G)   |   7912475945 |   7914186436 |      1.71049
+HOST-Info: Transfer_25    | mem (H<->G)   |   7914186482 |   7914238909 |     0.052427
+HOST-Info: Transfer_26    | mem (H<->G)   |   7914202322 |   7916001143 |      1.79882
+HOST-Info: Transfer_27    | mem (H<->G)   |   7914248412 |   7914276707 |     0.028295
+HOST-Info: Transfer_28    | mem (H<->G)   |   7914281816 |   7916005528 |      1.72371
+HOST-Info: Transfer_29    | mem (H<->G)   |   7916004594 |   7916013274 |      0.00868
+HOST-Info: Transfer_30    | mem (H<->G)   |   7916007016 |   7917711545 |      1.70453
+HOST-Info: Transfer_31    | mem (H<->G)   |   7916014876 |   7916023436 |      0.00856
+HOST-Info: Transfer_32    | mem (H<->G)   |   7916024153 |   7917725595 |      1.70144
+HOST-Info: Transfer_33    | mem (H<->G)   |   7917713560 |   7917722085 |     0.008525
+HOST-Info: Transfer_34    | mem (H<->G)   |   8096456238 |   8096650553 |     0.194315
+HOST-Info: -------------------------------------------------------------------------------
+HOST-Info:     Kernels Execution Time (ms) :  178.595  (kernel_phi_mlp'end - kernel_phi_mlp'begin)
+HOST-Info: Application Execution Time (ms) :  193.974  (Transfer_34'end - Transfer_1'begin)
+HOST-Info: -------------------------------------------------------------------------------
