@@ -2,16 +2,19 @@ import torch
 import numpy as np
 from transformers import AutoTokenizer
 import os
+import time
 
 hf_path = 'tinyllava/TinyLLaVA-Phi-2-SigLIP-3.1B'
 tokenizer = AutoTokenizer.from_pretrained(hf_path, use_fast=False, model_max_length = 3072, padding_side = "right")
 
-prompt = "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: Hello! ASSISTANT:"
+prompt = "def bubble_sort"
 
 inputs = tokenizer(prompt)
 
 token_ids = inputs['input_ids']
+print(f"Input:\n{prompt}")
 print("Input length:", len(token_ids))
+print(token_ids)
 
 class NewGELU(torch.nn.Module):
     def forward(self, x):
@@ -34,16 +37,16 @@ embeddings = torch.from_numpy(embeddings)
 
 eos_id = 50256
 
-pre_layernorm = [torch.nn.LayerNorm(HIDDEN_SIZE, eps=0.00001, dtype=torch.float32) for _ in range(32)]
-q_proj = [torch.nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float32) for _ in range(32)]
-k_proj = [torch.nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float32) for _ in range(32)]
-v_proj = [torch.nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float32) for _ in range(32)]
-dense = [torch.nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float32) for _ in range(32)]
-mlp_fc1 = [torch.nn.Linear(HIDDEN_SIZE, 4 * HIDDEN_SIZE, dtype=torch.float32) for _ in range(32)]
-mlp_fc2 = [torch.nn.Linear(4 * HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float32) for _ in range(32)]
+pre_layernorm = [torch.nn.LayerNorm(HIDDEN_SIZE, eps=0.00001, dtype=torch.float16) for _ in range(32)]
+q_proj = [torch.nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float16) for _ in range(32)]
+k_proj = [torch.nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float16) for _ in range(32)]
+v_proj = [torch.nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float16) for _ in range(32)]
+dense = [torch.nn.Linear(HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float16) for _ in range(32)]
+mlp_fc1 = [torch.nn.Linear(HIDDEN_SIZE, 4 * HIDDEN_SIZE, dtype=torch.float16) for _ in range(32)]
+mlp_fc2 = [torch.nn.Linear(4 * HIDDEN_SIZE, HIDDEN_SIZE, dtype=torch.float16) for _ in range(32)]
 mlp_activation = NewGELU()
-final_layernorm = torch.nn.LayerNorm(HIDDEN_SIZE, eps=0.00001, dtype=torch.float32)
-lm_head = torch.nn.Linear(HIDDEN_SIZE, VOCAB_SIZE, dtype=torch.float32)
+final_layernorm = torch.nn.LayerNorm(HIDDEN_SIZE, eps=0.00001, dtype=torch.float16)
+lm_head = torch.nn.Linear(HIDDEN_SIZE, VOCAB_SIZE, dtype=torch.float16)
 
 k_cache = [None for _ in range(32)]
 v_cache = [None for _ in range(32)]
@@ -76,19 +79,19 @@ for layer in range(32):
 
 input_length = len(token_ids)
 
+start = time.time()
+
 for i in range(832):
     if token_ids[i] == eos_id:
-        print("Encountered EOS token at position", i)
         break
+    
     hidden_state = embeddings[token_ids[i]]
-
-    print(f"Processing token: {i}")
 
     for layer in range(32):
         residual = hidden_state.clone()
         
         hidden_state = pre_layernorm[layer](hidden_state)
-
+        
         q = q_proj[layer](hidden_state)
         k = k_proj[layer](hidden_state)
         v = v_proj[layer](hidden_state)
@@ -136,9 +139,11 @@ for i in range(832):
     logits = lm_head(hidden_state)
     predicted_id = torch.argmax(logits).item()
     
-    os.system('clear')
-    print(f"Token ID: {token_ids[i]} -> Predicted next Token ID: {predicted_id}")
     token_ids.append(predicted_id)
-    output_text = tokenizer.decode(token_ids, skip_special_tokens=True)
-    print("Output Text:")
-    print(output_text)
+    
+end = time.time()
+print(f"Elapsed time: {end - start:.6f} seconds")
+print(f"Elapsed time: {(end - start)/len(token_ids):.6f} seconds/token")
+output_text = tokenizer.decode(token_ids, skip_special_tokens=True)
+print("Output Text:")
+print(output_text)
