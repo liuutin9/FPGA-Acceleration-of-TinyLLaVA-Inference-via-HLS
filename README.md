@@ -28,14 +28,18 @@ The host code manages tokenization, memory mapping, and controls the generation 
 ### Phi-2 Implementation
 We partitioned the Phi-2 model into 10 separate kernels for execution on the Alveo U280.
 
-![Phi-2 Design Architecture](./pictures/phi2_architecture.jpg)
-*Figure 1: System Architecture showing the partition between Host (CPU) and Kernel (FPGA) for the Phi-2 model.*
+<p align="center">
+  <img src="./pictures/phi2_architecture.jpg" width="80%" alt="Phi-2 Design Architecture">
+</p>
+<p align="center"><em>Figure 1: System Architecture showing the partition between Host (CPU) and Kernel (FPGA) for the Phi-2 model.</em></p>
 
 ### SigLIP & Connector Implementation
 The Vision Encoder requires complex dataflow management. We designed a specific buffering strategy to handle the data dependencies between Layernorm, Linear, and Attention layers.
 
-![SigLIP Dataflow Architecture](./pictures/siglip_architecture.jpg)
-*Figure 2: Dataflow and memory buffering strategy for the SigLIP Vision Encoder on FPGA.*
+<p align="center">
+  <img src="./pictures/siglip_architecture.jpg" width="80%" alt="SigLIP Dataflow Architecture">
+</p>
+<p align="center"><em>Figure 2: Dataflow and memory buffering strategy for the SigLIP Vision Encoder on FPGA.</em></p>
 
 ### Memory Layout Strategy
 Due to the U280's 8GB HBM limit and the model's ~6GB parameter size, we implemented a strict memory allocation strategy:
@@ -53,8 +57,10 @@ We applied several HLS-specific optimizations to achieve hardware acceleration:
 #### Matrix Rotation (Phi-2 MLP)
 To address the "storage fragmentation" issue in URAM, we transposed the weights of the MLP FC2 layer. This allows the kernel to compute partial results with a much smaller local buffer (reducing requirements from 2560 to 8 elements), significantly saving on-chip memory.
 
-![Matrix Rotation Strategy](./pictures/matrix_rotation.jpg)
-*Figure 3: Illustration of the Matrix Rotation strategy in the MLP FC2 layer to minimize on-chip memory usage.*
+<p align="center">
+  <img src="./pictures/matrix_rotation.jpg" width="80%" alt="Matrix Rotation Strategy">
+</p>
+<p align="center"><em>Figure 3: Illustration of the Matrix Rotation strategy in the MLP FC2 layer to minimize on-chip memory usage.</em></p>
 
 #### Counter-Based Indexing (SigLIP Attention)
 Standard implementation of `Reshape` and `Transpose` operations involves expensive division and modulo operations. We replaced these with efficient **counter-based logic**, which tracks `head_num` and `offset` to generate indices directly. This significantly reduced DSP/LUT usage and latency.
@@ -65,8 +71,10 @@ Standard implementation of `Reshape` and `Transpose` operations involves expensi
 * **AXI Burst Transfers:** Implemented burst reading (block size = 256) to maximize memory throughput.
 * **Tiling Strategy:** Applied to SigLIP and Connector layers (e.g., block size 36) to handle large matrices within limited URAM/BRAM resources.
 
-![Tiling Strategy](./pictures/tiling_strategy.jpg)
-*Figure 4: Tiling strategy and optimized counter-based indexing for efficient Attention computation.*
+<p align="center">
+  <img src="./pictures/tiling_strategy.jpg" width="80%" alt="Tiling Strategy">
+</p>
+<p align="center"><em>Figure 4: Tiling strategy and optimized counter-based indexing for efficient Attention computation.</em></p>
 
 ### 3. Precision Optimization
 * **Fixed-Point Arithmetic:** Converted the majority of Phi-2 MLP calculations from Float16 to **`ap_fixed<40, 16>`**.
