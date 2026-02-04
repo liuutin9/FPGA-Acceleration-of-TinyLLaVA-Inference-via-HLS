@@ -1,0 +1,1 @@
+# FPGA-Based Acceleration of TinyLLaVA Model Inference via High-Level Synthesis on Alveo U280 
