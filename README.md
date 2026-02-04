@@ -107,9 +107,18 @@ Through Tiling and Counter-based indexing, the Vision Encoder performance improv
 
 ## 👥 Contributors
 
-* **Yu-Ting Liu:** Phi-2 optimization, HLS implementation, Project Lead.
-* **Zhi-Yun Lin:** SigLIP architecture, C++ implementation.
-* **Zi-En Huang:** SigLIP/Connector optimization, Memory strategy.
+* **You-Ting Liu:**
+    * Ported the **Phi-2** model from Python to C++ and verified model correctness.
+    * Implemented and accelerated Phi-2 model inference using High-Level Synthesis (HLS).
+    * Produced project documentation, including the demo video and poster.
+* **Zhi-Yun Lin:**
+    * Ported the **SigLIP** model from Python to C++ and verified model correctness.
+    * Designed the initial architecture for the SigLIP Host and Kernel code.
+    * Authored documentation related to SigLIP and Connector implementation.
+* **Zi-En Huang:**
+    * Integrated Phi-2 and SigLIP modules to establish the complete **TinyLLaVA** framework.
+    * Optimized kernel internal structures and arithmetic logic to improve computational efficiency.
+    * Designed and implemented optimal memory access strategies to mitigate bandwidth bottlenecks.
 
 ## 📚 References
 
