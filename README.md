@@ -85,7 +85,7 @@ Standard implementation of `Reshape` and `Transpose` operations involves expensi
 ## 📊 Performance Results
 
 ### Phi-2 MLP Acceleration
-By optimizing memory access and applying fixed-point arithmetic, we achieved a **2.28x speedup** compared to the baseline FPGA implementation.
+By optimizing memory access and applying fixed-point arithmetic, we achieved a similar speed compared to the baseline Pytorch version running on i9-14900k.
 
 | Version | Precision | Hardware | Execution Time |
 | :--- | :--- | :--- | :--- |
