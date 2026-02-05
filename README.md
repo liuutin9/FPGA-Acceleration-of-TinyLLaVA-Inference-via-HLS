@@ -89,9 +89,10 @@ By optimizing memory access and applying fixed-point arithmetic, we achieved a *
 
 | Version | Precision | Hardware | Execution Time |
 | :--- | :--- | :--- | :--- |
-| Baseline (No Accel) | Float32 | CPU (i9-14900k) | 2029.44 ms |
-| Original HLS | Float32 | Alveo U280 | 179 ms |
-| **Optimized (v2)** | **Fixed<40,16>** | **Alveo U280** | **60 ms** |
+| C++ Version | Float32 | CPU (i9-14900k) | 2029.44 s / token |
+| Pytorch Version | Float32 | CPU (i9-14900k) | 2.206 s / token |
+| Original HLS | Float32 | Alveo U280 | 9.093 s / token |
+| **Optimized (v2)** | **Fixed<40,16>** | **Alveo U280** | **3.986 s / token** |
 
 ### SigLIP Optimization
 Through Tiling and Counter-based indexing, the Vision Encoder performance improved significantly.
