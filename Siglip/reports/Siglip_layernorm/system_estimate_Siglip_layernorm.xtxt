@@ -1,0 +1,60 @@
+===============================================================================
+Version:    v++ v2023.2 (64-bit)
+Build:      SW Build 4026344 on 2023-10-11-15:42:10
+Copyright:  Copyright 1986-2023 Xilinx, Inc. All Rights Reserved.
+Created:    Tue Oct 14 01:05:18 2025
+===============================================================================
+
+-------------------------------------------------------------------------------
+Design Name:             Siglip_layernorm
+Target Device:           xilinx:u280:gen3x16_xdma_1:202211.1
+Target Clock:            300.000000MHz
+Total number of kernels: 1
+-------------------------------------------------------------------------------
+
+Kernel Summary
+Kernel Name       Type  Target              OpenCL Library    Compute Units
+----------------  ----  ------------------  ----------------  -------------
+Siglip_layernorm  c     fpga0:OCL_REGION_0  Siglip_layernorm  1
+
+
+-------------------------------------------------------------------------------
+OpenCL Binary:     Siglip_layernorm
+Kernels mapped to: clc_region
+
+Timing Information (MHz)
+Compute Unit        Kernel Name       Module Name                                Target Frequency  Estimated Frequency
+------------------  ----------------  -----------------------------------------  ----------------  -------------------
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_44_1  300.300293        411.015198
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_56_3  300.300293        411.015198
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_63_4  300.300293        480.769257
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_70_5  300.300293        433.463379
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_77_6  300.300293        427.715973
+Siglip_layernorm_1  Siglip_layernorm  sqrt_fixed_33_15_s                         300.300293        418.585205
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_86_7  300.300293        411.015198
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm                           300.300293        411.015198
+
+Latency Information
+Compute Unit        Kernel Name       Module Name                                Start Interval  Best (cycles)  Avg (cycles)  Worst (cycles)  Best (absolute)  Avg (absolute)  Worst (absolute)
+------------------  ----------------  -----------------------------------------  --------------  -------------  ------------  --------------  ---------------  --------------  ----------------
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_44_1  1158            1158           1158          1158            3.860 us         3.860 us        3.860 us
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_56_3  1155            1155           1155          1155            3.850 us         3.850 us        3.850 us
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_63_4  291             291            291           291             0.970 us         0.970 us        0.970 us
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_70_5  2307            2307           2307          2307            7.689 us         7.689 us        7.689 us
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_77_6  582             582            582           582             1.940 us         1.940 us        1.940 us
+Siglip_layernorm_1  Siglip_layernorm  sqrt_fixed_33_15_s                         1               20             20            20              66.660 ns        66.660 ns       66.660 ns
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_86_7  1163            1163           1163          1163            3.876 us         3.876 us        3.876 us
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm                           4051696         4051695        4051695       4051695         13.504 ms        13.504 ms       13.504 ms
+
+Area Information
+Compute Unit        Kernel Name       Module Name                                FF     LUT    DSP  BRAM  URAM
+------------------  ----------------  -----------------------------------------  -----  -----  ---  ----  ----
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_44_1  2769   1742   0    0     0
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_56_3  1034   124    0    0     0
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_63_4  113    235    0    0     0
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_70_5  92     263    0    0     0
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_77_6  587    557    0    0     0
+Siglip_layernorm_1  Siglip_layernorm  sqrt_fixed_33_15_s                         2310   6283   0    0     0
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm_Pipeline_VITIS_LOOP_86_7  1407   936    0    0     0
+Siglip_layernorm_1  Siglip_layernorm  Siglip_layernorm                           17651  20350  0    72    0
+-------------------------------------------------------------------------------

@@ -1,0 +1,105 @@
+===============================================================================
+Version:    v++ v2023.2 (64-bit)
+Build:      SW Build 4026344 on 2023-10-11-15:42:10
+Copyright:  Copyright 1986-2023 Xilinx, Inc. All Rights Reserved.
+Created:    Tue Oct 14 01:05:17 2025
+===============================================================================
+
+-------------------------------------------------------------------------------
+Design Name:             Siglip_MLP
+Target Device:           xilinx:u280:gen3x16_xdma_1:202211.1
+Target Clock:            300.000000MHz
+Total number of kernels: 1
+-------------------------------------------------------------------------------
+
+Kernel Summary
+Kernel Name  Type  Target              OpenCL Library  Compute Units
+-----------  ----  ------------------  --------------  -------------
+Siglip_MLP   c     fpga0:OCL_REGION_0  Siglip_MLP      1
+
+
+-------------------------------------------------------------------------------
+OpenCL Binary:     Siglip_MLP
+Kernels mapped to: clc_region
+
+Timing Information (MHz)
+Compute Unit  Kernel Name  Module Name                                         Target Frequency  Estimated Frequency
+------------  -----------  --------------------------------------------------  ----------------  -------------------
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_cache_bias_1                    300.300293        411.015198
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_cache_bias_2                    300.300293        411.015198
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_in                         300.300293        411.015198
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_1_VITIS_LOOP_94_1     300.300293        369.139893
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_2_VITIS_LOOP_101_2    300.300293        392.927307
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w0                         300.300293        411.015198
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_1                   300.300293        231.160416
+Siglip_MLP_1  Siglip_MLP   exp_generic_double_s                                300.300293        422.654266
+Siglip_MLP_1  Siglip_MLP   generic_tanh_float_s                                300.300293        422.654266
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_gelu                            300.300293        322.997406
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w2                         300.300293        411.015198
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_2                   300.300293        214.868942
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_out                             300.300293        355.366028
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_in_r                       300.300293        411.015198
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_1_r_VITIS_LOOP_190_3  300.300293        369.139893
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_2_r_VITIS_LOOP_198_4  300.300293        392.927307
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w0_r                       300.300293        411.015198
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_1_r                 300.300293        231.160416
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_gelu_r                          300.300293        322.997406
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w2_r                       300.300293        411.015198
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_2_r                 300.300293        214.868942
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_out_r                           300.300293        355.366028
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP                                          300.300293        214.868942
+
+Latency Information
+Compute Unit  Kernel Name  Module Name                                         Start Interval           Best (cycles)  Avg (cycles)  Worst (cycles)  Best (absolute)  Avg (absolute)  Worst (absolute)
+------------  -----------  --------------------------------------------------  -----------------------  -------------  ------------  --------------  ---------------  --------------  ----------------
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_cache_bias_1                    4383                     4383           4383          4383            14.609 us        14.609 us       14.609 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_cache_bias_2                    1159                     1159           1159          1159            3.863 us         3.863 us        3.863 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_in                         18436                    18436          18436         18436           61.447 us        61.447 us       61.447 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_1_VITIS_LOOP_94_1     68869                    68869          68869         68869           0.230 ms         0.230 ms        0.230 ms
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_2_VITIS_LOOP_101_2    18436                    18436          18436         18436           61.447 us        61.447 us       61.447 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w0                         18439                    18439          18439         18439           61.457 us        61.457 us       61.457 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_1                   293                      293            293           293             1.267 us         1.267 us        1.267 us
+Siglip_MLP_1  Siglip_MLP   exp_generic_double_s                                1                        27             27            27              89.991 ns        89.991 ns       89.991 ns
+Siglip_MLP_1  Siglip_MLP   generic_tanh_float_s                                1                        74             74            74              0.247 us         0.247 us        0.247 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_gelu                            17337                    17337          17337         17337           57.784 us        57.784 us       57.784 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w2                         68871                    68871          68871         68871           0.230 ms         0.230 ms        0.230 ms
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_2                   1081                     1081           1081          1081            5.031 us         5.031 us        5.031 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_out                             18436                    18436          18436         18436           61.447 us        61.447 us       61.447 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_in_r                       10372                    10372          10372         10372           34.570 us        34.570 us       34.570 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_1_r_VITIS_LOOP_190_3  38742                    38742          38742         38742           0.129 ms         0.129 ms        0.129 ms
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_2_r_VITIS_LOOP_198_4  10372                    10372          10372         10372           34.570 us        34.570 us       34.570 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w0_r                       18439                    18439          18439         18439           61.457 us        61.457 us       61.457 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_1_r                 293                      293            293           293             1.267 us         1.267 us        1.267 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_gelu_r                          38857                    38857          38857         38857           0.130 ms         0.130 ms        0.130 ms
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w2_r                       68871                    68871          68871         68871           0.230 ms         0.230 ms        0.230 ms
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_2_r                 1081                     1081           1081          1081            5.031 us         5.031 us        5.031 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_out_r                           2595                     2595           2595          2595            8.649 us         8.649 us        8.649 us
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP                                          2378951347 ~ 2382088963  2378951346     2382088962    2382088962      11.072 sec       11.086 sec      11.086 sec
+
+Area Information
+Compute Unit  Kernel Name  Module Name                                         FF      LUT    DSP  BRAM  URAM
+------------  -----------  --------------------------------------------------  ------  -----  ---  ----  ----
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_cache_bias_1                    20404   3260   0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_cache_bias_2                    1440    965    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_in                         1319    260    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_1_VITIS_LOOP_94_1     215     233    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_2_VITIS_LOOP_101_2    185     244    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w0                         1512    1005   0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_1                   882     719    0    0     0
+Siglip_MLP_1  Siglip_MLP   exp_generic_double_s                                3527    3328   0    5     0
+Siglip_MLP_1  Siglip_MLP   generic_tanh_float_s                                11195   5837   0    5     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_gelu                            42561   28175  0    15    0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w2                         1516    1009   0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_2                   970     751    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_out                             665     588    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_in_r                       1317    258    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_1_r_VITIS_LOOP_190_3  207     203    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_bias_2_r_VITIS_LOOP_198_4  182     240    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w0_r                       1512    1005   0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_1_r                 881     718    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_gelu_r                          1515    2186   0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_copy_w2_r                       1516    1009   0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_partial_sum_2_r                 969     750    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP_Pipeline_out_r                           533     458    0    0     0
+Siglip_MLP_1  Siglip_MLP   Siglip_MLP                                          111929  74826  0    140   123
+-------------------------------------------------------------------------------

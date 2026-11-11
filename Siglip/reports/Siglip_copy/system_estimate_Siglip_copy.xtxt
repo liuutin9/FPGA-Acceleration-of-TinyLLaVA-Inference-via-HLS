@@ -1,0 +1,39 @@
+===============================================================================
+Version:    v++ v2023.2 (64-bit)
+Build:      SW Build 4026344 on 2023-10-11-15:42:10
+Copyright:  Copyright 1986-2023 Xilinx, Inc. All Rights Reserved.
+Created:    Tue Oct  7 12:27:00 2025
+===============================================================================
+
+-------------------------------------------------------------------------------
+Design Name:             Siglip_copy
+Target Device:           xilinx:u280:gen3x16_xdma_1:202211.1
+Target Clock:            300.000000MHz
+Total number of kernels: 1
+-------------------------------------------------------------------------------
+
+Kernel Summary
+Kernel Name  Type  Target              OpenCL Library  Compute Units
+-----------  ----  ------------------  --------------  -------------
+Siglip_copy  c     fpga0:OCL_REGION_0  Siglip_copy     1
+
+
+-------------------------------------------------------------------------------
+OpenCL Binary:     Siglip_copy
+Kernels mapped to: clc_region
+
+Timing Information (MHz)
+Compute Unit   Kernel Name  Module Name  Target Frequency  Estimated Frequency
+-------------  -----------  -----------  ----------------  -------------------
+Siglip_copy_1  Siglip_copy  Siglip_copy  300.300293        411.015198
+
+Latency Information
+Compute Unit   Kernel Name  Module Name  Start Interval  Best (cycles)  Avg (cycles)  Worst (cycles)  Best (absolute)  Avg (absolute)  Worst (absolute)
+-------------  -----------  -----------  --------------  -------------  ------------  --------------  ---------------  --------------  ----------------
+Siglip_copy_1  Siglip_copy  Siglip_copy  839952          839951         839951        839951          2.800 ms         2.800 ms        2.800 ms
+
+Area Information
+Compute Unit   Kernel Name  Module Name  FF    LUT   DSP  BRAM  URAM
+-------------  -----------  -----------  ----  ----  ---  ----  ----
+Siglip_copy_1  Siglip_copy  Siglip_copy  9435  6554  0    60    0
+-------------------------------------------------------------------------------

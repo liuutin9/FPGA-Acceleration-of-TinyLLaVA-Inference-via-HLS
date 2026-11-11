@@ -1,0 +1,72 @@
+===============================================================================
+Version:    v++ v2023.2 (64-bit)
+Build:      SW Build 4026344 on 2023-10-11-15:42:10
+Copyright:  Copyright 1986-2023 Xilinx, Inc. All Rights Reserved.
+Created:    Tue Oct 14 01:05:16 2025
+===============================================================================
+
+-------------------------------------------------------------------------------
+Design Name:             Siglip_linear
+Target Device:           xilinx:u280:gen3x16_xdma_1:202211.1
+Target Clock:            300.000000MHz
+Total number of kernels: 1
+-------------------------------------------------------------------------------
+
+Kernel Summary
+Kernel Name    Type  Target              OpenCL Library  Compute Units
+-------------  ----  ------------------  --------------  -------------
+Siglip_linear  c     fpga0:OCL_REGION_0  Siglip_linear   1
+
+
+-------------------------------------------------------------------------------
+OpenCL Binary:     Siglip_linear
+Kernels mapped to: clc_region
+
+Timing Information (MHz)
+Compute Unit     Kernel Name    Module Name                                               Target Frequency  Estimated Frequency
+---------------  -------------  --------------------------------------------------------  ----------------  -------------------
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_bias                          300.300293        411.015198
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_in                            300.300293        411.015198
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_block_bias_VITIS_LOOP_106_1   300.300293        392.927307
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_weight                        300.300293        411.015198
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_compute_qkv                        300.300293        237.079193
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_out_out_in                         300.300293        357.142853
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_in_r                          300.300293        411.015198
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_VITIS_LOOP_165_2_VITIS_LOOP_166_3  300.300293        392.927307
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_w_r                           300.300293        411.015198
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_compute_qkv_r                      300.300293        237.079193
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_out_r_out_in_r                     300.300293        357.142853
+Siglip_linear_1  Siglip_linear  Siglip_linear                                             300.300293        237.079193
+
+Latency Information
+Compute Unit     Kernel Name    Module Name                                               Start Interval  Best (cycles)  Avg (cycles)  Worst (cycles)  Best (absolute)  Avg (absolute)  Worst (absolute)
+---------------  -------------  --------------------------------------------------------  --------------  -------------  ------------  --------------  ---------------  --------------  ----------------
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_bias                          1159            1159           1159          1159            3.863 us         3.863 us        3.863 us
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_in                            41476           41476          41476         41476           0.138 ms         0.138 ms        0.138 ms
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_block_bias_VITIS_LOOP_106_1   41477           41477          41477         41477           0.138 ms         0.138 ms        0.138 ms
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_weight                        41479           41479          41479         41479           0.138 ms         0.138 ms        0.138 ms
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_compute_qkv                        293             293            293           293             1.236 us         1.236 us        1.236 us
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_out_out_in                         1370            1370           1370          1370            4.566 us         4.566 us        4.566 us
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_in_r                          10372           10372          10372         10372           34.570 us        34.570 us       34.570 us
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_VITIS_LOOP_165_2_VITIS_LOOP_166_3  10373           10373          10373         10373           34.573 us        34.573 us       34.573 us
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_w_r                           41479           41479          41479         41479           0.138 ms         0.138 ms        0.138 ms
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_compute_qkv_r                      293             293            293           293             1.236 us         1.236 us        1.236 us
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_out_r_out_in_r                     398             398            398           398             1.327 us         1.327 us        1.327 us
+Siglip_linear_1  Siglip_linear  Siglip_linear                                             287479380       287479379      287479379     287479379       1.213 sec        1.213 sec       1.213 sec
+
+Area Information
+Compute Unit     Kernel Name    Module Name                                               FF     LUT    DSP  BRAM  URAM
+---------------  -------------  --------------------------------------------------------  -----  -----  ---  ----  ----
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_bias                          3926   2551   0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_in                            1321   262    0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_block_bias_VITIS_LOOP_106_1   1066   407    0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_weight                        3936   2561   0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_compute_qkv                        1746   1445   0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_out_out_in                         2233   1548   0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_in_r                          1317   258    0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_VITIS_LOOP_165_2_VITIS_LOOP_166_3  1058   397    0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_copy_w_r                           3936   2561   0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_compute_qkv_r                      1744   1442   0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear_Pipeline_out_r_out_in_r                     2221   1536   0    0     0
+Siglip_linear_1  Siglip_linear  Siglip_linear                                             45150  44457  0    114   136
+-------------------------------------------------------------------------------

@@ -1,0 +1,63 @@
+===============================================================================
+Version:    v++ v2023.2 (64-bit)
+Build:      SW Build 4026344 on 2023-10-11-15:42:10
+Copyright:  Copyright 1986-2023 Xilinx, Inc. All Rights Reserved.
+Created:    Tue Oct 14 01:05:16 2025
+===============================================================================
+
+-------------------------------------------------------------------------------
+Design Name:             Siglip_attention
+Target Device:           xilinx:u280:gen3x16_xdma_1:202211.1
+Target Clock:            300.000000MHz
+Total number of kernels: 1
+-------------------------------------------------------------------------------
+
+Kernel Summary
+Kernel Name       Type  Target              OpenCL Library    Compute Units
+----------------  ----  ------------------  ----------------  -------------
+Siglip_attention  c     fpga0:OCL_REGION_0  Siglip_attention  1
+
+
+-------------------------------------------------------------------------------
+OpenCL Binary:     Siglip_attention
+Kernels mapped to: clc_region
+
+Timing Information (MHz)
+Compute Unit        Kernel Name       Module Name                                  Target Frequency  Estimated Frequency
+------------------  ----------------  -------------------------------------------  ----------------  -------------------
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_VITIS_LOOP_68_2    300.300293        237.24791
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_compute_softmax_1  300.300293        384.467499
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_compute_softmax_2  300.300293        440.334686
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_compute_softmax_3  300.300293        413.736023
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_load_value         300.300293        411.015198
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_VITIS_LOOP_108_3   300.300293        237.24791
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_load_out           300.300293        411.015198
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_VITIS_LOOP_130_4   300.300293        237.24791
+Siglip_attention_1  Siglip_attention  Siglip_attention                             300.300293        237.24791
+
+Latency Information
+Compute Unit        Kernel Name       Module Name                                  Start Interval           Best (cycles)  Avg (cycles)  Worst (cycles)  Best (absolute)  Avg (absolute)  Worst (absolute)
+------------------  ----------------  -------------------------------------------  -----------------------  -------------  ------------  --------------  ---------------  --------------  ----------------
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_VITIS_LOOP_68_2    23                       23             23            23              96.945 ns        96.945 ns       96.945 ns
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_compute_softmax_1  367                      367            367           367             1.223 us         1.223 us        1.223 us
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_compute_softmax_2  204 ~ 205                204            205           205             0.680 us         0.683 us        0.683 us
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_compute_softmax_3  421                      421            421           421             1.403 us         1.403 us        1.403 us
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_load_value         804                      804            804           804             2.680 us         2.680 us        2.680 us
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_VITIS_LOOP_108_3   188                      188            188           188             0.792 us         0.792 us        0.792 us
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_load_out           1156                     1156           1156          1156            3.853 us         3.853 us        3.853 us
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_VITIS_LOOP_130_4   295                      295            295           295             1.243 us         1.243 us        1.243 us
+Siglip_attention_1  Siglip_attention  Siglip_attention                             1940216007 ~ 1998174423  1940216006     1969620950    1998174422      8.178 sec        8.302 sec       8.422 sec
+
+Area Information
+Compute Unit        Kernel Name       Module Name                                  FF     LUT    DSP  BRAM  URAM
+------------------  ----------------  -------------------------------------------  -----  -----  ---  ----  ----
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_VITIS_LOOP_68_2    826    415    0    0     0
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_compute_softmax_1  108    280    0    0     0
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_compute_softmax_2  9057   5215   0    8     0
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_compute_softmax_3  11168  8425   0    0     0
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_load_value         413    294    0    0     0
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_VITIS_LOOP_108_3   420    360    0    0     0
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_load_out           1311   252    0    0     0
+Siglip_attention_1  Siglip_attention  Siglip_attention_Pipeline_VITIS_LOOP_130_4   2348   3424   0    0     0
+Siglip_attention_1  Siglip_attention  Siglip_attention                             47368  39616  0    138   4
+-------------------------------------------------------------------------------

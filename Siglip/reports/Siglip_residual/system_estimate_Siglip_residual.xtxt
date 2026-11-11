@@ -1,0 +1,39 @@
+===============================================================================
+Version:    v++ v2023.2 (64-bit)
+Build:      SW Build 4026344 on 2023-10-11-15:42:10
+Copyright:  Copyright 1986-2023 Xilinx, Inc. All Rights Reserved.
+Created:    Tue Oct 14 01:05:15 2025
+===============================================================================
+
+-------------------------------------------------------------------------------
+Design Name:             Siglip_residual
+Target Device:           xilinx:u280:gen3x16_xdma_1:202211.1
+Target Clock:            300.000000MHz
+Total number of kernels: 1
+-------------------------------------------------------------------------------
+
+Kernel Summary
+Kernel Name      Type  Target              OpenCL Library   Compute Units
+---------------  ----  ------------------  ---------------  -------------
+Siglip_residual  c     fpga0:OCL_REGION_0  Siglip_residual  1
+
+
+-------------------------------------------------------------------------------
+OpenCL Binary:     Siglip_residual
+Kernels mapped to: clc_region
+
+Timing Information (MHz)
+Compute Unit       Kernel Name      Module Name      Target Frequency  Estimated Frequency
+-----------------  ---------------  ---------------  ----------------  -------------------
+Siglip_residual_1  Siglip_residual  Siglip_residual  300.300293        411.015198
+
+Latency Information
+Compute Unit       Kernel Name      Module Name      Start Interval  Best (cycles)  Avg (cycles)  Worst (cycles)  Best (absolute)  Avg (absolute)  Worst (absolute)
+-----------------  ---------------  ---------------  --------------  -------------  ------------  --------------  ---------------  --------------  ----------------
+Siglip_residual_1  Siglip_residual  Siglip_residual  839952          839951         839951        839951          2.800 ms         2.800 ms        2.800 ms
+
+Area Information
+Compute Unit       Kernel Name      Module Name      FF     LUT   DSP  BRAM  URAM
+-----------------  ---------------  ---------------  -----  ----  ---  ----  ----
+Siglip_residual_1  Siglip_residual  Siglip_residual  14085  9459  0    90    0
+-------------------------------------------------------------------------------
