@@ -1,0 +1,1 @@
+g++ -std=c++17 ./src/tokenizer.cpp  -I./include -L./lib -ltokenizers_cpp -ltokenizers_c -lsentencepiece -lpthread -ldl -o tokenizer
